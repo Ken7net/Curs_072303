@@ -1,4 +1,4 @@
-#ifndef CURSSRV_USER_H
+п»ї#ifndef CURSSRV_USER_H
 #define CURSSRV_USER_H
 
 #include <utility>
@@ -11,18 +11,18 @@ using namespace Checks;
 class User {
 private:
 	size_t uid;				// Id
-	std::string name;		// Фамилия Имя
-	std::string login;      // Логин
-	std::string pass;       // Телефон
-	std::string role;       // Роль
+	std::string name;		// Р¤Р°РјРёР»РёСЏ РРјСЏ
+	std::string login;      // Р›РѕРіРёРЅ
+	std::string pass;       // РўРµР»РµС„РѕРЅ
+	std::string role;       // Р РѕР»СЊ
 public:
-	vector<string> Roles;// = { "Администратор", "Представитель компании", "Эксперт" };
+	vector<string> Roles;// = { "РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ", "РџСЂРµРґСЃС‚Р°РІРёС‚РµР»СЊ РєРѕРјРїР°РЅРёРё", "Р­РєСЃРїРµСЂС‚" };
 
 	friend ostream& operator<<(ostream& out, User& obj) {
-		out << "Фамилия Имя: " << obj.getName() << endl;
-		out << "Логин: " << obj.getLogin() << endl;
-		out << "Пароль: " << obj.getPass() << endl;
-		out << "Роль: " << obj.getRole() << endl;
+		out << "Р¤Р°РјРёР»РёСЏ РРјСЏ: " << obj.getName() << endl;
+		out << "Р›РѕРіРёРЅ: " << obj.getLogin() << endl;
+		out << "РџР°СЂРѕР»СЊ: " << obj.getPass() << endl;
+		out << "Р РѕР»СЊ: " << obj.getRole() << endl;
 		return out;
 	}
 
@@ -101,7 +101,7 @@ public:
 		//return *this;
 	}
 
-	// Функция для просмотра сотрудника администратором
+	// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РїСЂРѕСЃРјРѕС‚СЂР° СЃРѕС‚СЂСѓРґРЅРёРєР° Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂРѕРј
 	void printUser(bool one = false, ostream& fout = std::cout) {
 		if (one) {
 			fout << "+-------------------------------------+------------------------+--------+-------------+----------+"
@@ -118,38 +118,38 @@ public:
     virtual void enterUser() {
 		//User tmp;
 		string _name, _login, _pass, _role;
-		//ФИО
-		cout << "Введите ФИО сотрудника:\n";
+		//Р¤РРћ
+		cout << "Р’РІРµРґРёС‚Рµ Р¤РРћ СЃРѕС‚СЂСѓРґРЅРёРєР°:\n";
 		do {
-			cout << "Фамилия Имя: ";
+			cout << "Р¤Р°РјРёР»РёСЏ РРјСЏ: ";
 			cin >> _name;
 			if (Checks::checkNoNumbers(_name)) {
 				break;
 			}
 			else
-				cout << "Некорректный ввод. Повторите попытку.\n";
+				cout << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\n";
 		} while (true);
 		do {
-			cout << "Логин: ";
+			cout << "Р›РѕРіРёРЅ: ";
 			cin >> _login;
 			if (Checks::checkNoNumbers(_login)) {
 				break;
 			}
 			else
-				cout << "Некорректный ввод. Повторите попытку.\n";
+				cout << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\n";
 		} while (true);
-		//Номер телефона
+		//РќРѕРјРµСЂ С‚РµР»РµС„РѕРЅР°
 		do {
-			cout << "Введите номер телефона:\n";
+			cout << "Р’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ С‚РµР»РµС„РѕРЅР°:\n";
 			cin >> _pass;
 			if (Checks::checkNoLetters(_pass)) {
 				break;
 			}
 			else
-				cout << "Некорректный ввод. Повторите попытку.\n";
+				cout << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\n";
 		} while (true);
-		//Роль
-		size_t ch = vcChoice("Роль", Roles);
+		//Р РѕР»СЊ
+		size_t ch = vcChoice("Р РѕР»СЊ", Roles);
 		if (ch > 0) _role = Roles[ch - 1];
 		else return;
 		setUser(_name, _login, _pass, _role);
@@ -185,7 +185,7 @@ public:
 	}
 };
 
-// Сравнение по фамилии
+// РЎСЂР°РІРЅРµРЅРёРµ РїРѕ С„Р°РјРёР»РёРё
 bool compareName(User obj1, User obj2) {
 	if (strcmp(obj1.getName().c_str(), obj2.getName().c_str()) < 0)
 		return true;
@@ -208,16 +208,16 @@ public:
 		string _name, _login, _pass, _role;
 		sendString(sock, "data");
 		//-----------------------------------
-		sendString(sock, "Фамилия: ");
+		sendString(sock, "Р¤Р°РјРёР»РёСЏ: ");
 		do {
 			_name = takeString(sock);
 			if (Checks::checkNoNumbers(_name)) {
 				break;
 			}
 			else
-				sendString(sock, "Некорректный ввод. Повторите попытку.\nФамилия: ");
+				sendString(sock, "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\nР¤Р°РјРёР»РёСЏ: ");
 		} while (true);
-		sendString(sock, "Имя: ");
+		sendString(sock, "РРјСЏ: ");
 		std::string _name2;
 		do {
 			_name2 = takeString(sock);
@@ -225,11 +225,11 @@ public:
 				break;
 			}
 			else
-				sendString(sock, "Некорректный ввод. Повторите попытку.\nИмя: ");
+				sendString(sock, "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\nРРјСЏ: ");
 		} while (true);
 		_name += " " + _name2;
 		//-----------------------------------
-		sendString(sock, "Логин: ");
+		sendString(sock, "Р›РѕРіРёРЅ: ");
 		_login = takeString(sock);
 		//do {
 		//	_login = takeString(sock);
@@ -237,21 +237,21 @@ public:
 		//		break;
 		//	}
 		//	else
-		//		sendString(sock, "Некорректный ввод. Повторите попытку.\nЛогин: ");
+		//		sendString(sock, "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\nР›РѕРіРёРЅ: ");
 		//} while (true);
 		//-----------------------------------
-		sendString(sock, "Пароль: ");
+		sendString(sock, "РџР°СЂРѕР»СЊ: ");
 		do {
 			_pass = takeString(sock);
 			if (Checks::checkNoLetters(_pass)) {
 				break;
 			}
 			else
-				sendString(sock, "Некорректный ввод. Повторите попытку.\nПароль: ");
+				sendString(sock, "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\nРџР°СЂРѕР»СЊ: ");
 		} while (true);
 		//-----------------------------------
 		sendString(sock, "end");
-		//size_t ch = vcChoice("Роль", Roles);
+		//size_t ch = vcChoice("Р РѕР»СЊ", Roles);
 		size_t ch;
 		sendString(sock, "menu");
 		sendString(sock, toString(Roles));

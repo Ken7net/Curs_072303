@@ -1,4 +1,4 @@
-#include <iostream>
+п»ї#include <iostream>
 #include "Client.h"
 #include "MenuCln.h"
 //#include <locale.h>
@@ -19,26 +19,26 @@ int main() {
     system("mode con: cols=70 lines=20");
 
     WSADATA wsaData;
-    WORD wVersionRequested = MAKEWORD(2, 2);//первая цифра версии находится в младшем байте, вторая - в старшем.
-    int err = WSAStartup(wVersionRequested, &wsaData);//инициализируем работу с WinSock dll
+    WORD wVersionRequested = MAKEWORD(2, 2);//РїРµСЂРІР°СЏ С†РёС„СЂР° РІРµСЂСЃРёРё РЅР°С…РѕРґРёС‚СЃСЏ РІ РјР»Р°РґС€РµРј Р±Р°Р№С‚Рµ, РІС‚РѕСЂР°СЏ - РІ СЃС‚Р°СЂС€РµРј.
+    int err = WSAStartup(wVersionRequested, &wsaData);//РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј СЂР°Р±РѕС‚Сѓ СЃ WinSock dll
     if (err != 0) return -1;
 
-    struct sockaddr_in peer;//адресная структура
+    struct sockaddr_in peer;//Р°РґСЂРµСЃРЅР°СЏ СЃС‚СЂСѓРєС‚СѓСЂР°
     peer.sin_family = AF_INET;
-    peer.sin_port = htons(1280);//порт соединения
-    peer.sin_addr.s_addr = inet_addr("127.0.0.1");// т.к. клиент и сервер на одном компьютере
-    SOCKET s = socket(AF_INET, SOCK_STREAM, 0);//создаем TCP-сокет с интернет-адресацией
-    connect(s, (struct sockaddr *) &peer, sizeof(peer));//запрос на открытие соединения
+    peer.sin_port = htons(1280);//РїРѕСЂС‚ СЃРѕРµРґРёРЅРµРЅРёСЏ
+    peer.sin_addr.s_addr = inet_addr("127.0.0.1");// С‚.Рє. РєР»РёРµРЅС‚ Рё СЃРµСЂРІРµСЂ РЅР° РѕРґРЅРѕРј РєРѕРјРїСЊСЋС‚РµСЂРµ
+    SOCKET s = socket(AF_INET, SOCK_STREAM, 0);//СЃРѕР·РґР°РµРј TCP-СЃРѕРєРµС‚ СЃ РёРЅС‚РµСЂРЅРµС‚-Р°РґСЂРµСЃР°С†РёРµР№
+    connect(s, (struct sockaddr *) &peer, sizeof(peer));//Р·Р°РїСЂРѕСЃ РЅР° РѕС‚РєСЂС‹С‚РёРµ СЃРѕРµРґРёРЅРµРЅРёСЏ
 //    if (connect(s, (SOCKADDR *) &peer, sizeof(peer)) != 0) {
 //
 //    if (cln.startClient() != 0) {
-//        cout << "Ошибка, неполучилось подсоединиться к серверу" << endl;
+//        cout << "РћС€РёР±РєР°, РЅРµРїРѕР»СѓС‡РёР»РѕСЃСЊ РїРѕРґСЃРѕРµРґРёРЅРёС‚СЊСЃСЏ Рє СЃРµСЂРІРµСЂСѓ" << endl;
 //        return 1;
 //    } else {
     std::cout << takeString(s);
     A_menu menu(s);
     menu.start();
-    sendString(s, "Отключаюсь");
+    sendString(s, "РћС‚РєР»СЋС‡Р°СЋСЃСЊ");
     //    }
     closesocket(s);
     WSACleanup();

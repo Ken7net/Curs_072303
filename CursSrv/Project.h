@@ -1,4 +1,4 @@
-#ifndef CURSSRV_PROJECT_H
+п»ї#ifndef CURSSRV_PROJECT_H
 #define CURSSRV_PROJECT_H
 
 #include <utility>
@@ -148,53 +148,53 @@ public:
         std::string _projectName, _sudReestr, _sumCreditStr, _creditTimeStr, _companyIdStr;
         Date _applicationDate{};
         _projectId = 0;
-        //Наименование проекта
+        //РќР°РёРјРµРЅРѕРІР°РЅРёРµ РїСЂРѕРµРєС‚Р°
         do {
-            cout << "Наименование: ";
+            cout << "РќР°РёРјРµРЅРѕРІР°РЅРёРµ: ";
             cin >> _projectName;
             if (Checks::checkNoNumbers(_projectName)) {
                 break;
             } else
-                cout << "Некорректный ввод. Повторите попытку.\n";
+                cout << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\n";
         } while (true);
         do {
-            cout << "Сумму кредита: ";
+            cout << "РЎСѓРјРјСѓ РєСЂРµРґРёС‚Р°: ";
             cin >> _sumCreditStr;
             if (Checks::checkNoLetters(_sumCreditStr)) {
                 _sumCredit = stod(_sumCreditStr);
                 break;
             } else
-                cout << "Некорректный ввод. Повторите попытку.\n";
+                cout << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\n";
         } while (true);
         do {
-            cout << "Срок кредитования: ";
+            cout << "РЎСЂРѕРє РєСЂРµРґРёС‚РѕРІР°РЅРёСЏ: ";
             cin >> _creditTimeStr;
             if (Checks::checkNoLetters(_creditTimeStr)) {
                 _creditTime = stol(_creditTimeStr);
                 break;
             } else
-                std::cout << "Некорректный ввод. Повторите попытку.\n";
+                std::cout << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\n";
         } while (true);
         do {
-            cout << "Судебный реестр: ";
+            cout << "РЎСѓРґРµР±РЅС‹Р№ СЂРµРµСЃС‚СЂ: ";
             cin >> _projectName;
             if (Checks::checkNoNumbers(_sudReestr)) {
                 break;
             } else
-                cout << "Некорректный ввод. Повторите попытку.\n";
+                cout << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\n";
         } while (true);
-        cout << "Дата подачи заявки: ";
+        cout << "Р”Р°С‚Р° РїРѕРґР°С‡Рё Р·Р°СЏРІРєРё: ";
         _applicationDate.inputDate();
         //_applicationDate.getDateStr(); //std::string
         do {
-            cout << "Код Компании: ";
+            cout << "РљРѕРґ РљРѕРјРїР°РЅРёРё: ";
             cin >> _companyIdStr;
             if (Checks::checkNoLetters(_companyIdStr)) {
                 _companyId = stol(_companyIdStr);
                 break;
             }
             else
-                cout << "Некорректный ввод. Повторите попытку.\n";
+                cout << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\n";
         } while (true);
         tmp.setProject(_projectId, _projectName, _sumCredit, _creditTime, _sudReestr, _applicationDate.getDateStr(), _companyId);
     }
@@ -210,26 +210,26 @@ public:
         Date tmp{};
         std::string _year, _month, _day;
         do {
-            sendString(sock, "Год: ");
+            sendString(sock, "Р“РѕРґ: ");
             do {
                 _year = takeString(sock);
                 if (Checks::checkNoLetters(_year)) {
                     tmp.year = stol(_year);
-                    if(Date::CheckYear(tmp.year) == 0) sendString(sock, "Неверный год! Повторите ввод.\nГод: ");
+                    if(Date::CheckYear(tmp.year) == 0) sendString(sock, "РќРµРІРµСЂРЅС‹Р№ РіРѕРґ! РџРѕРІС‚РѕСЂРёС‚Рµ РІРІРѕРґ.\nР“РѕРґ: ");
                     else break;
                 } else
-                    sendString(sock, "Неверный год! Повторите ввод.\nГод: ");
+                    sendString(sock, "РќРµРІРµСЂРЅС‹Р№ РіРѕРґ! РџРѕРІС‚РѕСЂРёС‚Рµ РІРІРѕРґ.\nР“РѕРґ: ");
             } while (true);
             break;
         } while (true);
         size_t max_day;
         do {
-            std::cout << "Месяц: ";
+            std::cout << "РњРµСЃСЏС†: ";
             Checks::CheckInput(tmp.month);
             max_day = Date::CheckMon(tmp.year, tmp.month);
         } while (max_day == 0);
         do {
-            std::cout << "День: ";
+            std::cout << "Р”РµРЅСЊ: ";
             Checks::CheckInput(tmp.day);
             tmp.day = Date::CheckDay(max_day, tmp.day);
         } while (tmp.day == 0);
@@ -242,52 +242,52 @@ public:
         Date _applicationDate{};
         _projectId = 0;
         sendString(sock, "data");
-        //Наименование проекта
-        sendString(sock, "Наименование проекта: ");
+        //РќР°РёРјРµРЅРѕРІР°РЅРёРµ РїСЂРѕРµРєС‚Р°
+        sendString(sock, "РќР°РёРјРµРЅРѕРІР°РЅРёРµ РїСЂРѕРµРєС‚Р°: ");
         do {
             _projectName = takeString(sock);
             if (Checks::checkNoNumbers(_projectName)) {
                 break;
             } else
-                sendString(sock, "Некорректный ввод. Повторите попытку.\nНаименование: ");
+                sendString(sock, "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\nРќР°РёРјРµРЅРѕРІР°РЅРёРµ: ");
         } while (true);
-        sendString(sock, "Сумму кредита: ");
+        sendString(sock, "РЎСѓРјРјСѓ РєСЂРµРґРёС‚Р°: ");
         do {
             _sumCreditStr = takeString(sock);
             if (Checks::checkNoLetters(_sumCreditStr)) {
                 _sumCredit = stod(_sumCreditStr);
                 break;
             } else
-                sendString(sock, "Некорректный ввод. Повторите попытку.\nСумму кредита: ");
+                sendString(sock, "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\nРЎСѓРјРјСѓ РєСЂРµРґРёС‚Р°: ");
         } while (true);
-        sendString(sock, "Срок кредитования: ");
+        sendString(sock, "РЎСЂРѕРє РєСЂРµРґРёС‚РѕРІР°РЅРёСЏ: ");
         do {
             _creditTimeStr = takeString(sock);
             if (Checks::checkNoLetters(_creditTimeStr)) {
                 _creditTime = stol(_creditTimeStr);
                 break;
             } else
-                sendString(sock, "Некорректный ввод. Повторите попытку.\nСрок кредитования: ");
+                sendString(sock, "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\nРЎСЂРѕРє РєСЂРµРґРёС‚РѕРІР°РЅРёСЏ: ");
         } while (true);
-        sendString(sock, "Судебный реестр: ");
+        sendString(sock, "РЎСѓРґРµР±РЅС‹Р№ СЂРµРµСЃС‚СЂ: ");
         do {
             _projectName = takeString(sock);
             if (Checks::checkNoNumbers(_sudReestr)) {
                 break;
             } else
-                sendString(sock, "Некорректный ввод. Повторите попытку.\nСудебный реестр: ");
+                sendString(sock, "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\nРЎСѓРґРµР±РЅС‹Р№ СЂРµРµСЃС‚СЂ: ");
         } while (true);
-        //sendString(sock, "Дата подачи заявки: ");
+        //sendString(sock, "Р”Р°С‚Р° РїРѕРґР°С‡Рё Р·Р°СЏРІРєРё: ");
         //_applicationDate.inputDate();
         _applicationDate.getDateStr(); //std::string
-        sendString(sock, "Наименование компании: ");
+        sendString(sock, "РќР°РёРјРµРЅРѕРІР°РЅРёРµ РєРѕРјРїР°РЅРёРё: ");
         do {
             _companyIdStr = takeString(sock);
             if (Checks::checkNoNumbers(_companyIdStr)) {
                 _companyId = stol(_companyIdStr);
                 break;
             } else
-                sendString(sock, "Некорректный ввод. Повторите попытку.\nНаименование компании: ");
+                sendString(sock, "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\nРќР°РёРјРµРЅРѕРІР°РЅРёРµ РєРѕРјРїР°РЅРёРё: ");
         } while (true);
         sendString(sock, "end");
         setProject(_projectId, _projectName, _sumCredit, _creditTime, _sudReestr, _applicationDate.getDateStr(), _companyId);

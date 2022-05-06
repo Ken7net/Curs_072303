@@ -1,4 +1,4 @@
-#ifndef CURSSRV_COMPANY_H
+п»ї#ifndef CURSSRV_COMPANY_H
 #define CURSSRV_COMPANY_H
 
 #include <ostream>
@@ -68,7 +68,7 @@ public:
         //return *this;
     }
 
-    // Функция для просмотра сотрудника администратором
+    // Р¤СѓРЅРєС†РёСЏ РґР»СЏ РїСЂРѕСЃРјРѕС‚СЂР° СЃРѕС‚СЂСѓРґРЅРёРєР° Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂРѕРј
     void printCompany(bool one = false, ostream &fout = std::cout) const {
 //        if (one) {
 //            fout << "+-------------------------------------+------------------------+--------+-------------+----------+"
@@ -85,31 +85,31 @@ public:
     static void enterCompany(Company &tmp) {
         std::string _name, _activity, _financeStr;
         size_t _finance;
-        //Наименование компании
+        //РќР°РёРјРµРЅРѕРІР°РЅРёРµ РєРѕРјРїР°РЅРёРё
         do {
-            cout << "Наименование: ";
+            cout << "РќР°РёРјРµРЅРѕРІР°РЅРёРµ: ";
             cin >> _name;
             if (Checks::checkNoNumbers(_name)) {
                 break;
             } else
-                cout << "Некорректный ввод. Повторите попытку.\n";
+                cout << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\n";
         } while (true);
         do {
-            cout << "Вид деятельности: ";
+            cout << "Р’РёРґ РґРµСЏС‚РµР»СЊРЅРѕСЃС‚Рё: ";
             cin >> _activity;
             if (Checks::checkNoNumbers(_activity)) {
                 break;
             } else
-                cout << "Некорректный ввод. Повторите попытку.\n";
+                cout << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\n";
         } while (true);
         do {
-            cout << "Финансовое состояние: ";
+            cout << "Р¤РёРЅР°РЅСЃРѕРІРѕРµ СЃРѕСЃС‚РѕСЏРЅРёРµ: ";
             cin >> _financeStr;
             if (Checks::checkNoLetters(_financeStr)) {
                 _finance = stol(_financeStr);
                 break;
             } else
-                std::cout << "Некорректный ввод. Повторите попытку.\n";
+                std::cout << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\n";
         } while (true);
         tmp.setCompany(_name, _activity, _finance);
     }
@@ -133,31 +133,31 @@ public:
         std::string _name, _activity, _financeStr;
         size_t _finance;
         sendString(sock, "data");
-        //Наименование компании
-        sendString(sock, "Наименование: ");
+        //РќР°РёРјРµРЅРѕРІР°РЅРёРµ РєРѕРјРїР°РЅРёРё
+        sendString(sock, "РќР°РёРјРµРЅРѕРІР°РЅРёРµ: ");
         do {
             _name = takeString(sock);
             if (Checks::checkNoNumbers(_name)) {
                 break;
             } else
-                sendString(sock, "Некорректный ввод. Повторите попытку.\nНаименование: ");
+                sendString(sock, "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\nРќР°РёРјРµРЅРѕРІР°РЅРёРµ: ");
         } while (true);
-        sendString(sock, "Вид деятельности: ");
+        sendString(sock, "Р’РёРґ РґРµСЏС‚РµР»СЊРЅРѕСЃС‚Рё: ");
         do {
             _activity = takeString(sock);
             if (Checks::checkNoNumbers(_activity)) {
                 break;
             } else
-                sendString(sock, "Некорректный ввод. Повторите попытку.\nВид деятельности: ");
+                sendString(sock, "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\nР’РёРґ РґРµСЏС‚РµР»СЊРЅРѕСЃС‚Рё: ");
         } while (true);
-        sendString(sock, "Финансовое состояние: ");
+        sendString(sock, "Р¤РёРЅР°РЅСЃРѕРІРѕРµ СЃРѕСЃС‚РѕСЏРЅРёРµ: ");
         do {
             _financeStr = takeString(sock);
             if (Checks::checkNoLetters(_financeStr)) {
                 _finance = stol(_financeStr);
                 break;
             } else
-                sendString(sock, "Некорректный ввод. Повторите попытку.\nФинансовое состояние: ");
+                sendString(sock, "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\nР¤РёРЅР°РЅСЃРѕРІРѕРµ СЃРѕСЃС‚РѕСЏРЅРёРµ: ");
         } while (true);
         sendString(sock, "end");
         setCompany(_name, _activity, _finance);

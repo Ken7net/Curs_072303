@@ -1,4 +1,4 @@
-#ifndef CURSSRV_SERVER_H
+п»ї#ifndef CURSSRV_SERVER_H
 #define CURSSRV_SERVER_H
 
 #define _CRT_SECURE_NO_WARNINGS
@@ -23,7 +23,7 @@ public:
 //        SOCKET sock;
 //        sock = accept(newConnection, (SOCKADDR *) &FromAddr, &len);
 //
-//        printf("IP клиента  %3u.%3u.%3u.%3u\n",
+//        printf("IP РєР»РёРµРЅС‚Р°  %3u.%3u.%3u.%3u\n",
 //               FromAddr.sin_addr.S_un.S_un_b.s_b1,
 //               FromAddr.sin_addr.S_un.S_un_b.s_b2,
 //               FromAddr.sin_addr.S_un.S_un_b.s_b3,
@@ -36,24 +36,24 @@ public:
 
     int startClient() {
         WSADATA wsaData;
-        WORD wVersionRequested = MAKEWORD(2, 2);//первая цифра версии находится в младшем байте, вторая - в старшем.
-        int err = WSAStartup(wVersionRequested, &wsaData);//инициализируем работу с WinSock dll
+        WORD wVersionRequested = MAKEWORD(2, 2);//РїРµСЂРІР°СЏ С†РёС„СЂР° РІРµСЂСЃРёРё РЅР°С…РѕРґРёС‚СЃСЏ РІ РјР»Р°РґС€РµРј Р±Р°Р№С‚Рµ, РІС‚РѕСЂР°СЏ - РІ СЃС‚Р°СЂС€РµРј.
+        int err = WSAStartup(wVersionRequested, &wsaData);//РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј СЂР°Р±РѕС‚Сѓ СЃ WinSock dll
         if (err != 0) {
-            std::cout << "Ошибка подключения к серверу!";
+            std::cout << "РћС€РёР±РєР° РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє СЃРµСЂРІРµСЂСѓ!";
             return -1;
         }
 
-        struct sockaddr_in peer{};//адресная структура
+        struct sockaddr_in peer{};//Р°РґСЂРµСЃРЅР°СЏ СЃС‚СЂСѓРєС‚СѓСЂР°
         peer.sin_family = AF_INET;
-        peer.sin_port = htons(1280);//порт соединения
-        peer.sin_addr.s_addr = inet_addr("127.0.0.1");// т.к. клиент и сервер на одном компьютере
-        newConnection = socket(AF_INET, SOCK_STREAM, 0);//создаем TCP-сокет с интернет-адресацией
-        connect(newConnection, (struct sockaddr *) &peer, sizeof(peer));//запрос на открытие соединения
+        peer.sin_port = htons(1280);//РїРѕСЂС‚ СЃРѕРµРґРёРЅРµРЅРёСЏ
+        peer.sin_addr.s_addr = inet_addr("127.0.0.1");// С‚.Рє. РєР»РёРµРЅС‚ Рё СЃРµСЂРІРµСЂ РЅР° РѕРґРЅРѕРј РєРѕРјРїСЊСЋС‚РµСЂРµ
+        newConnection = socket(AF_INET, SOCK_STREAM, 0);//СЃРѕР·РґР°РµРј TCP-СЃРѕРєРµС‚ СЃ РёРЅС‚РµСЂРЅРµС‚-Р°РґСЂРµСЃР°С†РёРµР№
+        connect(newConnection, (struct sockaddr *) &peer, sizeof(peer));//Р·Р°РїСЂРѕСЃ РЅР° РѕС‚РєСЂС‹С‚РёРµ СЃРѕРµРґРёРЅРµРЅРёСЏ
         return 0;
     }
 
     ~Client() {
-        closesocket(newConnection);//закрываем сокет
+        closesocket(newConnection);//Р·Р°РєСЂС‹РІР°РµРј СЃРѕРєРµС‚
         WSACleanup();
     }
 

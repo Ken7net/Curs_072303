@@ -1,4 +1,4 @@
-#include "Server.h"
+п»ї#include "Server.h"
 #include <iostream>
 #include <process.h> /* _beginthread, _endthread */
 #include <Windows.h>
@@ -12,7 +12,7 @@
 
 using namespace std;
 
-void Work(void* newS) {//поток обслуживания
+void Work(void* newS) {//РїРѕС‚РѕРє РѕР±СЃР»СѓР¶РёРІР°РЅРёСЏ
 	A_menu menu((SOCKET)newS);
 	menu.start();
 }
@@ -20,25 +20,25 @@ void Work(void* newS) {//поток обслуживания
 int main() {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
-	//setlocale(LC_ALL, "1251");// utf - 8");//это на всякий случай
+	//setlocale(LC_ALL, "1251");// utf - 8");//СЌС‚Рѕ РЅР° РІСЃСЏРєРёР№ СЃР»СѓС‡Р°Р№
 	WSADATA wsaData;
-	WORD wVersionRequested = MAKEWORD(2, 2);//первая цифра версии находится в младшем байте, вторая - в старшем.
-	int err = WSAStartup(wVersionRequested, &wsaData);//инициализируем работу с WinSock dll
+	WORD wVersionRequested = MAKEWORD(2, 2);//РїРµСЂРІР°СЏ С†РёС„СЂР° РІРµСЂСЃРёРё РЅР°С…РѕРґРёС‚СЃСЏ РІ РјР»Р°РґС€РµРј Р±Р°Р№С‚Рµ, РІС‚РѕСЂР°СЏ - РІ СЃС‚Р°СЂС€РµРј.
+	int err = WSAStartup(wVersionRequested, &wsaData);//РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј СЂР°Р±РѕС‚Сѓ СЃ WinSock dll
 	if (err != 0) return err;
 
-	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);//создаем TCP-сокет с интернет-адресацией
-	struct sockaddr_in local;//адресная структура
+	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);//СЃРѕР·РґР°РµРј TCP-СЃРѕРєРµС‚ СЃ РёРЅС‚РµСЂРЅРµС‚-Р°РґСЂРµСЃР°С†РёРµР№
+	struct sockaddr_in local;//Р°РґСЂРµСЃРЅР°СЏ СЃС‚СЂСѓРєС‚СѓСЂР°
 	local.sin_family = AF_INET;
-	local.sin_port = htons(1280);//порт соединения
-	local.sin_addr.s_addr = htonl(INADDR_ANY);//посылать или принимать данные через любой IP-адрес данного компьютера
-	bind(s, (struct sockaddr*)&local, sizeof(local));//связываем адрес с сокетом
-	listen(s, 5);//установка в прослушивание с 5-ти кратными попытками соединения
-	while (true) {//цикл извлечения запросов на подключение из очереди
-		sockaddr_in remote;//адрес клиента(заполняется системой)
-		int j = sizeof(remote);//адрес клиента(заполняется системой)
-		SOCKET newS = accept(s, (struct sockaddr*)&remote, &j);//подключение
+	local.sin_port = htons(1280);//РїРѕСЂС‚ СЃРѕРµРґРёРЅРµРЅРёСЏ
+	local.sin_addr.s_addr = htonl(INADDR_ANY);//РїРѕСЃС‹Р»Р°С‚СЊ РёР»Рё РїСЂРёРЅРёРјР°С‚СЊ РґР°РЅРЅС‹Рµ С‡РµСЂРµР· Р»СЋР±РѕР№ IP-Р°РґСЂРµСЃ РґР°РЅРЅРѕРіРѕ РєРѕРјРїСЊСЋС‚РµСЂР°
+	bind(s, (struct sockaddr*)&local, sizeof(local));//СЃРІСЏР·С‹РІР°РµРј Р°РґСЂРµСЃ СЃ СЃРѕРєРµС‚РѕРј
+	listen(s, 5);//СѓСЃС‚Р°РЅРѕРІРєР° РІ РїСЂРѕСЃР»СѓС€РёРІР°РЅРёРµ СЃ 5-С‚Рё РєСЂР°С‚РЅС‹РјРё РїРѕРїС‹С‚РєР°РјРё СЃРѕРµРґРёРЅРµРЅРёСЏ
+	while (true) {//С†РёРєР» РёР·РІР»РµС‡РµРЅРёСЏ Р·Р°РїСЂРѕСЃРѕРІ РЅР° РїРѕРґРєР»СЋС‡РµРЅРёРµ РёР· РѕС‡РµСЂРµРґРё
+		sockaddr_in remote;//Р°РґСЂРµСЃ РєР»РёРµРЅС‚Р°(Р·Р°РїРѕР»РЅСЏРµС‚СЃСЏ СЃРёСЃС‚РµРјРѕР№)
+		int j = sizeof(remote);//Р°РґСЂРµСЃ РєР»РёРµРЅС‚Р°(Р·Р°РїРѕР»РЅСЏРµС‚СЃСЏ СЃРёСЃС‚РµРјРѕР№)
+		SOCKET newS = accept(s, (struct sockaddr*)&remote, &j);//РїРѕРґРєР»СЋС‡РµРЅРёРµ
 		std::cout << remoteIP(remote) << std::endl;
-		_beginthread(Work, 0, (void*)newS);//запускаем поток для обслуживания клиента
+		_beginthread(Work, 0, (void*)newS);//Р·Р°РїСѓСЃРєР°РµРј РїРѕС‚РѕРє РґР»СЏ РѕР±СЃР»СѓР¶РёРІР°РЅРёСЏ РєР»РёРµРЅС‚Р°
 	}
 	WSACleanup();
 	return 0;

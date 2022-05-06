@@ -1,4 +1,4 @@
-#ifndef SRV_STDAFX_H
+п»ї#ifndef SRV_STDAFX_H
 #define SRV_STDAFX_H
 
 #pragma warning(push)
@@ -20,28 +20,28 @@
 #include <algorithm>
 #include <iomanip>
 #include <format>
-#include <conio.h>   //для getch
+#include <conio.h>   //РґР»СЏ getch
 //#include "Menu.h"
 #include <sstream>
 
 #pragma warning(pop) //For /Wall
 
 namespace Checks {
-    int checkInt() //проверка на целые числа
+    int checkInt() //РїСЂРѕРІРµСЂРєР° РЅР° С†РµР»С‹Рµ С‡РёСЃР»Р°
     {
         int a;
         while (true) {
             std::cin >> a;
             try {
                 if ((std::cin.get() != '\n')) {
-                    throw "Некорректный ввод. \n";
+                    throw "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. \n";
                 }
                 break;
             }
             catch (const char *err) {
                 std::cin.clear();
                 std::cin.ignore(32767, '\n');
-                std::cout << err << "Повторите попытку: " << std::endl;
+                std::cout << err << "РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ: " << std::endl;
                 //cin >> a;
                 //break;
             }
@@ -63,14 +63,14 @@ namespace Checks {
             std::cin >> str;
             try {
                 if (str.length() > length) {
-                    throw "Cлишком длинная строка!!!";
+                    throw "CР»РёС€РєРѕРј РґР»РёРЅРЅР°СЏ СЃС‚СЂРѕРєР°!!!";
                 }
                 break;
             }
             catch (const char *err) {
                 std::cin.clear();
                 std::cin.ignore(32767, '\n');
-                std::cout << err << "Повторите попытку: " << std::endl;
+                std::cout << err << "РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ: " << std::endl;
             }
         }
         return str;
@@ -81,7 +81,7 @@ namespace Checks {
         while (true) {
             std::cin >> tmp;
             if (std::cin.get() != '\n') {
-                std::cout << " Ошибка ввода, повторите попытку: ";
+                std::cout << " РћС€РёР±РєР° РІРІРѕРґР°, РїРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ: ";
                 std::cin.clear();
                 std::cin.ignore(32767, '\n');
             } else break;
@@ -135,7 +135,7 @@ std::string takeString(SOCKET newConnection) {
 }
 //----------------------------------------------------------------------------
 std::string remoteIP(SOCKADDR_IN FromAddr) {
-    return "IP клиента: " + std::to_string(FromAddr.sin_addr.S_un.S_un_b.s_b1) + "." +
+    return "IP РєР»РёРµРЅС‚Р°: " + std::to_string(FromAddr.sin_addr.S_un.S_un_b.s_b1) + "." +
            std::to_string(FromAddr.sin_addr.S_un.S_un_b.s_b2) + "." +
            std::to_string(FromAddr.sin_addr.S_un.S_un_b.s_b3) + "." +
            std::to_string(FromAddr.sin_addr.S_un.S_un_b.s_b4) + "\n";
@@ -148,10 +148,10 @@ struct tUser {
     std::string Role;
 };
 //----------------------------------------------------------------------------
-std::string input_pass(/*char *str1*/)    //Функция ввода массива символов
-{                                                                //name - что вводим,
-    //str строка,
-    //num=1 если нужны только символы
+std::string input_pass(/*char *str1*/)    //Р¤СѓРЅРєС†РёСЏ РІРІРѕРґР° РјР°СЃСЃРёРІР° СЃРёРјРІРѕР»РѕРІ
+{                                                                //name - С‡С‚Рѕ РІРІРѕРґРёРј,
+    //str СЃС‚СЂРѕРєР°,
+    //num=1 РµСЃР»Рё РЅСѓР¶РЅС‹ С‚РѕР»СЊРєРѕ СЃРёРјРІРѕР»С‹
     size_t nn = 0;
     size_t mm = 0;
     int num = 0;
@@ -227,11 +227,11 @@ std::vector<std::string> takeMenu(SOCKET Connection) {
 }
 //----------------------------------------------------------------------------
 int vcChoice(const std::string &strMenu, std::vector<std::string> vc, bool back = false) {
-    std::cout << "Выберите " + strMenu + ": " << std::endl;
+    std::cout << "Р’С‹Р±РµСЂРёС‚Рµ " + strMenu + ": " << std::endl;
     for (size_t i = 0; i < vc.size(); ++i) {
         std::cout << std::setw(2) << i + 1 << ". " << vc[i] << std::endl;
     }
-    if (back) std::cout << "0. -= ОТМЕНА =- " << std::endl;
+    if (back) std::cout << "0. -= РћРўРњР•РќРђ =- " << std::endl;
     int ch = -1;
     do {
         std::cin >> ch;

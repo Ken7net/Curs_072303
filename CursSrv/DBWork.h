@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifndef DBWORK_H
 #define DBWORK_H
 
@@ -83,9 +83,15 @@ public:
 		delete con;
 	}
 
-	vector<string> getGuide(const std::string& _table, size_t _numField) {
+	// Получение справочников
+	// _table : таблица
+	// _numField : номер поля
+	// exp :   = 1 - для отбора экспертов (по умолчанию 0)
+	vector<string> getGuide(const std::string& _table, size_t _numField, size_t exp = 0) {
 		vector<string> tmp;
-		pstmt = con->prepareStatement("SELECT * FROM " + _table + ";");
+		std::string str = "";
+		if (exp != 0) str = " WHERE role = 'Эксперт'";
+		pstmt = con->prepareStatement("SELECT * FROM " + _table + str + ";");
 		result = pstmt->executeQuery();
 		while (result->next()) {
 			//printf("%s\n", result->getString(_numField).c_str());
@@ -96,7 +102,7 @@ public:
 	}
 
 	//--------- User --------
-
+	// Получение ролей
 	vector<string> getRoles() {
 		vector<string> tmp;
 		pstmt = con->prepareStatement("SELECT * FROM user_role;");
@@ -109,7 +115,7 @@ public:
 		//setlocale(LC_ALL, ".1251");
 		return tmp;
 	}
-
+	// Добавить пользователя
 	void addUser(User& user) {
 		try {
 			pstmt = con->prepareStatement("INSERT INTO user (user_name, login, pass, role) VALUES(?, ?, ?, ?);");
@@ -126,6 +132,7 @@ public:
 		}
 	}
 
+	// Редактировать пользователя
 	void editUser(User& user, size_t u_id) {
 		try {
 			pstmt = con->prepareStatement(
@@ -143,7 +150,9 @@ public:
 			//exit(1);
 		}
 	}
-
+	// Получить пользователя
+	// field_name - поле для отбора
+	// u_name - значение поля
 	User getUser(const std::string& field_name, const std::string& u_name) {
 		User tmp;
 		pstmt = con->prepareStatement("SELECT * FROM user WHERE " + field_name + " = ?;");
@@ -156,7 +165,7 @@ public:
 		delete result;
 		return tmp;
 	}
-
+	// Удалить пользователя по id
 	void deleteUser(size_t u_id) {
 		try {
 			pstmt = con->prepareStatement("DELETE FROM user WHERE user_id = ?;");
@@ -169,7 +178,7 @@ public:
 			//exit(1);
 		}
 	}
-
+	// Удалить пользователя по логину
 	void deleteUser(const std::string& _login) {
 		try {
 			pstmt = con->prepareStatement("DELETE FROM user WHERE login = ?;");
@@ -184,7 +193,7 @@ public:
 	}
 
 	//------- Company -------
-
+	// Добавить компанию
 	void addCompany(const Company& company) {
 		try {
 			pstmt = con->prepareStatement("INSERT INTO company (company_name, activity, finance) VALUES(?, ?, ?);");
@@ -199,7 +208,7 @@ public:
 			//exit(1);
 		}
 	}
-
+	// Редактировать компанию
 	void editCompany(const Company& company, size_t c_id) {
 		try {
 			pstmt = con->prepareStatement(
@@ -216,7 +225,7 @@ public:
 			//exit(1);
 		}
 	}
-
+	// Получить компанию
 	Company getCompany(const std::string& field_name, const std::string& u_name) {
 		Company tmp;
 		pstmt = con->prepareStatement("SELECT * FROM company WHERE " + field_name + " = ?;");
@@ -229,7 +238,7 @@ public:
 		delete result;
 		return tmp;
 	}
-
+	// Удалить компанию по id
 	void deleteCompany(size_t u_id) {
 		try {
 			pstmt = con->prepareStatement("DELETE FROM company WHERE company_id = ?;");
@@ -242,7 +251,7 @@ public:
 			//exit(1);
 		}
 	}
-
+	// Удалить пользователя по названию
 	void deleteCompany(const std::string& _name) {
 		try {
 			pstmt = con->prepareStatement("DELETE FROM company WHERE company_name = ?;");
@@ -257,7 +266,7 @@ public:
 	}
 
 	//------- Project -------
-
+	// Добавить проект
 	void addProject(const Project& project) {
 		try {
 			pstmt = con->prepareStatement(
@@ -275,7 +284,7 @@ public:
 			//exit(1);
 		}
 	}
-
+	// Редактировать проект
 	void editProject(const Project& project, size_t p_id) {
 		try {
 			pstmt = con->prepareStatement(
@@ -294,7 +303,7 @@ public:
 			//exit(1);
 		}
 	}
-
+	// Получить проект
 	Project getProject(const std::string& field_name, const std::string& p_name) {
 		Project tmp;
 		pstmt = con->prepareStatement("SELECT * FROM project WHERE " + field_name + " = ?;");
@@ -307,7 +316,7 @@ public:
 		delete result;
 		return tmp;
 	}
-
+	// Удалить проект по id
 	void deleteProject(size_t u_id) {
 		try {
 			pstmt = con->prepareStatement("DELETE FROM project WHERE project_id = ?;");
@@ -320,7 +329,7 @@ public:
 			//exit(1);
 		}
 	}
-
+	// Удалить проект по названию
 	void deleteProject(const std::string& _name) {
 		try {
 			pstmt = con->prepareStatement("DELETE FROM project WHERE project_name = ?;");
@@ -335,7 +344,7 @@ public:
 	}
 
 	//------- Mark -------
-
+	// Добавить оценку
 	void addMark(Mark mark) {
 		try {
 			pstmt = con->prepareStatement(
@@ -354,7 +363,7 @@ public:
 			//exit(1);
 		}
 	}
-
+	// Редактировать оценку
 	void editMark(Mark mark, size_t m_id) {
 		try {
 			pstmt = con->prepareStatement(
@@ -373,7 +382,7 @@ public:
 			//exit(1);
 		}
 	}
-
+	// Получить оценку
 	Mark getMark(const std::string& field_name, size_t m_id) {
 		Mark tmp;
 		pstmt = con->prepareStatement("SELECT * FROM mark WHERE " + field_name + " = ?;");
@@ -386,7 +395,7 @@ public:
 		delete result;
 		return tmp;
 	}
-
+	// Удалить оценку по id
 	void deleteMark(size_t m_id) {
 		try {
 			pstmt = con->prepareStatement("DELETE FROM mark WHERE mark_id = ?;");

@@ -1,4 +1,4 @@
-#ifndef CURSSRV_SERVER_H
+п»ї#ifndef CURSSRV_SERVER_H
 #define CURSSRV_SERVER_H
 
 #define _CRT_SECURE_NO_WARNINGS
@@ -23,7 +23,7 @@ public:
         SOCKET sock;
         sock = accept(newConnection, (SOCKADDR *) &FromAddr, &len);
 
-        printf("IP клиента  %3u.%3u.%3u.%3u\n",
+        printf("IP РєР»РёРµРЅС‚Р°  %3u.%3u.%3u.%3u\n",
                FromAddr.sin_addr.S_un.S_un_b.s_b1,
                FromAddr.sin_addr.S_un.S_un_b.s_b2,
                FromAddr.sin_addr.S_un.S_un_b.s_b3,
@@ -36,24 +36,24 @@ public:
         WORD version = MAKEWORD(2, 1);
 
         if (WSAStartup(version, &Wsdata) != 0) {
-            std::cout << "Не удалось загузить библиотеку WSdata" << std::endl;
+            std::cout << "РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСѓР·РёС‚СЊ Р±РёР±Р»РёРѕС‚РµРєСѓ WSdata" << std::endl;
             exit(1);
         }
         SOCKADDR_IN addr;
         int size = sizeof(addr);
         addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-        addr.sin_port = htons(1111);    //порт соединения
+        addr.sin_port = htons(1111);    //РїРѕСЂС‚ СЃРѕРµРґРёРЅРµРЅРёСЏ
         addr.sin_family = AF_INET;
 
-        SOCKET sListen = socket(AF_INET, SOCK_STREAM, NULL); //создаем TCP-сокет с интернет-адресацией
-        bind(sListen, (SOCKADDR *) &addr, sizeof(addr));//связываем адрес с сокетом
+        SOCKET sListen = socket(AF_INET, SOCK_STREAM, NULL); //СЃРѕР·РґР°РµРј TCP-СЃРѕРєРµС‚ СЃ РёРЅС‚РµСЂРЅРµС‚-Р°РґСЂРµСЃР°С†РёРµР№
+        bind(sListen, (SOCKADDR *) &addr, sizeof(addr));//СЃРІСЏР·С‹РІР°РµРј Р°РґСЂРµСЃ СЃ СЃРѕРєРµС‚РѕРј
         listen(sListen, SOMAXCONN);
         newConnection = accept(sListen, (SOCKADDR *) &addr, &size);
 
         if (newConnection == 0) {
             std::cout << "error";
         } else {
-            std::cout << "Клиент присоединился к серверу!" << std::endl;
+            std::cout << "РљР»РёРµРЅС‚ РїСЂРёСЃРѕРµРґРёРЅРёР»СЃСЏ Рє СЃРµСЂРІРµСЂСѓ!" << std::endl;
             Accept();
         }
     }

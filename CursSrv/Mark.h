@@ -1,4 +1,4 @@
-#ifndef CURSSRV_MARK_H
+п»ї#ifndef CURSSRV_MARK_H
 #define CURSSRV_MARK_H
 
 #include <ostream>
@@ -114,19 +114,19 @@ public:
 		size_t numberMark, userId, project1Id, project2Id;
 		std::string numberMarkStr, userIdStr, project1IdStr, project2IdStr, _valueStr;
 		float _value;
-		// получение
-		// NumberMark авто из БД
-		// expert_Id из БД (текущий пользователь)
-		// project1_id и project2_id выбор из БД
+		// РїРѕР»СѓС‡РµРЅРёРµ
+		// NumberMark Р°РІС‚Рѕ РёР· Р‘Р”
+		// expert_Id РёР· Р‘Р” (С‚РµРєСѓС‰РёР№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ)
+		// project1_id Рё project2_id РІС‹Р±РѕСЂ РёР· Р‘Р”
 		do {
-			cout << "Оценку: ";
+			cout << "РћС†РµРЅРєСѓ: ";
 			cin >> _valueStr;
 			if (Checks::checkNoLetters(_valueStr)) {
 				_value = std::stof(_valueStr);
 				break;
 			}
 			else
-				cout << "Некорректный ввод. Повторите попытку.\n";
+				cout << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\n";
 		} while (true);
 		tmp.setMark(numberMark, userId, project1Id, project2Id, _value);
 	}
@@ -144,20 +144,20 @@ public:
 		std::string numberMarkStr, userIdStr, project1IdStr, project2IdStr, _valueStr;
 		float _value;
 
-		// получение
-		// NumberMark авто из БД
-		// expert_Id из БД (текущий пользователь)
-		// project1_id и project2_id выбор из БД
+		// РїРѕР»СѓС‡РµРЅРёРµ
+		// NumberMark Р°РІС‚Рѕ РёР· Р‘Р”
+		// expert_Id РёР· Р‘Р” (С‚РµРєСѓС‰РёР№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ)
+		// project1_id Рё project2_id РІС‹Р±РѕСЂ РёР· Р‘Р”
 		sendString(sock, "data");
 		do {
-			sendString(sock, "Оценку: ");
+			sendString(sock, "РћС†РµРЅРєСѓ: ");
 			_valueStr = takeString(sock);
 			if (Checks::checkNoLetters(_valueStr)) {
 				_value = std::stof(_valueStr);
 				break;
 			}
 			else
-				cout << "Некорректный ввод. Повторите попытку.\n";
+				cout << "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.\n";
 		} while (true);
 		sendString(sock, "end");
 		setMark(numberMark, userId, project1Id, project2Id, _value);

@@ -1,4 +1,4 @@
-#ifndef CURSSRV_DATE_H
+ï»¿#ifndef CURSSRV_DATE_H
 #define CURSSRV_DATE_H
 
 #include <ostream>
@@ -7,13 +7,13 @@
 
 class Date {
 public:
-    size_t year;       //Ãîä
-    size_t month;      //Ìåñÿö
-    size_t day;        //Äåíü
+    size_t year;       //Ð“Ð¾Ð´
+    size_t month;      //ÐœÐµÑÑÑ†
+    size_t day;        //Ð”ÐµÐ½ÑŒ
 
     static size_t CheckYear(size_t y) {
         if ((y > 2022) || (y < 2000)) {
-            std::cout << "Íåâåðíûé ãîä! Ïîâòîðèòå ââîä." << std::endl;
+            std::cout << "ÐÐµÐ²ÐµÑ€Ð½Ñ‹Ð¹ Ð³Ð¾Ð´! ÐŸÐ¾Ð²Ñ‚Ð¾Ñ€Ð¸Ñ‚Ðµ Ð²Ð²Ð¾Ð´." << std::endl;
             return 0;
         }
         return y;
@@ -22,7 +22,7 @@ public:
     static size_t CheckMon(size_t y, size_t m) {
         size_t md;
         if ((m < 1) || (m > 12)) {
-            std::cout << "Íåâåðíûé ìåñÿö! Ïîâòîðèòå ââîä." << std::endl;
+            std::cout << "ÐÐµÐ²ÐµÑ€Ð½Ñ‹Ð¹ Ð¼ÐµÑÑÑ†! ÐŸÐ¾Ð²Ñ‚Ð¾Ñ€Ð¸Ñ‚Ðµ Ð²Ð²Ð¾Ð´." << std::endl;
             return 0;
         }
         switch (m) {
@@ -72,7 +72,7 @@ public:
 
     static size_t CheckDay(size_t md, size_t d) {
         if ((d > 0) && (d <= md)) return d;
-        std::cout << "Íåâåðíûé äåíü! Ïîâòîðèòå ââîä." << std::endl;
+        std::cout << "ÐÐµÐ²ÐµÑ€Ð½Ñ‹Ð¹ Ð´ÐµÐ½ÑŒ! ÐŸÐ¾Ð²Ñ‚Ð¾Ñ€Ð¸Ñ‚Ðµ Ð²Ð²Ð¾Ð´." << std::endl;
         return 0;
     }
 
@@ -96,17 +96,17 @@ public:
 
     void inputDate() {
         do {
-            std::cout << "Ãîä: ";
+            std::cout << "Ð“Ð¾Ð´: ";
             Checks::CheckInput(year);
         } while (CheckYear(year) == 0);
         size_t max_day;
         do {
-            std::cout << "Ìåñÿö: ";
+            std::cout << "ÐœÐµÑÑÑ†: ";
             Checks::CheckInput(month);
             max_day = CheckMon(year, month);
         } while (max_day == 0);
         do {
-            std::cout << "Äåíü: ";
+            std::cout << "Ð”ÐµÐ½ÑŒ: ";
             Checks::CheckInput(day);
             day = CheckDay(max_day, day);
         } while (day == 0);
@@ -128,7 +128,7 @@ public:
         os << date.getDateStr();
         return os;
     }
-    // Ïîëó÷åíèå òåêóùåé äàòû â ôîðìàòå YYYY/MM/DD
+    // ÐŸÐ¾Ð»ÑƒÑ‡ÐµÐ½Ð¸Ðµ Ñ‚ÐµÐºÑƒÑ‰ÐµÐ¹ Ð´Ð°Ñ‚Ñ‹ Ð² Ñ„Ð¾Ñ€Ð¼Ð°Ñ‚Ðµ YYYY/MM/DD
     static std::string currentDateTime() {
         time_t     now = time(nullptr);
         struct tm  tstruct{};

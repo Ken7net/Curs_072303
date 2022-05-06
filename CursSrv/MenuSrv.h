@@ -1,4 +1,4 @@
-#ifndef CURSCLN_MENUSRV_H
+п»ї#ifndef CURSCLN_MENUSRV_H
 #define CURSCLN_MENUSRV_H
 
 #include "..\Utils\stdafx.h"
@@ -14,21 +14,21 @@ private:
 	DBWork db;
 	tUser userC;
 public:
-	//static vector<std::string> vcMainMenu = {"Логин", "Регистрация", "Выход"};
+	//static vector<std::string> vcMainMenu = {"Р›РѕРіРёРЅ", "Р РµРіРёСЃС‚СЂР°С†РёСЏ", "Р’С‹С…РѕРґ"};
 	//All_info ai;
-	std::string strMenuMain = "-=-=-=-=  М е н ю  =-=-=-=-#Логин#Регистрация#Логаут#Выход";
-	std::string strMenuAdmin = "\tАдминистратор#Просмотр инвестиционных проектов#Добавление#Удаление#Сохранение информации в бд#Поиск#Сортировка инвестиционных проектов#Ранжировать инвестиционные проекты#Вывести результат ранжирования ИП#Редактировать#Выход";
-	std::string strMenuAdminAdd = "Вы хотите добавить: #Новые компании#Новых экспертов#Новые проекты#Назад";
-	std::string strMenuAdminDel = "Вы хотите удалить: #Компанию#Экспертов#Проекты#Назад";
-	std::string strMenuAdminSave = "Вы хотите сохранить информацию о:#Компании#Экспертах#Проектах#Назад";
-	std::string strMenuAdminRanking = "Ранжировать инвестиционные проекты:#Осуществить попарное сравнение проектов#Найти оценки#Вычислить веса проектов#Составить порядок предпочтений#Назад";
-	std::string strMenuAdminEdit = "Вы хотите редактировать данные:#Компании#Экспертов#Проектов#Назад";
-	std::string strMenuCompany = "\tКомпания#Ввод данных#Редактировать данные#Добавить проект#Сохранение информации в бд#Удаление данных о проекте#Выход";
-	std::string strMenuCompanyEdit = "Вы хотите редактировать данные:#Компании#Проектов#Назад";
-	std::string strMenuCompanySave = "Вы хотите сохранить информацию о:#Компании#Проектах#Назад";
-	std::string strMenuExpert = "\tЭксперт#Выставление оценок#Редактировать данные о себе#Просмотреть информацию об инвестиционных проектах#Выход";
+	std::string strMenuMain = "-=-=-=-=  Рњ Рµ РЅ СЋ  =-=-=-=-#Р›РѕРіРёРЅ#Р РµРіРёСЃС‚СЂР°С†РёСЏ#Р›РѕРіР°СѓС‚#Р’С‹С…РѕРґ";
+	std::string strMenuAdmin = "\tРђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ#РџСЂРѕСЃРјРѕС‚СЂ РёРЅРІРµСЃС‚РёС†РёРѕРЅРЅС‹С… РїСЂРѕРµРєС‚РѕРІ#Р”РѕР±Р°РІР»РµРЅРёРµ#РЈРґР°Р»РµРЅРёРµ#РЎРѕС…СЂР°РЅРµРЅРёРµ РёРЅС„РѕСЂРјР°С†РёРё РІ Р±Рґ#РџРѕРёСЃРє#РЎРѕСЂС‚РёСЂРѕРІРєР° РёРЅРІРµСЃС‚РёС†РёРѕРЅРЅС‹С… РїСЂРѕРµРєС‚РѕРІ#Р Р°РЅР¶РёСЂРѕРІР°С‚СЊ РёРЅРІРµСЃС‚РёС†РёРѕРЅРЅС‹Рµ РїСЂРѕРµРєС‚С‹#Р’С‹РІРµСЃС‚Рё СЂРµР·СѓР»СЊС‚Р°С‚ СЂР°РЅР¶РёСЂРѕРІР°РЅРёСЏ РРџ#Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ#Р’С‹С…РѕРґ";
+	std::string strMenuAdminAdd = "Р’С‹ С…РѕС‚РёС‚Рµ РґРѕР±Р°РІРёС‚СЊ: #РќРѕРІС‹Рµ РєРѕРјРїР°РЅРёРё#РќРѕРІС‹С… СЌРєСЃРїРµСЂС‚РѕРІ#РќРѕРІС‹Рµ РїСЂРѕРµРєС‚С‹#РќР°Р·Р°Рґ";
+	std::string strMenuAdminDel = "Р’С‹ С…РѕС‚РёС‚Рµ СѓРґР°Р»РёС‚СЊ: #РљРѕРјРїР°РЅРёСЋ#Р­РєСЃРїРµСЂС‚РѕРІ#РџСЂРѕРµРєС‚С‹#РќР°Р·Р°Рґ";
+	std::string strMenuAdminSave = "Р’С‹ С…РѕС‚РёС‚Рµ СЃРѕС…СЂР°РЅРёС‚СЊ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ:#РљРѕРјРїР°РЅРёРё#Р­РєСЃРїРµСЂС‚Р°С…#РџСЂРѕРµРєС‚Р°С…#РќР°Р·Р°Рґ";
+	std::string strMenuAdminRanking = "Р Р°РЅР¶РёСЂРѕРІР°С‚СЊ РёРЅРІРµСЃС‚РёС†РёРѕРЅРЅС‹Рµ РїСЂРѕРµРєС‚С‹:#РћСЃСѓС‰РµСЃС‚РІРёС‚СЊ РїРѕРїР°СЂРЅРѕРµ СЃСЂР°РІРЅРµРЅРёРµ РїСЂРѕРµРєС‚РѕРІ#РќР°Р№С‚Рё РѕС†РµРЅРєРё#Р’С‹С‡РёСЃР»РёС‚СЊ РІРµСЃР° РїСЂРѕРµРєС‚РѕРІ#РЎРѕСЃС‚Р°РІРёС‚СЊ РїРѕСЂСЏРґРѕРє РїСЂРµРґРїРѕС‡С‚РµРЅРёР№#РќР°Р·Р°Рґ";
+	std::string strMenuAdminEdit = "Р’С‹ С…РѕС‚РёС‚Рµ СЂРµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РґР°РЅРЅС‹Рµ:#РљРѕРјРїР°РЅРёРё#Р­РєСЃРїРµСЂС‚РѕРІ#РџСЂРѕРµРєС‚РѕРІ#РќР°Р·Р°Рґ";
+	std::string strMenuCompany = "\tРљРѕРјРїР°РЅРёСЏ#Р’РІРѕРґ РґР°РЅРЅС‹С…#Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РґР°РЅРЅС‹Рµ#Р”РѕР±Р°РІРёС‚СЊ РїСЂРѕРµРєС‚#РЎРѕС…СЂР°РЅРµРЅРёРµ РёРЅС„РѕСЂРјР°С†РёРё РІ Р±Рґ#РЈРґР°Р»РµРЅРёРµ РґР°РЅРЅС‹С… Рѕ РїСЂРѕРµРєС‚Рµ#Р’С‹С…РѕРґ";
+	std::string strMenuCompanyEdit = "Р’С‹ С…РѕС‚РёС‚Рµ СЂРµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РґР°РЅРЅС‹Рµ:#РљРѕРјРїР°РЅРёРё#РџСЂРѕРµРєС‚РѕРІ#РќР°Р·Р°Рґ";
+	std::string strMenuCompanySave = "Р’С‹ С…РѕС‚РёС‚Рµ СЃРѕС…СЂР°РЅРёС‚СЊ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ:#РљРѕРјРїР°РЅРёРё#РџСЂРѕРµРєС‚Р°С…#РќР°Р·Р°Рґ";
+	std::string strMenuExpert = "\tР­РєСЃРїРµСЂС‚#Р’С‹СЃС‚Р°РІР»РµРЅРёРµ РѕС†РµРЅРѕРє#Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РґР°РЅРЅС‹Рµ Рѕ СЃРµР±Рµ#РџСЂРѕСЃРјРѕС‚СЂРµС‚СЊ РёРЅС„РѕСЂРјР°С†РёСЋ РѕР± РёРЅРІРµСЃС‚РёС†РёРѕРЅРЅС‹С… РїСЂРѕРµРєС‚Р°С…#Р’С‹С…РѕРґ";
 
-	// Конструктор
+	// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 	A_menu() {
 		sock = NULL;
 	};
@@ -38,7 +38,7 @@ public:
 		db.connect("tcp://10.182.67.148:3306", "myuser", "MyPas$curs2", "curs");
 	}
 
-	// Деструктор
+	// Р”РµСЃС‚СЂСѓРєС‚РѕСЂ
 	~A_menu() = default;
 
 	static int changeMenu(const std::string& str, int cntMenu, const std::string& begMenu, int back) {
@@ -46,14 +46,14 @@ public:
 		std::string endMenu = "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-";
 		cout << endl << begMenu << endl;
 		cout << str << endl;
-		if (back == 0) cout << " 0 - Выход" << endl;
-		else cout << " 0 - Назад" << endl;
+		if (back == 0) cout << " 0 - Р’С‹С…РѕРґ" << endl;
+		else cout << " 0 - РќР°Р·Р°Рґ" << endl;
 		cout << endMenu.substr(0, begMenu.size()) << endl;
-		cout << "Выберите: ";
+		cout << "Р’С‹Р±РµСЂРёС‚Рµ: ";
 		do {
 			Checks::CheckInput(choice);
 			if ((choice > cntMenu) || (choice < 0)) {
-				cout << "Такого варианта нет в меню, попробуйте снова" << endl;
+				cout << "РўР°РєРѕРіРѕ РІР°СЂРёР°РЅС‚Р° РЅРµС‚ РІ РјРµРЅСЋ, РїРѕРїСЂРѕР±СѓР№С‚Рµ СЃРЅРѕРІР°" << endl;
 			}
 		} while ((choice < 0) || (choice > cntMenu));
 		std::cin.clear();
@@ -61,8 +61,8 @@ public:
 	}
 
 	static size_t choiceMenu(size_t cntMenu, const std::string& strMenu) {
-		cout << " 0 - --= ОТМЕНА =-- " << endl;
-		cout << "Выберите " << strMenu << ": ";
+		cout << " 0 - --= РћРўРњР•РќРђ =-- " << endl;
+		cout << "Р’С‹Р±РµСЂРёС‚Рµ " << strMenu << ": ";
 		size_t ch = -1;
 		do {
 			std::cin >> ch;
@@ -73,21 +73,21 @@ public:
 
 	static bool Confirm(const std::string& msg) {
 		//        int ls;
-		//        cout << msg << " (Y/Д/[N/Н]): ";
+		//        cout << msg << " (Y/Р”/[N/Рќ]): ";
 		//        do {
 		//            ls = cin.get();
-		//        } while (((ls != 'Y') && (ls != 'y') && (ls != 'N') && (ls != 'n') && (ls != 'Д') && (ls != 'д') &&
-		//                  (ls != 'Н') && (ls != '')) || (ls == 13));
-		//        if ((ls == 'Y') || (ls == 'y') || (ls == 'Д') || (ls == 'д')) return true;
-		//        else if ((ls == 'N') || (ls == 'n') || (ls == 'Н') || (ls == 'н') || (ls == 13)) return false;
+		//        } while (((ls != 'Y') && (ls != 'y') && (ls != 'N') && (ls != 'n') && (ls != 'Р”') && (ls != 'Рґ') &&
+		//                  (ls != 'Рќ') && (ls != '')) || (ls == 13));
+		//        if ((ls == 'Y') || (ls == 'y') || (ls == 'Р”') || (ls == 'Рґ')) return true;
+		//        else if ((ls == 'N') || (ls == 'n') || (ls == 'Рќ') || (ls == 'РЅ') || (ls == 13)) return false;
 		//        else return false;
 		return true;
 	}
 
 	static int menuMain() {
-		std::string strMenu = " 1 - Логин\n 2 - Регистрация";
-		return changeMenu(strMenu, 6, "-=-=-=-=  М е н ю  =-=-=-=-", 0);
-		//        return vcChoice("-=-=-=-=  М е н ю  =-=-=-=-", vcMainMenu, 0)
+		std::string strMenu = " 1 - Р›РѕРіРёРЅ\n 2 - Р РµРіРёСЃС‚СЂР°С†РёСЏ";
+		return changeMenu(strMenu, 6, "-=-=-=-=  Рњ Рµ РЅ СЋ  =-=-=-=-", 0);
+		//        return vcChoice("-=-=-=-=  Рњ Рµ РЅ СЋ  =-=-=-=-", vcMainMenu, 0)
 	}
 
 	void menuAdmin() {
@@ -98,7 +98,7 @@ public:
 		strcpy(p, "");
 		p[0] = '\0';
 		std::string command;
-		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
 			size_t i = atoi(p);
 			std::cout << "<- " << split(strMenuAdmin)[i] << endl;
 			switch (i) {
@@ -141,7 +141,7 @@ public:
 		char p[200];
 		strcpy(p, "");
 		p[0] = '\0';
-		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
 			int i = atoi(p);
 			std::cout << "<- " << split(strMenuAdminAdd)[i] << endl;
 			switch (i) {
@@ -167,7 +167,7 @@ public:
 		char p[200];
 		strcpy(p, "");
 		p[0] = '\0';
-		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
 			int i = atoi(p);
 			std::cout << "<- " << split(strMenuAdminDel)[i] << endl;
 			switch (i) {
@@ -193,7 +193,7 @@ public:
 		char p[200];
 		strcpy(p, "");
 		p[0] = '\0';
-		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
 			int i = atoi(p);
 			std::cout << "<- " << split(strMenuAdminSave)[i] << endl;
 			switch (i) {
@@ -219,7 +219,7 @@ public:
 		char p[200];
 		strcpy(p, "");
 		p[0] = '\0';
-		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
 			int i = atoi(p);
 			std::cout << "<- " << split(strMenuAdminRanking)[i] << endl;
 			switch (i) {
@@ -247,7 +247,7 @@ public:
 		char p[200];
 		strcpy(p, "");
 		p[0] = '\0';
-		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
 			int i = atoi(p);
 			std::cout << "<- " << split(strMenuAdminEdit)[i] << endl;
 			switch (i) {
@@ -276,7 +276,7 @@ public:
 		p[0] = '\0';
 		std::string command;
 		int c = -1;
-		while (c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
+		while (c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
 			int i = atoi(p);
 			std::cout << "<- " << split(strMenuCompany)[i] << endl;
 			switch (i) {
@@ -309,7 +309,7 @@ public:
 		char p[200];
 		strcpy(p, "");
 		p[0] = '\0';
-		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
 			int i = atoi(p);
 			std::cout << "<- " << split(strMenuCompanyEdit)[i] << endl;
 			switch (i) {
@@ -333,7 +333,7 @@ public:
 		char p[200];
 		strcpy(p, "");
 		p[0] = '\0';
-		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
 			int i = atoi(p);
 			std::cout << "<- " << split(strMenuCompanySave)[i] << endl;
 			switch (i) {
@@ -360,7 +360,7 @@ public:
 		p[0] = '\0';
 		std::string command;
 		int c = -1;
-		while (c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
+		while (c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
 			int i = atoi(p);
 			std::cout << "<- " << split(strMenuExpert)[i] << endl;
 			switch (i) {
@@ -384,25 +384,25 @@ public:
 
 	void start() {
 		int c;
-		char p[200], com[200];//основной буфер и команда
+		char p[200], com[200];//РѕСЃРЅРѕРІРЅРѕР№ Р±СѓС„РµСЂ Рё РєРѕРјР°РЅРґР°
 		char curU[20];
 		curU[0] = '\0';
 		com[0] = '\0';
 		p[0] = '\0';
-		std::cout << "Соединение установлено." << std::endl;
+		std::cout << "РЎРѕРµРґРёРЅРµРЅРёРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅРѕ." << std::endl;
 		char* message = new char[100];
 		strcat(p, "Server connected...\n");
-		//send((SOCKET)newS, p, sizeof(p), 0);//посылаем приветствие при соединении
-		std::string strMenu = "-=-=-=-=  М е н ю  =-=-=-=-#Логин#Регистрация#Логаут#Выход";
+		//send((SOCKET)newS, p, sizeof(p), 0);//РїРѕСЃС‹Р»Р°РµРј РїСЂРёРІРµС‚СЃС‚РІРёРµ РїСЂРё СЃРѕРµРґРёРЅРµРЅРёРё
+		std::string strMenu = "-=-=-=-=  Рњ Рµ РЅ СЋ  =-=-=-=-#Р›РѕРіРёРЅ#Р РµРіРёСЃС‚СЂР°С†РёСЏ#Р›РѕРіР°СѓС‚#Р’С‹С…РѕРґ";
 		Date tmpDate{};
 		tmpDate.setDateStr("2022/05/06");
-		sendString(sock, "Server connected...\n"+tmpDate.getDateStr());
+		sendString(sock, "Server connected...\n" + tmpDate.getDateStr());
 		sendString(sock, "menu");
 		sendString(sock, strMenu);
 		strcpy(p, "");
 		p[0] = '\0';
 		std::string command;
-		while (c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
+		while (c = recv(sock, p, sizeof(p), 0) != 0) { //РїРѕРєР° РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РєРѕРјР°РЅРґС‹
 			command = p;
 			//std::cout << "<- " << com << std::endl;
 			int i = atoi(command.c_str());
@@ -412,22 +412,22 @@ public:
 			UserSock user(sock, db.getGuide("user_role", 1));
 			switch (i) {
 			case 1:
-				//Подключение пользователя
-				
+				//РџРѕРґРєР»СЋС‡РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+
 				sendString(sock, "data");
-				sendString(sock, "Логин: ");
+				sendString(sock, "Р›РѕРіРёРЅ: ");
 				userC.login = takeString(sock);
-				// ищем пользователя в базе
+				// РёС‰РµРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РІ Р±Р°Р·Рµ
 				oldUser = db.getUser("login", userC.login);
-				// если находим
-				sendString(sock, "Пароль: ");
+				// РµСЃР»Рё РЅР°С…РѕРґРёРј
+				sendString(sock, "РџР°СЂРѕР»СЊ: ");
 				userC.pass = takeString(sock);
 				sendString(sock, "end");
 				if (userC.pass == oldUser.getPass()) {
 					userC.Role = oldUser.getRole();
 					std::cout << "login: " << userC.login << " - " << userC.pass << " - " << userC.Role << endl;
-					if (oldUser.getRole() == "Администратор") menuAdmin();
-					else if (oldUser.getRole() == "Эксперт") menuExpert();
+					if (oldUser.getRole() == "РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ") menuAdmin();
+					else if (oldUser.getRole() == "Р­РєСЃРїРµСЂС‚") menuExpert();
 					else menuCompany();
 				}
 				else {
@@ -439,22 +439,22 @@ public:
 				menuAdmin();
 				//menuCompany();
 				break;
-			case 2 :
-				//подключение пользователя
+			case 2:
+				//РїРѕРґРєР»СЋС‡РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 //                tUser user{};
 //                sendString(sock, "data");
-//                sendString(sock, "Введите логин: ");
+//                sendString(sock, "Р’РІРµРґРёС‚Рµ Р»РѕРіРёРЅ: ");
 //                user.login = takeString(sock);
-//                // ищем пользователя в базе
-//                // если находим
-//                sendString(sock, "Введите пароль: ");
+//                // РёС‰РµРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РІ Р±Р°Р·Рµ
+//                // РµСЃР»Рё РЅР°С…РѕРґРёРј
+//                sendString(sock, "Р’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ: ");
 //                user.pass = takeString(sock);
 //                sendString(sock, "end");
 //                std::cout << "register: " << user.login << " - " << user.pass << endl;
 //
 //                menuExpert();
 				//
-				////----- Ввод нового пользователя -----
+				////----- Р’РІРѕРґ РЅРѕРІРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ -----
 
 				////UserSock user(sock, db.getRoles());
 				//UserSock user(sock, db.getGuide("user_role", 1));
@@ -462,13 +462,30 @@ public:
 				//std::cout << user;
 				//db.addUser(user);
 
-				//----- Редактирование пользователя -----
+				//----- Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ -----
 
 				//UserSock user(sock, db.getRoles());
-				users = db.getGuide("user", 2);
+
+
+				//----------- РЎРїРёСЃРѕРє РїСЂРѕРµРєС‚РѕРІ -----------
+				sendString(sock, "menu");
+				sendString(sock, toString(db.getGuide("project", 2)));
+				ch = takeInt(sock);
+				//---------------------------------------
+				
+				//----------- РЎРїРёСЃРѕРє РєРѕРјРїР°РЅРёР№ -----------
+				sendString(sock, "menu");
+				sendString(sock, toString(db.getGuide("company", 2)));
+				ch = takeInt(sock);
+				//---------------------------------------
+				
+				//-------- РЎРїРёСЃРѕРє РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ ---------
+				users = db.getGuide("user", 2, 1);
 				sendString(sock, "menu");
 				sendString(sock, toString(users));
 				ch = takeInt(sock);
+				//---------------------------------------
+				
 				if (ch != 0) oldUser = db.getUser("user_name", users[ch - 1]);
 				else return;
 				//UserSock user(sock, db.getGuide("user_role", 1));
@@ -478,16 +495,16 @@ public:
 				menuAdmin();
 				break;
 			case 3:
-				//отключение пользователя
+				//РѕС‚РєР»СЋС‡РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 				//cout << "User " << curU << " logout" << endl;
 				sendString(sock, "exit");
-				closesocket(sock);//закрываем сокет
+				closesocket(sock);//Р·Р°РєСЂС‹РІР°РµРј СЃРѕРєРµС‚
 				return;
 				//break;
 			case 4:
-				//выход
+				//РІС‹С…РѕРґ
 				sendString(sock, "exit");
-				closesocket(sock);//закрываем сокет
+				closesocket(sock);//Р·Р°РєСЂС‹РІР°РµРј СЃРѕРєРµС‚
 				exit(EXIT_SUCCESS);
 				break;
 			default:
