@@ -38,6 +38,11 @@ public:
         return finance;
     }
 
+    size_t getId() {
+        return id;
+    }
+
+
     void setId(size_t _id) {
         Company::id = _id;
     }
@@ -135,13 +140,7 @@ public:
         sendString(sock, "data");
         //Наименование компании
         sendString(sock, "Наименование: ");
-        do {
-            _name = takeString(sock);
-            if (Checks::checkNoNumbers(_name)) {
-                break;
-            } else
-                sendString(sock, "Некорректный ввод. Повторите попытку.\nНаименование: ");
-        } while (true);
+        _name = takeString(sock);
         sendString(sock, "Вид деятельности: ");
         do {
             _activity = takeString(sock);

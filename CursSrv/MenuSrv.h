@@ -410,6 +410,8 @@ public:
 			vector<std::string> users;
 			size_t ch;
 			UserSock user(sock, db.getGuide("user_role", 1));
+			CompanySock cmp(sock);
+			ProjectSock project(sock, db.getGuide("company", 2));
 			switch (i) {
 			case 1:
 				//Подключение пользователя
@@ -455,43 +457,57 @@ public:
 //                menuExpert();
 				//
 				////----- Ввод нового пользователя -----
-
 				////UserSock user(sock, db.getRoles());
-				//UserSock user(sock, db.getGuide("user_role", 1));
+				//UserSock user(sock, db.getGuide("user_role", 1, 0)); //, 2); // для вывода кроме админа (регистрация)
 				//user.enterUser();
 				//std::cout << user;
 				//db.addUser(user);
+				////---------------------------------------
 
-				//----- Редактирование пользователя -----
+				////--------- Ввод новой компании ---------
+				////CompanySock cmp(sock);
+				//cmp.enterCompany();
+				//std::cout << cmp;
+				//db.addCompany(cmp);
+				////---------------------------------------
 
-				//UserSock user(sock, db.getRoles());
-
-
-				//----------- Список проектов -----------
-				sendString(sock, "menu");
-				sendString(sock, toString(db.getGuide("project", 2)));
-				ch = takeInt(sock);
+				//--------- Ввод нового проекта ---------
+				//ProjectSock project(sock);
+				project.enterProject();
+				project.setCompanyId(db.getCompany("company_name", project.Companies[project.getCompanyId()]).getId());
+				std::cout << project;
+				db.addProject(project);
 				//---------------------------------------
-				
-				//----------- Список компаний -----------
-				sendString(sock, "menu");
-				sendString(sock, toString(db.getGuide("company", 2)));
-				ch = takeInt(sock);
-				//---------------------------------------
-				
-				//-------- Список пользователей ---------
-				users = db.getGuide("user", 2, 1);
-				sendString(sock, "menu");
-				sendString(sock, toString(users));
-				ch = takeInt(sock);
-				//---------------------------------------
-				
-				if (ch != 0) oldUser = db.getUser("user_name", users[ch - 1]);
-				else return;
-				//UserSock user(sock, db.getGuide("user_role", 1));
-				user.enterUser();
-				std::cout << user;
-				db.editUser(user, oldUser.getUid());
+
+				////----------- Список проектов -----------
+				////users = db.getGuide("user", 2, 1);
+				//sendString(sock, "menu");
+				//sendString(sock, toString(db.getGuide("project", 2)));
+				//ch = takeInt(sock);
+				////---------------------------------------
+
+				////----------- Список компаний -----------
+				////users = db.getGuide("user", 2, 1);
+				//sendString(sock, "menu");
+				//sendString(sock, toString(db.getGuide("company", 2)));
+				//ch = takeInt(sock);
+				////---------------------------------------
+
+				////-------- Список пользователей ---------
+				//users = db.getGuide("user", 2, 1);
+				//sendString(sock, "menu");
+				//sendString(sock, toString(users));
+				//ch = takeInt(sock);
+				////---------------------------------------
+
+				////----- Редактирование пользователя -----
+				////UserSock user(sock, db.getRoles());
+				//if (ch != 0) oldUser = db.getUser("user_name", users[ch - 1]);
+				//else return;
+				////UserSock user(sock, db.getGuide("user_role", 1));
+				//user.enterUser();
+				//std::cout << user;
+				//db.editUser(user, oldUser.getUid());
 				menuAdmin();
 				break;
 			case 3:

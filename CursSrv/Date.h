@@ -129,7 +129,7 @@ public:
         return os;
     }
     // Получение текущей даты в формате YYYY/MM/DD
-    static std::string currentDateTime() {
+    static std::string currentDate() {
         time_t     now = time(nullptr);
         struct tm  tstruct{};
         char       buf[80];

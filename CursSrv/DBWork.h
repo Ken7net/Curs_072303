@@ -87,10 +87,12 @@ public:
 	// _table : таблица
 	// _numField : номер поля
 	// exp :   = 1 - для отбора экспертов (по умолчанию 0)
+	//			 2 - для не Администратора
 	vector<string> getGuide(const std::string& _table, size_t _numField, size_t exp = 0) {
 		vector<string> tmp;
 		std::string str = "";
-		if (exp != 0) str = " WHERE role = 'Эксперт'";
+		if (exp == 1) str = " WHERE role = 'Эксперт'";
+		if (exp == 2) str = " WHERE NOT name = 'Администратор'";
 		pstmt = con->prepareStatement("SELECT * FROM " + _table + str + ";");
 		result = pstmt->executeQuery();
 		while (result->next()) {
@@ -233,7 +235,7 @@ public:
 		result = pstmt->executeQuery();
 		while (result->next()) {
 			tmp.setId(result->getInt(1));
-			tmp.setCompany(result->getString(2), result->getString(3), result->getDouble(4));
+			tmp.setCompany(result->getString(2), result->getString(3), result->getInt(4));
 		}
 		delete result;
 		return tmp;
@@ -270,12 +272,13 @@ public:
 	void addProject(const Project& project) {
 		try {
 			pstmt = con->prepareStatement(
-				"INSERT INTO project (project_name, sum_credit, sud_reest, application_date, company_id) VALUES(?, ?, ?, ?, ?);");
+				"INSERT INTO project (project_name, sum_credit, credit_time, sud_reestr, application_date, company_id) VALUES(?, ?, ?, ?, ?, ?);");
 			pstmt->setString(1, project.getProjectName());
 			pstmt->setInt(2, project.getSumCredit());
-			pstmt->setString(3, project.getSudReestr());
-			pstmt->setString(4, project.getApplicationDate().getDateStr());
-			pstmt->setInt(5, project.getCompanyId());
+			pstmt->setInt(3, project.getCreditTime());
+			pstmt->setString(4, project.getSudReestr());
+			pstmt->setString(5, project.getApplicationDate().getDateStr());
+			pstmt->setInt(6, project.getCompanyId());
 			result = pstmt->executeQuery();
 		}
 		catch (sql::SQLException e) {
@@ -288,13 +291,14 @@ public:
 	void editProject(const Project& project, size_t p_id) {
 		try {
 			pstmt = con->prepareStatement(
-				"UPDATE project SET project_name = ?, sum_credit = ?, sud_reest = ?, application_date = ?, company_id = ? where project_id = ?;");
+				"UPDATE project SET project_name = ?, sum_credit = ?, credit_time = ?, sud_reest = ?, application_date = ?, company_id = ? where project_id = ?;");
 			pstmt->setString(1, project.getProjectName());
 			pstmt->setInt(2, project.getSumCredit());
-			pstmt->setString(3, project.getSudReestr());
-			pstmt->setString(4, project.getApplicationDate().getDateStr());
-			pstmt->setInt(5, project.getCompanyId());
-			pstmt->setInt(6, p_id);
+			pstmt->setInt(3, project.getCreditTime());
+			pstmt->setString(4, project.getSudReestr());
+			pstmt->setString(5, project.getApplicationDate().getDateStr());
+			pstmt->setInt(6, project.getCompanyId());
+			pstmt->setInt(7, p_id);
 			result = pstmt->executeQuery();
 		}
 		catch (sql::SQLException e) {
