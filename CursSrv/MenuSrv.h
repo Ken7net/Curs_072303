@@ -6,6 +6,7 @@
 #include "Company.h"
 #include "DBWork.h"
 
+
 using namespace std;
 
 class A_menu {
@@ -390,7 +391,7 @@ public:
 		user.enterUser();
 		std::cout << user;
 		db.addUser(user);
-		std::cout << "----- Удаление пользователя -----" << std::endl;
+		std::cout << "---- Добавление пользователя ----" << std::endl;
 		std::cout << user;
 		db.deleteUser(user.getUid());
 		std::cout << "---------------------------------" << std::endl;
@@ -400,11 +401,33 @@ public:
 	//-------- Список пользователей ---------
 	int listUsers(vector<std::string>& vc, int flag = 0) {	// 0 - Все
 		int ch = 0;											// 1 - Эксперты
+		if (!vc.empty()) vc.clear();						// 2 - Не Администраторы
 		vc = db.getGuide("user", 2, flag);
-		sendString(sock, "menu");
-		sendString(sock, toString(vc));
+		sendString(sock, "menu0");
+		sendString(sock, toString(vc, "Выберите пользователя: "));
 		ch = takeInt(sock);
 		return ch;
+	}
+
+	//----- Редактирование пользователя -----
+	void editUser() {
+		vector<std::string> users;
+		User oldUser;
+		int ch = listUsers(users, 0);
+		if (ch != 0) oldUser = db.getUser("user_name", users[ch - 1]);
+		else {
+			std::cout << "- Редактирование пользователя отменено -" << std::endl;
+			return;
+		}
+		UserSock user(sock, db.getGuide("user_role", 1));
+		user.enterUser();
+		user.setUid(oldUser.getUid());
+		db.editUser(user, oldUser.getUid());
+		std::cout << "-- Редактирование пользователя --" << std::endl;
+		std::cout << oldUser;
+		std::cout << "---------------------------------" << std::endl;
+		std::cout << user;
+		std::cout << "---------------------------------" << std::endl;
 	}
 
 	//----- Удаление пользователя -----
@@ -422,6 +445,212 @@ public:
 		db.deleteUser(oldUser.getUid());
 		std::cout << "---------------------------------" << std::endl;
 	}
+
+	//--------- Ввод новой компании ---------
+	void addCompany() {
+		CompanySock cmp(sock);
+		cmp.enterCompany();
+		db.addCompany(cmp);
+		std::cout << "------ Добавление компании ------" << std::endl;
+		std::cout << cmp;
+		std::cout << "---------------------------------" << std::endl;
+	}
+
+	//----------- Список компаний -----------
+	int listCompany(vector<string>& vc) {
+		int ch = 0;
+		if (!vc.empty()) vc.clear();
+		vc = db.getGuide("company", 2);
+		sendString(sock, "menu0");
+		sendString(sock, toString(vc, "Выберите компанию: "));
+		ch = takeInt(sock);
+		return ch;
+	}
+
+	//------- Редактирование компании -------
+	void editCompany() {
+		vector<std::string> companies;
+		Company oldCompany;
+		int ch = listCompany(companies);
+		if (ch != 0) oldCompany = db.getCompany("company_name", companies[ch - 1]);
+		else {
+			std::cout << "-- Редактирование компании отменено --" << std::endl;
+			return;
+		}
+		std::cout << "------- Редактирование компании -------" << std::endl;
+		std::cout << oldCompany;
+		std::cout << "---------------------------------" << std::endl;
+		CompanySock newCompany(sock);
+		newCompany.enterCompany();
+		newCompany.setId(oldCompany.getId());
+		db.editCompany(newCompany, oldCompany.getId());
+		std::cout << newCompany;
+		std::cout << "---------------------------------" << std::endl;
+	}
+
+	//---------- Удаление компании ----------
+	void deleteCompany() {
+		vector<std::string> companies;
+		Company oldCompany;
+		int ch = listCompany(companies);
+		if (ch != 0) oldCompany = db.getCompany("company_name", companies[ch - 1]);
+		else {
+			std::cout << "--- Удаление компании отменено ---" << std::endl;
+			return;
+		}
+		std::cout << "------- Удаление компании -------" << std::endl;
+		std::cout << oldCompany;
+		db.deleteCompany(oldCompany.getId());
+		std::cout << "---------------------------------" << std::endl;
+	}
+
+	//--------- Ввод нового проекта ---------
+	void addProject() {
+		ProjectSock project(sock, db.getGuide("company", 2));
+		project.enterProject();
+		project.setCompanyId(db.getCompany("company_name", project.Companies[project.getCompanyId()]).getId());
+		std::cout << project;
+		db.addProject(project);
+		std::cout << "--------- Ввод нового проекта ---------" << std::endl;
+		std::cout << project;
+		std::cout << "---------------------------------------" << std::endl;
+	}
+
+	//------- Список проектов vector --------
+	size_t listProject(vector<string>& vc) {
+		int ch = 0;
+		if (!vc.empty()) vc.clear();
+		vc = db.getGuide("project", 2);
+		sendString(sock, "menu0");
+		sendString(sock, toString(vc, "Выберите проект: "));
+		ch = takeInt(sock);
+		return ch;
+	}
+
+	//--------- Список проектов map ---------
+	size_t listProject(map<string, size_t>& vc) {
+		int ch = 0;
+		if (!vc.empty()) vc.clear();
+		vc = db.getGuideMap("project", 2);
+		vector<string> tmp = toVector(vc);
+		sendString(sock, "menu0");
+		sendString(sock, toString(tmp, "Выберите проект: "));
+		ch = takeInt(sock);
+		if (ch != 0) {
+			//ch = vc[tmp[ch]];
+			std::cout << tmp[ch] << " " << tmp[ch - 1] << " " << vc[tmp[ch - 1]] << endl;
+			ch = vc[tmp[ch - 1]];
+		}
+		return ch;
+	}
+
+	//-------- Редактирование проекта--------
+	void editProject() {
+		vector<std::string> projects;
+		Project oldProject;
+		int ch = listProject(projects);
+		if (ch != 0)
+			oldProject = db.getProject("project_name", projects[ch - 1]);
+		else {
+			std::cout << "--- Редактирование проекта отменено ---" << std::endl;
+			return;
+		}
+		ProjectSock newProject(sock, db.getGuide("company", 2));
+		std::cout << "-------- Редактирование проекта--------" << std::endl;
+		std::cout << oldProject;
+		std::cout << "---------------------------------------" << std::endl;
+		newProject.enterProject();
+		newProject.setProjectId(oldProject.getProjectId());
+		newProject.setCompanyId(db.getCompany("company_name", newProject.Companies[newProject.getCompanyId()]).getId());
+		db.editProject(newProject, oldProject.getProjectId());
+		std::cout << newProject;
+		std::cout << "---------------------------------------" << std::endl;
+	}
+
+	//----------- Удаление проекта-----------
+	void deleteProject() {
+		vector<std::string> projects;
+		Project oldProject;
+		size_t ch = listProject(projects);
+		if (ch != 0) oldProject = db.getProject("project_name", projects[ch - 1]);
+		else {
+			std::cout << "------ Удаление проекта отменено ------" << std::endl;
+			return;
+		}
+		std::cout << "----------- Удаление проекта-----------" << std::endl;
+		std::cout << oldProject;
+		std::cout << "---------------------------------------" << std::endl;
+		db.deleteProject(oldProject.getProjectId());
+	}
+	
+	//---------- Ввод новой оценки ----------
+	void addMark() {
+		MarkSock mark(sock, db.getGuideMap("user", 2, 1), db.getGuideMap("project", 2));
+		mark.enterMark();
+		//mark.setCompanyId(db.getCompany("company_name", project.Companies[project.getCompanyId()]).getId());
+		std::cout << mark;
+		db.addMark(mark);
+		std::cout << "---------- Ввод новой оценки ----------" << std::endl;
+		std::cout << mark;
+		std::cout << "---------------------------------------" << std::endl;
+	}
+	
+	//--------- Список оценок map ---------
+	size_t listMark(map<string, size_t>& vc) {
+		int ch = 0;
+		if (!vc.empty()) vc.clear();
+		vc = db.getGuideMap("mark", 2);
+		vector<string> tmp = toVector(vc);
+		sendString(sock, "menu0");
+		sendString(sock, toString(tmp, "Выберите оценку: "));
+		ch = takeInt(sock);
+		if (ch != 0) {
+			//ch = vc[tmp[ch]];
+			std::cout << tmp[ch] << " " << tmp[ch - 1] << " " << vc[tmp[ch - 1]] << endl;
+			ch = vc[tmp[ch - 1]];
+		}
+		return ch;
+	}
+	
+	//-------- Редактирование оценки --------
+	void editMark() {
+		std::map<std::string, size_t> marks;
+		Mark oldMark;
+		size_t ch = listMark(marks);
+		if (ch != 0) oldMark = db.getMark("mark_id", ch);
+		else {
+			std::cout << "---- Редактирование оценки отменено ---" << std::endl;
+			return;
+		}
+		std::cout << "-------- Редактирование оценки --------" << std::endl;
+		std::cout << oldMark;
+		std::cout << "---------------------------------------" << std::endl;
+		MarkSock newMark(sock, db.getGuideMap("user", 2, 1), db.getGuideMap("project", 2));
+		newMark.enterMark();
+		newMark.setMarKId(oldMark.getMarkId());
+		//newProject.setCompanyId(db.getCompany("company_name", newProject.Companies[newProject.getCompanyId()]).getId());
+		//db.editProject(newProject, oldProject.getProjectId());
+		db.editMark(newMark, newMark.getMarkId());
+		std::cout << newMark;
+		std::cout << "---------------------------------------" << std::endl;
+	}
+	
+	//----------- Удаление оценки -----------
+	void deleteMark() {
+		std::map<std::string, size_t> marks;
+		Mark oldMark;
+		size_t ch = listMark(marks);
+		if (ch != 0) oldMark = db.getMark("mark_id", ch);
+		else {
+			std::cout << "------ Удаление оценки отменено -------" << std::endl;
+			return;
+		}
+		std::cout << "----------- Удаление оценки -----------" << std::endl;
+		std::cout << oldMark;
+		std::cout << "---------------------------------------" << std::endl;
+		db.deleteMark(oldMark.getMarkId());
+	}
+
 
 	void start() {
 		int c;
@@ -449,6 +678,7 @@ public:
 			int i = atoi(command.c_str());
 			User oldUser;
 			vector<std::string> users;
+			std::map<std::string, size_t> userS;
 			size_t ch;
 			UserSock user(sock, db.getGuide("user_role", 1));
 			CompanySock cmp(sock);
@@ -499,52 +729,13 @@ public:
 				//
 
 
-				////--------- Ввод новой компании ---------
-				////CompanySock cmp(sock);
-				//cmp.enterCompany();
-				//std::cout << cmp;
-				//db.addCompany(cmp);
-				////---------------------------------------
 
-				////--------- Ввод нового проекта ---------
-				////ProjectSock project(sock);
-				//project.enterProject();
-				//project.setCompanyId(db.getCompany("company_name", project.Companies[project.getCompanyId()]).getId());
-				//std::cout << project;
-				//db.addProject(project);
-				////---------------------------------------
+				/*ch = listProject(userS);
+				std::cout << ch;*/
 
-				////----------- Список проектов -----------
-				////users = db.getGuide("user", 2, 1);
-				//sendString(sock, "menu");
-				//sendString(sock, toString(db.getGuide("project", 2)));
-				//ch = takeInt(sock);
-				////---------------------------------------
+				deleteMark();
 
-				////----------- Список компаний -----------
-				////users = db.getGuide("user", 2, 1);
-				//sendString(sock, "menu");
-				//sendString(sock, toString(db.getGuide("company", 2)));
-				//ch = takeInt(sock);
-				////---------------------------------------
 
-				////-------- Список пользователей ---------
-				//users = db.getGuide("user", 2, 1);
-				//sendString(sock, "menu");
-				//sendString(sock, toString(users));
-				//ch = takeInt(sock);
-				////---------------------------------------
-
-				////----- Редактирование пользователя -----
-				////UserSock user(sock, db.getRoles());
-				//if (ch != 0) oldUser = db.getUser("user_name", users[ch - 1]);
-				//else return;
-				////UserSock user(sock, db.getGuide("user_role", 1));
-				//user.enterUser();
-				//std::cout << user;
-				//db.editUser(user, oldUser.getUid());
-
-				addUser();
 
 				//menuAdmin();
 				break;

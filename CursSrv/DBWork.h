@@ -103,6 +103,22 @@ public:
 		return tmp;
 	}
 
+	std::map<string, size_t> getGuideMap(const std::string& _table, size_t _numField, size_t exp = 0) {
+		std::map<std::string, size_t> tmp;
+		std::string str = "";
+		if (exp == 1) str = " WHERE role = 'Эксперт'";
+		if (exp == 2) str = " WHERE NOT role = 'Администратор'";
+		pstmt = con->prepareStatement("SELECT * FROM " + _table + str + ";");
+		result = pstmt->executeQuery();
+		while (result->next()) {
+			//printf("%s\n", result->getString(_numField).c_str());
+			//tmp.push_back(result->getString(_numField).c_str());
+			tmp.insert(make_pair(result->getString(_numField).c_str(), result->getInt(1)));
+		}
+		delete result;
+		return tmp;
+	}
+
 	//--------- User --------
 	// Получение ролей
 	vector<string> getRoles() {
@@ -210,11 +226,12 @@ public:
 			//exit(1);
 		}
 	}
+
 	// Редактировать компанию
 	void editCompany(const Company& company, size_t c_id) {
 		try {
 			pstmt = con->prepareStatement(
-				"UPDATE company SET company_name = ?, activity = ? finance = ? where company_id = ?;");
+				"UPDATE company SET company_name = ?, activity = ?, finance = ? where company_id = ?;");
 			pstmt->setString(1, company.getName());
 			pstmt->setString(2, company.getActivity());
 			pstmt->setInt(3, company.getFinance());
@@ -291,7 +308,7 @@ public:
 	void editProject(const Project& project, size_t p_id) {
 		try {
 			pstmt = con->prepareStatement(
-				"UPDATE project SET project_name = ?, sum_credit = ?, credit_time = ?, sud_reest = ?, application_date = ?, company_id = ? where project_id = ?;");
+				"UPDATE project SET project_name = ?, sum_credit = ?, credit_time = ?, sud_reestr = ?, application_date = ?, company_id = ? where project_id = ?;");
 			pstmt->setString(1, project.getProjectName());
 			pstmt->setInt(2, project.getSumCredit());
 			pstmt->setInt(3, project.getCreditTime());
@@ -320,6 +337,7 @@ public:
 		delete result;
 		return tmp;
 	}
+
 	// Удалить проект по id
 	void deleteProject(size_t u_id) {
 		try {
@@ -353,12 +371,12 @@ public:
 		try {
 			pstmt = con->prepareStatement(
 				"INSERT INTO mark (number, user_id, project1_id, project2_id, mark1, mark2) VALUES(?, ?, ?, ?, ?, ?);");
-			pstmt->setInt(1, mark.getNumber());
+			pstmt->setInt(1, mark.getNumber());	
 			pstmt->setInt(2, mark.getUserId());
-			pstmt->setInt(4, mark.getProject1Id());
-			pstmt->setInt(5, mark.getProject2Id());
-			pstmt->setDouble(6, mark.getValue1());
-			pstmt->setDouble(7, mark.getValue2());
+			pstmt->setInt(3, mark.getProject1Id());
+			pstmt->setInt(4, mark.getProject2Id());
+			pstmt->setDouble(5, mark.getValue1());
+			pstmt->setDouble(6, mark.getValue2());
 			//pstmt->setInt(6, m_id);
 			result = pstmt->executeQuery();
 		}
@@ -372,7 +390,7 @@ public:
 	void editMark(Mark mark, size_t m_id) {
 		try {
 			pstmt = con->prepareStatement(
-				"UPDATE mark SET number = ?, user_id = ?, project1_id = ?, project2_id = ?, mark = ?, mark2 =? where mark_id = ?;");
+				"UPDATE mark SET number = ?, user_id = ?, project1_id = ?, project2_id = ?, mark1 = ?, mark2 =? where mark_id = ?;");
 			pstmt->setInt(1, mark.getNumber());
 			pstmt->setInt(2, mark.getUserId());
 			pstmt->setInt(3, mark.getProject1Id());

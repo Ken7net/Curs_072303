@@ -18,7 +18,22 @@ private:
 	float value1;		// Оценка проекту 1
 	float value2;		// Оценка проекту 2
 public:
+	map<string, size_t> mpUsers;
+	map<string, size_t> mpProjects;
+
 	Mark() {
+		mark_id = 0;
+		number = 0;
+		user_id = 0;
+		project1_id = 0;
+		project2_id = 0;
+		value1 = 0;
+		value2 = 0;
+	}
+
+	Mark(std::map<std::string, size_t> mpU, std::map<string, size_t> mpP) {
+		mpUsers = std::move(mpU);
+		mpProjects = std::move(mpP);
 		mark_id = 0;
 		number = 0;
 		user_id = 0;
@@ -118,8 +133,13 @@ public:
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const Mark& mark) {
-		os << "mark_id: " << mark.mark_id << "number: " << mark.number << " user_id: " << mark.user_id << " project1_id: "
-			<< mark.project1_id << " project2_id: " << mark.project2_id << " value1: " << mark.value1 << " value2: " << mark.value2;
+		os << " mark_id: " << mark.mark_id << std::endl; 
+		os << " number: " << mark.number << std::endl; 
+		os << " user_id: " << mark.user_id << std::endl; 
+		os << " project1_id: " << mark.project1_id << std::endl; 
+		os << " project2_id: " << mark.project2_id << std::endl; 
+		os << " value1: " << mark.value1 << std::endl; 
+		os << " value2: " << mark.value2 << std::endl;
 		return os;
 	}
 
@@ -151,28 +171,61 @@ class MarkSock : public Mark {
 public:
 	SOCKET sock;
 
-	explicit MarkSock(SOCKET _sock) {
+	explicit MarkSock(const SOCKET& _sock, std::map<std::string, size_t> mpU, std::map<string, size_t> mpP) : Mark(std::move(mpU), std::move(mpP)) {
 		this->sock = _sock;
 	}
+
 	void enterMark() {
 		size_t _number, userId, project1Id, project2Id;
-		std::string numberMarkStr, userIdStr, project1IdStr, project2IdStr, _valueStr;
+		std::string numberStr, userIdStr, project1IdStr, project2IdStr, _valueStr;
 		float _value;
 
 		// получение
 		// Number авто из БД
 		// expert_Id из БД (текущий пользователь)
 		// project1_id и project2_id выбор из БД
+		vector<string> vc = toVector(mpUsers);
+		sendString(sock, "menu");
+		sendString(sock, toString(vc));
+		size_t ch = takeInt(sock);
+		if (ch > 0) userId = mpUsers[vc[ch - 1]];
+		else return;
+		vc.clear();
+		vc = toVector(mpProjects);
+		sendString(sock, "menu");
+		sendString(sock, toString(vc));
+		ch = takeInt(sock);
+		if (ch > 0) project1Id = mpProjects[vc[ch - 1]];
+		else return;
+		auto iter = vc.cbegin(); // указатель на первый элемент
+		vc.erase(iter + (ch - 1));
+
+		sendString(sock, "menu");
+		sendString(sock, toString(vc));
+		ch = takeInt(sock);
+		if (ch > 0) project2Id = mpProjects[vc[ch - 1]];
+		else return;
+
 		sendString(sock, "data");
+		sendString(sock, "Номер ранжа: ");
 		do {
-			sendString(sock, "Оценку: ");
+			numberStr = takeString(sock);
+			if (Checks::checkNoLetters(_valueStr)) {
+				_number = std::stol(numberStr);
+				break;
+			}
+			else
+				cout << "Некорректный ввод. Повторите попытку.\nНомер ранжа: ";
+		} while (true);
+		sendString(sock, "Оценку: ");
+		do {
 			_valueStr = takeString(sock);
 			if (Checks::checkNoLetters(_valueStr)) {
 				_value = std::stof(_valueStr);
 				break;
 			}
 			else
-				cout << "Некорректный ввод. Повторите попытку.\n";
+				cout << "Некорректный ввод. Повторите попытку.\nОценку: ";
 		} while (true);
 		sendString(sock, "end");
 		setMark(0, _number, userId, project1Id, project2Id, _value);

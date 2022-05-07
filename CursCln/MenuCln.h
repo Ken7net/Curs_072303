@@ -18,17 +18,18 @@ int vcChoiceOld(std::vector<std::string> vc, const std::string& strMenu = "", bo
 	} while ((ch < 0) || (ch > vc.size()));
 	return ch;
 }
-int vcChoice(std::vector<std::string> vc) {
+int vcChoice(std::vector<std::string> vc, size_t cancel = 1) {
 	std::cout << vc[0] << std::endl;
 	for (size_t i = 1; i < vc.size(); ++i) {
 		std::cout << std::setw(2) << i << ". " << vc[i] << std::endl;
 	}
+	if (cancel == 0) std::cout << "0. -= ОТМЕНА =-" << std::endl;
 	std::cout << "Выберите: ";
 	int ch = -1;
 	do {
 		std::cin >> ch;
 		fflush(stdin);
-	} while ((ch < 1) || (ch > vc.size() - 1));
+	} while ((ch < cancel) || (ch > vc.size() - 1));
 	return ch;
 }
 
@@ -101,25 +102,29 @@ public:
 	}
 
 	void start() {
-		int v;
+		int v = 1;
 		std::string str;
 		//char str[50];
 		while (true) {
 			//system("cls");
 			//v = menuMain();
 			str = takeString(cn);
-			if (str == "menu") {
+			if ((str == "menu") || (str == "menu0")) {
 				if (!vcMenu.empty()) {
 					vcMenu.clear();
 				}
 				vcMenu = takeMenu(cn);
-				sendInt(cn, vcChoice(vcMenu));
+				if (str == "menu0") v = 0;
+				//if (vcMenu[0] != "") v = 0;
+				sendInt(cn, vcChoice(vcMenu, v));
+				str = "";
+				v = 1;
 			}
 			if (str == "data") {
 				// получение и отправка данных
 				str = takeString(cn);
 				while (str != "end") {
-                    std::cout << str;
+					std::cout << str;
 					if (str.find("Пароль: ", 0) != std::string::npos) {
 						str = input_pass();
 					}

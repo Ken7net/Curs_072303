@@ -24,6 +24,9 @@
 //#include "Menu.h"
 #include <sstream>
 #include <WinSock2.h>
+#include <map>
+#include <cstdlib>
+#include <utility>
 
 #pragma warning(pop) //For /Wall
 
@@ -208,6 +211,21 @@ std::string toString(std::vector<std::string> a, std::string text = "") {
         text += "#" + it;
     }
     return text;
+}
+//----------------------------------------------------------------------------
+std::string toString(std::map<std::string, size_t> a, std::string text = "") {
+    for (auto it : a) {
+        text += "#" + it.first;
+    }
+    return text;
+}
+//----------------------------------------------------------------------------
+std::vector<std::string> toVector(std::map<std::string, size_t> a) {
+    std::vector<std::string> tmp;
+    for (auto it : a) {
+        tmp.push_back(it.first);
+    }
+    return tmp;
 }
 //----------------------------------------------------------------------------
 void sendMenu(SOCKET Connection, std::vector<std::string> a) {

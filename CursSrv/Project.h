@@ -125,15 +125,15 @@ public:
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const Project& project) {
-		os << "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
-		os << " project_id: " << project.project_id << endl; 
+		//os << "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+		os << " project_id: " << project.project_id << endl;
 		os << " project_name: " << project.project_name << endl;
-		os << " sum_credit: " << project.sum_credit << endl; 
+		os << " sum_credit: " << project.sum_credit << endl;
 		os << " credit_time: " << project.credit_time << endl;
-		os << " sud_reestr: " << project.sud_reestr << endl; 
+		os << " sud_reestr: " << project.sud_reestr << endl;
 		os << " application_date: " << project.application_date << endl;
 		os << " company_id: " << project.company_id << endl;
-		os << "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+		//os << "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
 		return os;
 	}
 
@@ -299,7 +299,7 @@ public:
 				sendString(sock, "Некорректный ввод. Повторите попытку.\nСрок кредитования: ");
 		} while (true);
 
-		sendString(sock, "Судебный реестр: ");
+		/*sendString(sock, "Судебный реестр: ");
 		do {
 			_sudReestr = takeString(sock);
 			if (Checks::checkNoNumbers(_sudReestr)) {
@@ -307,8 +307,27 @@ public:
 			}
 			else
 				sendString(sock, "Некорректный ввод. Повторите попытку.\nСудебный реестр: ");
-		} while (true);
+		} while (true);*/
 
+		sendString(sock, "end");
+
+		size_t ch;
+		sendString(sock, "menu");
+		sendString(sock, "Судебный реестр:#Нет#Да");
+		ch = takeInt(sock);
+		if (ch > 0) {
+			switch (ch) {
+			case 1:
+				_sudReestr = "Нет";
+				break;
+			case 2:
+				_sudReestr = "Да";
+				break;
+			default:
+				break;
+			}
+		}
+		else return;
 		//sendString(sock, "Дата подачи заявки: ");
 		//_applicationDate.inputDate();
 		_applicationDate.setDateStr(_applicationDate.currentDate()); //std::string
@@ -323,16 +342,29 @@ public:
 			else
 				sendString(sock, "Некорректный ввод. Повторите попытку.\nНаименование компании: ");
 		} while (true);*/
-		sendString(sock, "end");
+		//sendString(sock, "end");
 
 		//size_t ch = vcChoice("Компания", Companies);
-		size_t ch;
+		//size_t ch;
 		sendString(sock, "menu");
 		sendString(sock, toString(Companies));
 		ch = takeInt(sock);
 		if (ch > 0) _companyId = ch - 1;
 		else return;
 		setProject(_projectId, _projectName, _sumCredit, _creditTime, _sudReestr, _applicationDate.getDateStr(), _companyId);
+	}
+
+	friend std::ostream& operator<<(std::ostream& os, const ProjectSock& project) {
+		//os << "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+		os << " project_id: " << project.getProjectId() << endl;
+		os << " project_name: " << project.getProjectName() << endl;
+		os << " sum_credit: " << project.getSumCredit() << endl;
+		os << " credit_time: " << project.getCreditTime() << endl;
+		os << " sud_reestr: " << project.getSudReestr() << endl;
+		os << " application_date: " << project.getApplicationDate().getDateStr() << endl;
+		os << " company_id: " << project.getCompanyId() << endl;
+		//os << "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+		return os;
 	}
 };
 
