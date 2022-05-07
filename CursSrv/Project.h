@@ -60,7 +60,7 @@ public:
 		return project_name;
 	}
 
-	double getSumCredit() const {
+	size_t getSumCredit() const {
 		return sum_credit;
 	}
 
@@ -178,7 +178,7 @@ public:
 			cout << "Сумму кредита: ";
 			cin >> _sumCreditStr;
 			if (Checks::checkNoLetters(_sumCreditStr)) {
-				_sumCredit = stod(_sumCreditStr);
+				_sumCredit = stol(_sumCreditStr);
 				break;
 			}
 			else

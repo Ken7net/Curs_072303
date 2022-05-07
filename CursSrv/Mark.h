@@ -10,15 +10,17 @@ using namespace Checks;
 
 class Mark {
 private:
-	size_t number_mark;
-	size_t user_id;
-	size_t project1_id;
-	size_t project2_id;
-	float value1;
-	float value2;
+	size_t mark_id;		// ID Оценки
+	size_t number;		// # Ранжирования
+	size_t user_id;		// ID эксперта
+	size_t project1_id;	// Проект 1
+	size_t project2_id;	// Проект 2
+	float value1;		// Оценка проекту 1
+	float value2;		// Оценка проекту 2
 public:
 	Mark() {
-		number_mark = 0;
+		mark_id = 0;
+		number = 0;
 		user_id = 0;
 		project1_id = 0;
 		project2_id = 0;
@@ -26,11 +28,15 @@ public:
 		value2 = 0;
 	}
 
-	Mark(size_t numberMark, size_t userId, size_t project1Id, size_t project2Id, float _value) : number_mark(
-		numberMark), user_id(userId), project1_id(project1Id), project2_id(project2Id), value1(_value), value2(1 - _value) {}
+	Mark(size_t markId, size_t _number, size_t userId, size_t project1Id, size_t project2Id, float _value) : mark_id(
+		markId), number(_number), user_id(userId), project1_id(project1Id), project2_id(project2Id), value1(_value), value2(1 - _value) {}
 
-	size_t getNumberMark() const {
-		return number_mark;
+	size_t getMarkId() const {
+		return mark_id;
+	}
+
+	size_t getNumber() const {
+		return number;
 	}
 
 	size_t getUserId() const {
@@ -53,8 +59,12 @@ public:
 		return value2;
 	}
 
-	void setNumberMark(size_t numberMark) {
-		number_mark = numberMark;
+	void setMarKId(size_t markId) {
+		mark_id = markId;
+	}
+
+	void setNumberMark(size_t _number) {
+		number = _number;
 	}
 
 	void setUserId(size_t userId) {
@@ -75,7 +85,8 @@ public:
 	}
 
 	bool operator==(const Mark& rhs) const {
-		return number_mark == rhs.number_mark &&
+		return mark_id == rhs.mark_id &&
+			number == rhs.number &&
 			user_id == rhs.user_id &&
 			project1_id == rhs.project1_id &&
 			project2_id == rhs.project2_id &&
@@ -86,8 +97,9 @@ public:
 		return !(rhs == *this);
 	}
 
-	void setMark(size_t numberMark, size_t userId, size_t project1Id, size_t project2Id, float _value) {
-		number_mark = numberMark;
+	void setMark(size_t markId, size_t _number, size_t userId, size_t project1Id, size_t project2Id, float _value) {
+		mark_id = markId;
+		number = _number;
 		user_id = userId;
 		project1_id = project1Id;
 		project2_id = project2Id;
@@ -96,7 +108,8 @@ public:
 	}
 
 	void setMark(Mark& tmp) {
-		number_mark = tmp.number_mark;
+		mark_id = tmp.mark_id;
+		number = tmp.number;
 		user_id = tmp.user_id;
 		project1_id = tmp.project1_id;
 		project2_id = tmp.project2_id;
@@ -105,14 +118,16 @@ public:
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const Mark& mark) {
-		os << "number_mark: " << mark.number_mark << " user_id: " << mark.user_id << " project1_id: "
+		os << "mark_id: " << mark.mark_id << "number: " << mark.number << " user_id: " << mark.user_id << " project1_id: "
 			<< mark.project1_id << " project2_id: " << mark.project2_id << " value1: " << mark.value1 << " value2: " << mark.value2;
 		return os;
 	}
 
 	static void enterMark(Mark& tmp) {
-		size_t numberMark, userId, project1Id, project2Id;
-		std::string numberMarkStr, userIdStr, project1IdStr, project2IdStr, _valueStr;
+		size_t markId, _number, userId, project1Id, project2Id;
+		std::string numberStr, userIdStr, project1IdStr, project2IdStr, _valueStr;
+		if (tmp.getMarkId() != 0) markId = tmp.getMarkId();
+		else markId = 0;
 		float _value;
 		// получение
 		// NumberMark авто из БД
@@ -128,7 +143,7 @@ public:
 			else
 				cout << "Некорректный ввод. Повторите попытку.\n";
 		} while (true);
-		tmp.setMark(numberMark, userId, project1Id, project2Id, _value);
+		tmp.setMark(markId, _number, userId, project1Id, project2Id, _value);
 	}
 };
 
@@ -140,12 +155,12 @@ public:
 		this->sock = _sock;
 	}
 	void enterMark() {
-		size_t numberMark, userId, project1Id, project2Id;
+		size_t _number, userId, project1Id, project2Id;
 		std::string numberMarkStr, userIdStr, project1IdStr, project2IdStr, _valueStr;
 		float _value;
 
 		// получение
-		// NumberMark авто из БД
+		// Number авто из БД
 		// expert_Id из БД (текущий пользователь)
 		// project1_id и project2_id выбор из БД
 		sendString(sock, "data");
@@ -160,7 +175,7 @@ public:
 				cout << "Некорректный ввод. Повторите попытку.\n";
 		} while (true);
 		sendString(sock, "end");
-		setMark(numberMark, userId, project1Id, project2Id, _value);
+		setMark(0, _number, userId, project1Id, project2Id, _value);
 	}
 };
 

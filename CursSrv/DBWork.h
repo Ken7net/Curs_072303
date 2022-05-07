@@ -92,7 +92,7 @@ public:
 		vector<string> tmp;
 		std::string str = "";
 		if (exp == 1) str = " WHERE role = 'Эксперт'";
-		if (exp == 2) str = " WHERE NOT name = 'Администратор'";
+		if (exp == 2) str = " WHERE NOT role = 'Администратор'";
 		pstmt = con->prepareStatement("SELECT * FROM " + _table + str + ";");
 		result = pstmt->executeQuery();
 		while (result->next()) {
@@ -201,7 +201,7 @@ public:
 			pstmt = con->prepareStatement("INSERT INTO company (company_name, activity, finance) VALUES(?, ?, ?);");
 			pstmt->setString(1, company.getName());
 			pstmt->setString(2, company.getActivity());
-			pstmt->setDouble(3, company.getFinance());
+			pstmt->setInt(3, company.getFinance());
 			result = pstmt->executeQuery();
 		}
 		catch (sql::SQLException e) {
@@ -217,7 +217,7 @@ public:
 				"UPDATE company SET company_name = ?, activity = ? finance = ? where company_id = ?;");
 			pstmt->setString(1, company.getName());
 			pstmt->setString(2, company.getActivity());
-			pstmt->setDouble(3, company.getFinance());
+			pstmt->setInt(3, company.getFinance());
 			pstmt->setInt(4, c_id);
 			result = pstmt->executeQuery();
 		}
@@ -352,12 +352,13 @@ public:
 	void addMark(Mark mark) {
 		try {
 			pstmt = con->prepareStatement(
-				"INSERT INTO mark (user_id, project1_id, project2_id, mark, mark2) VALUES(?, ?, ?, ?, ?);");
-			pstmt->setInt(1, mark.getUserId());
-			pstmt->setInt(2, mark.getProject1Id());
-			pstmt->setInt(3, mark.getProject2Id());
-			pstmt->setDouble(4, mark.getValue1());
-			pstmt->setDouble(5, mark.getValue2());
+				"INSERT INTO mark (number, user_id, project1_id, project2_id, mark1, mark2) VALUES(?, ?, ?, ?, ?, ?);");
+			pstmt->setInt(1, mark.getNumber());
+			pstmt->setInt(2, mark.getUserId());
+			pstmt->setInt(4, mark.getProject1Id());
+			pstmt->setInt(5, mark.getProject2Id());
+			pstmt->setDouble(6, mark.getValue1());
+			pstmt->setDouble(7, mark.getValue2());
 			//pstmt->setInt(6, m_id);
 			result = pstmt->executeQuery();
 		}
@@ -371,13 +372,14 @@ public:
 	void editMark(Mark mark, size_t m_id) {
 		try {
 			pstmt = con->prepareStatement(
-				"UPDATE mark SET user_id = ?, project1_id = ?, project2_id = ?, mark = ?, mark2 =? where mark_id = ?;");
-			pstmt->setInt(1, mark.getUserId());
-			pstmt->setInt(2, mark.getProject1Id());
-			pstmt->setInt(3, mark.getProject2Id());
-			pstmt->setDouble(4, mark.getValue1());
-			pstmt->setDouble(5, mark.getValue2());
-			pstmt->setInt(6, m_id);
+				"UPDATE mark SET number = ?, user_id = ?, project1_id = ?, project2_id = ?, mark = ?, mark2 =? where mark_id = ?;");
+			pstmt->setInt(1, mark.getNumber());
+			pstmt->setInt(2, mark.getUserId());
+			pstmt->setInt(3, mark.getProject1Id());
+			pstmt->setInt(4, mark.getProject2Id());
+			pstmt->setDouble(5, mark.getValue1());
+			pstmt->setDouble(6, mark.getValue2());
+			pstmt->setInt(7, m_id);
 			result = pstmt->executeQuery();
 		}
 		catch (sql::SQLException e) {
@@ -393,8 +395,8 @@ public:
 		pstmt->setInt(1, m_id);
 		result = pstmt->executeQuery();
 		while (result->next()) {
-			tmp.setMark(result->getInt(1), result->getInt(2), result->getInt(3), result->getInt(4),
-				result->getDouble(5));
+			tmp.setMark(result->getInt(1), result->getInt(2), result->getInt(3), result->getInt(4), result->getInt(5),
+				result->getDouble(6)); //, result->getDouble(7)
 		}
 		delete result;
 		return tmp;

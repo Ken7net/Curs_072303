@@ -23,6 +23,7 @@
 #include <conio.h>   //для getch
 //#include "Menu.h"
 #include <sstream>
+#include <WinSock2.h>
 
 #pragma warning(pop) //For /Wall
 

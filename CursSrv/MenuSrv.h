@@ -35,7 +35,8 @@ public:
 
 	explicit A_menu(SOCKET connection) {
 		sock = connection;
-		db.connect("tcp://10.182.67.148:3306", "myuser", "MyPas$curs2", "curs");
+		//db.connect("tcp://10.182.67.148:3306", "myuser", "MyPas$curs2", "curs");
+		db.connect("tcp://127.0.0.1:3306", "myuser", "mypass", "curs");
 	}
 
 	// Деструктор
@@ -382,6 +383,46 @@ public:
 		}
 	}
 
+	//----- Ввод нового пользователя -----
+	void addUser(int flag = 2) {
+		//UserSock user(sock, db.getRoles());
+		UserSock user(sock, db.getGuide("user_role", 1, flag)); //, 2); // для вывода кроме админа (регистрация)
+		user.enterUser();
+		std::cout << user;
+		db.addUser(user);
+		std::cout << "----- Удаление пользователя -----" << std::endl;
+		std::cout << user;
+		db.deleteUser(user.getUid());
+		std::cout << "---------------------------------" << std::endl;
+	}
+
+
+	//-------- Список пользователей ---------
+	int listUsers(vector<std::string>& vc, int flag = 0) {	// 0 - Все
+		int ch = 0;											// 1 - Эксперты
+		vc = db.getGuide("user", 2, flag);
+		sendString(sock, "menu");
+		sendString(sock, toString(vc));
+		ch = takeInt(sock);
+		return ch;
+	}
+
+	//----- Удаление пользователя -----
+	void deleteUser() {
+		vector<std::string> users;
+		User oldUser;
+		int ch = listUsers(users, 0);
+		if (ch != 0) oldUser = db.getUser("user_name", users[ch - 1]);
+		else {
+			std::cout << "- Удаление пользователя отменено -" << std::endl;
+			return;
+		}
+		std::cout << "----- Удаление пользователя -----" << std::endl;
+		std::cout << oldUser;
+		db.deleteUser(oldUser.getUid());
+		std::cout << "---------------------------------" << std::endl;
+	}
+
 	void start() {
 		int c;
 		char p[200], com[200];//основной буфер и команда
@@ -396,7 +437,7 @@ public:
 		std::string strMenu = "-=-=-=-=  М е н ю  =-=-=-=-#Логин#Регистрация#Логаут#Выход";
 		Date tmpDate{};
 		tmpDate.setDateStr("2022/05/06");
-		sendString(sock, "Server connected...\n" + tmpDate.getDateStr());
+		sendString(sock, "Server connected...\n" + tmpDate.getDateStr() + "\n");
 		sendString(sock, "menu");
 		sendString(sock, strMenu);
 		strcpy(p, "");
@@ -456,13 +497,7 @@ public:
 //
 //                menuExpert();
 				//
-				////----- Ввод нового пользователя -----
-				////UserSock user(sock, db.getRoles());
-				//UserSock user(sock, db.getGuide("user_role", 1, 0)); //, 2); // для вывода кроме админа (регистрация)
-				//user.enterUser();
-				//std::cout << user;
-				//db.addUser(user);
-				////---------------------------------------
+
 
 				////--------- Ввод новой компании ---------
 				////CompanySock cmp(sock);
@@ -471,13 +506,13 @@ public:
 				//db.addCompany(cmp);
 				////---------------------------------------
 
-				//--------- Ввод нового проекта ---------
-				//ProjectSock project(sock);
-				project.enterProject();
-				project.setCompanyId(db.getCompany("company_name", project.Companies[project.getCompanyId()]).getId());
-				std::cout << project;
-				db.addProject(project);
-				//---------------------------------------
+				////--------- Ввод нового проекта ---------
+				////ProjectSock project(sock);
+				//project.enterProject();
+				//project.setCompanyId(db.getCompany("company_name", project.Companies[project.getCompanyId()]).getId());
+				//std::cout << project;
+				//db.addProject(project);
+				////---------------------------------------
 
 				////----------- Список проектов -----------
 				////users = db.getGuide("user", 2, 1);
@@ -508,7 +543,10 @@ public:
 				//user.enterUser();
 				//std::cout << user;
 				//db.editUser(user, oldUser.getUid());
-				menuAdmin();
+
+				addUser();
+
+				//menuAdmin();
 				break;
 			case 3:
 				//отключение пользователя
