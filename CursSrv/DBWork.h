@@ -64,7 +64,8 @@ public:
 		try {
 			driver = get_driver_instance();
 			//for demonstration only. never save password in the code!
-			con = driver->connect(server, username, password);
+			//con = driver->connect(server.c_str(), username.c_str(), password.c_str());
+            con = driver->connect(server, username, password);
 		}
 		catch (sql::SQLException e) {
 			cout << "Could not connect to server. Error message: " << e.what() << endl;

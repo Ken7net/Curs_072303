@@ -23,13 +23,24 @@ int vcChoice(std::vector<std::string> vc, size_t cancel = 1) {
 	for (size_t i = 1; i < vc.size(); ++i) {
 		std::cout << std::setw(2) << i << ". " << vc[i] << std::endl;
 	}
-	if (cancel == 0) std::cout << "0. -= ОТМЕНА =-" << std::endl;
-	std::cout << "Выберите: ";
+	std::cout << "- - - - - - - - - -" << std::endl;
+	size_t topVc = vc.size() - 1;
+	if (cancel == vc.size()) {
+		topVc = cancel;
+		cancel = 0;
+		std::cout << std::setw(2) << topVc << ". -= Все =-" << std::endl;
+	}
+	if (cancel == 0) {
+		std::cout << " 0. -= ОТМЕНА =-" << std::endl;
+		std::cout << "- - - - - - - - - -" << std::endl;
+	}
+	//std::cout << "Выберите: ";
 	int ch = -1;
 	do {
+		std::cout << "Выберите: ";
 		std::cin >> ch;
 		fflush(stdin);
-	} while ((ch < cancel) || (ch > vc.size() - 1));
+	} while ((ch < cancel) || (ch > topVc));
 	return ch;
 }
 
@@ -109,17 +120,30 @@ public:
 			//system("cls");
 			//v = menuMain();
 			str = takeString(cn);
-			if ((str == "menu") || (str == "menu0")) {
+			if (str.find("menu") != std::string::npos) {
+				if (str.size() > 4) {
+					v = stoi(str.substr(4, str.size() - 4));
+				}
 				if (!vcMenu.empty()) {
 					vcMenu.clear();
 				}
 				vcMenu = takeMenu(cn);
-				if (str == "menu0") v = 0;
-				//if (vcMenu[0] != "") v = 0;
+				if (v != 1 && v != 0) v = vcMenu.size();
 				sendInt(cn, vcChoice(vcMenu, v));
 				str = "";
 				v = 1;
 			}
+			//if ((str == "menu") || (str == "menu0")) {
+			//	if (!vcMenu.empty()) {
+			//		vcMenu.clear();
+			//	}
+			//	vcMenu = takeMenu(cn);
+			//	if (str == "menu0") v = 0;
+			//	//if (vcMenu[0] != "") v = 0;
+			//	sendInt(cn, vcChoice(vcMenu, v));
+			//	str = "";
+			//	v = 1;
+			//}
 			if (str == "data") {
 				// получение и отправка данных
 				str = takeString(cn);

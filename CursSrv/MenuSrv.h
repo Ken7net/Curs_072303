@@ -9,11 +9,221 @@
 
 using namespace std;
 
+//void OS::expert_opinion(Server& obj) //метод для ранжирования проектов методом парных сравнений
+//{
+//	Rating rating;
+//
+//	Read_Rating(rating, File_Rating);
+//	if (vecProgram.size() == 0 || rating.number_of_programs == 0 || vecProgram.size() != rating.number_of_programs)
+//	{
+//		int ch = 1;
+//		char buf[100];
+//		itoa(ch, buf, 10);
+//		send(obj.GetNewConnection(), buf, sizeof(buf), 0);		// отправили 1, если вектор программ пустой или кол-во программ == 0 или размер вектора!=кол-ву программ
+//	}															// нечего оценивать или ошибка
+//	else if (vecProgram.size() == 1) {							
+//		int ch = 2;
+//		char buf[100];
+//		itoa(ch, buf, 10);
+//		send(obj.GetNewConnection(), buf, sizeof(buf), 0);		// отправили 2, если размер вектора проектов == 1
+//	}															// мало проектов для оценивания
+//	else
+//	{
+//		int ch = 0;
+//		char buf[100];
+//		itoa(ch, buf, 10);
+//		send(obj.GetNewConnection(), buf, sizeof(buf), 0);		// иначе отправили 0
+//
+//		//-------- Создание массива оценок --------
+//		double** a = NULL;
+//		a = new double* [rating.number_of_experts];
+//		for (int i = 0; i < rating.number_of_experts; i++)
+//		{
+//			a[i] = new double[rating.width];
+//		}
+//		int k = 0;
+//		for (int i = 0; i < rating.number_of_experts; i++)
+//		{
+//			for (int j = 0; j < rating.width; j++) {
+//				a[i][j] = rating.vec[k];
+//				k++;
+//			}
+//		}
+//		//-----------------------------------------
+// 
+//		//---- Создание вектора сумм столбцов -----
+//		vector<double> Sum(rating.width);
+//		for (int i = 0; i < rating.width; i++) Sum[i] = 0;
+//		for (int j = 0; j < rating.width; j++)
+//		{
+//			for (int i = 0; i < rating.number_of_experts; i++)
+//			{
+//					Sum[j] += a[i][j];
+//			}
+//		}
+//		//-----------------------------------------
+// 
+//		//- Создание вектора сумм оценок проектов -
+//		vector<double> AlmostFinalSum(rating.number_of_programs);
+//
+//		int f = 0;
+//		int g = f;
+//		int counter = 0, counter1 = 1, counter2 = 1;
+//		int koef = 0, koef1 = 0;
+//		for (int j = 0; j < Sum.size() / 2; j++)
+//		{
+//			if (f == rating.number_of_programs - 1) {
+//				counter++;
+//				counter1 = counter + 1;
+//				g++;
+//				f = g;
+//			}
+//			AlmostFinalSum[counter] += Sum[koef];
+//			AlmostFinalSum[counter1] += Sum[counter2 + koef1];
+//
+//			counter1++;
+//			counter2++;
+//			f++;
+//			koef += 2, koef1++;
+//		}
+//		//-----------------------------------------
+//
+//		//------ Сумма всех оценок проектов -------
+//		double FinalSum = 0;
+//		for (int i = 0; i < rating.number_of_programs; i++) {
+//			FinalSum += AlmostFinalSum[i];
+//		}
+//		cout << FinalSum;
+//		//-----------------------------------------
+//
+//		//-------- Вектор весов проектов ----------
+//		vector<double> weight(rating.number_of_programs);
+//		for (int i = 0; i < rating.number_of_programs; i++)
+//		{
+//			weight[i] = AlmostFinalSum[i] / FinalSum;
+//		}
+//		//-----------------------------------------
+// 
+//		//------ Вектор проектов с весами ---------
+//		vector<Rating> strRating(rating.number_of_programs);
+//		for (int i = 0; i < vecProgram.size(); i++) {
+//			strRating[i].programName = vecProgram[i].getNameProgram();
+//			strRating[i].weight = weight[i];
+//		}
+//		//-----------------------------------------
+// 
+//		//------- Сортировка вектора весов --------
+//		Rating temp;
+//		for (int i = 0; i < strRating.size() - 1; i++)
+//		{
+//			for (int j = 0; j < strRating.size() - i - 1; j++)
+//			{
+//				if (strRating[j].weight < strRating[j + 1].weight)
+//				{
+//					temp = strRating[j];
+//					strRating[j] = strRating[j + 1];
+//					strRating[j + 1] = temp;
+//				}
+//			}
+//		}
+//		//-----------------------------------------
+// 
+//		//----- Печать вектора весов проектов -----
+//		obj.SendInt(vecProgram.size());
+//
+//		for (int i = 0; i < vecProgram.size(); i++) {
+//			obj.SendString(strRating[i].programName);
+//			obj.SendDouble(strRating[i].weight);
+//		}
+//		//-----------------------------------------
+// 
+//		//----------- Удаление массива ------------
+//		for (int i = 0; i < rating.number_of_experts; i++) {
+//			delete a[i];
+//		}
+//		delete[] a;
+//		//-----------------------------------------
+//	}
+//}
+// 
+// void OS::add_rating(Server& obj) //метод добавления оценок экспертами
+//{
+//while (true) {
+//	obj.SendInt(vecProgram.size());
+//	printf_Program(obj);
+//	int number = obj.TakeInt();
+//	if (number == 0)
+//	{
+//		break;
+//	}
+// 
+//	//------- Подсчет количества оценок -------
+//	Rating rating;
+//	rating.number_of_programs = vecProgram.size();
+//	int k = 1;
+//	rating.width = 0;
+//	while (rating.number_of_programs - k != 0) {
+//		rating.width += (rating.number_of_programs - k) * 2;
+//		k++;
+//	}
+//	//-----------------------------------------
+//	obj.SendInt(rating.width);
+//	rating.number_of_experts = obj.TakeInt();
+// 
+//	//---- Ввод (получение) массива оценок ----
+//	double a;
+//	for (int i = 0; i < rating.number_of_experts; ++i)
+//	{
+//		for (int j = 0; j < rating.width; ++j) {
+//			a = obj.TakeDouble();
+//			rating.vec.push_back(a);
+//		}
+//	}
+//	//-----------------------------------------
+//	File file;
+//	file.Write_Info(rating.number_of_experts, rating.number_of_programs, rating.width, rating.vec, File_Rating);
+//	break;
+//}
+//}
+
+// 
+//template<class T>
+//void File::Read_Info(vector<T>& vec, string name) //шаблонный метод для считывания данных из файла
+//{
+//	try
+//	{
+//		ifstream file;
+//		file.open(name);
+//		if (file.peek() == EOF)
+//		{
+//		}
+//		else
+//		{
+//			while (!file.eof())
+//			{
+//				T obj;
+//				file >> obj;
+//				vec.push_back(obj);
+//			}
+//		}
+//		file.close();
+//	}
+//	catch (Exception& ex)
+//	{
+//		ex.messegErrorFile(name);
+//		exit(1);
+//	}
+//}
+
+
+
 class A_menu {
 private:
 	SOCKET sock;
 	DBWork db;
 	tUser userC;
+	vector<size_t> vcProjectOp;	//Вектор проектов для оценивания
+	vector<double> vcMarksOp;	//Вектор оценок проектов
 public:
 	//static vector<std::string> vcMainMenu = {"Логин", "Регистрация", "Выход"};
 	//All_info ai;
@@ -36,8 +246,8 @@ public:
 
 	explicit A_menu(SOCKET connection) {
 		sock = connection;
-		//db.connect("tcp://10.182.67.148:3306", "myuser", "MyPas$curs2", "curs");
-		db.connect("tcp://127.0.0.1:3306", "myuser", "mypass", "curs");
+		db.connect("10.182.67.148:3306", "myuser", "MyPas$curs2", "curs");
+		//db.connect("tcp://127.0.0.1:3306", "myuser", "mypass", "curs");
 	}
 
 	// Деструктор
@@ -517,28 +727,31 @@ public:
 	}
 
 	//------- Список проектов vector --------
-	size_t listProject(vector<string>& vc) {
+	size_t listProject(vector<string>& vc, size_t mode = 0) {
 		int ch = 0;
 		if (!vc.empty()) vc.clear();
 		vc = db.getGuide("project", 2);
-		sendString(sock, "menu0");
+		sendString(sock, "menu" + std::to_string(mode));
 		sendString(sock, toString(vc, "Выберите проект: "));
 		ch = takeInt(sock);
 		return ch;
 	}
 
 	//--------- Список проектов map ---------
-	size_t listProject(map<string, size_t>& vc) {
+	size_t listProject(map<string, size_t>& vc, size_t mode = 0) {
 		int ch = 0;
 		if (!vc.empty()) vc.clear();
 		vc = db.getGuideMap("project", 2);
 		vector<string> tmp = toVector(vc);
-		sendString(sock, "menu0");
+		sendString(sock, "menu" + std::to_string(mode));
 		sendString(sock, toString(tmp, "Выберите проект: "));
 		ch = takeInt(sock);
-		if (ch != 0) {
-			//ch = vc[tmp[ch]];
-			std::cout << tmp[ch] << " " << tmp[ch - 1] << " " << vc[tmp[ch - 1]] << endl;
+		if (ch != 0 && ch != tmp.size() + 1) {
+			////ch = vc[tmp[ch]];
+			//ch = ch - 1;
+			std::cout << ch << std::endl;
+			//std::cout << tmp[ch] << " " << tmp[ch - 1] << " " << vc[tmp[ch - 1]] << endl;
+			std::cout << " " << tmp[ch - 1] << " " << vc[tmp[ch - 1]] << endl;
 			ch = vc[tmp[ch - 1]];
 		}
 		return ch;
@@ -582,7 +795,7 @@ public:
 		std::cout << "---------------------------------------" << std::endl;
 		db.deleteProject(oldProject.getProjectId());
 	}
-	
+
 	//---------- Ввод новой оценки ----------
 	void addMark() {
 		MarkSock mark(sock, db.getGuideMap("user", 2, 1), db.getGuideMap("project", 2));
@@ -594,7 +807,7 @@ public:
 		std::cout << mark;
 		std::cout << "---------------------------------------" << std::endl;
 	}
-	
+
 	//--------- Список оценок map ---------
 	size_t listMark(map<string, size_t>& vc) {
 		int ch = 0;
@@ -611,7 +824,7 @@ public:
 		}
 		return ch;
 	}
-	
+
 	//-------- Редактирование оценки --------
 	void editMark() {
 		std::map<std::string, size_t> marks;
@@ -634,7 +847,7 @@ public:
 		std::cout << newMark;
 		std::cout << "---------------------------------------" << std::endl;
 	}
-	
+
 	//----------- Удаление оценки -----------
 	void deleteMark() {
 		std::map<std::string, size_t> marks;
@@ -667,7 +880,7 @@ public:
 		Date tmpDate{};
 		tmpDate.setDateStr("2022/05/06");
 		sendString(sock, "Server connected...\n" + tmpDate.getDateStr() + "\n");
-		sendString(sock, "menu");
+		sendString(sock, "menu" + std::to_string(1));
 		sendString(sock, strMenu);
 		strcpy(p, "");
 		p[0] = '\0';
@@ -730,10 +943,10 @@ public:
 
 
 
-				/*ch = listProject(userS);
-				std::cout << ch;*/
+				ch = listProject(userS, 2); //, 2
+				std::cout << ch;
 
-				deleteMark();
+				//deleteMark();
 
 
 
