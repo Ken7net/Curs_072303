@@ -233,7 +233,20 @@ public:
 		} while (true);
 		tmp.setProject(_projectId, _projectName, _sumCredit, _creditTime, _sudReestr, _applicationDate.getDateStr(), _companyId);
 	}
+	//----------------------------------------------------------------------------
+	/*static std::vector<std::string> toVector(std::map<std::string, Project> a) {
+		std::vector<std::string> tmp;
+		for (auto it : a) {
+			tmp.push_back(it.first);
+		}
+		return tmp;
+	}*/
 };
+
+// Сравнение по весу
+bool compareWeight(Project obj1, Project obj2) {
+	return (obj1.getWeight() < obj2.getWeight());                       
+}
 
 class ProjectSock : public Project {
 public:

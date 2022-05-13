@@ -18,8 +18,8 @@ private:
 	float value1;		// Оценка проекту 1
 	float value2;		// Оценка проекту 2
 public:
-	map<string, size_t> mpUsers;
-	map<string, size_t> mpProjects;
+	//map<string, size_t> mpUsers;
+	//map<string, size_t> mpProjects;
 
 	Mark() {
 		mark_id = 0;
@@ -31,17 +31,17 @@ public:
 		value2 = 0;
 	}
 
-	Mark(std::map<std::string, size_t> mpU, std::map<string, size_t> mpP) {
-		mpUsers = std::move(mpU);
-		mpProjects = std::move(mpP);
-		mark_id = 0;
-		number = 0;
-		user_id = 0;
-		project1_id = 0;
-		project2_id = 0;
-		value1 = 0;
-		value2 = 0;
-	}
+	//Mark(std::map<std::string, size_t> mpU, std::map<string, size_t> mpP) {
+	//	mpUsers = std::move(mpU);
+	//	mpProjects = std::move(mpP);
+	//	mark_id = 0;
+	//	number = 0;
+	//	user_id = 0;
+	//	project1_id = 0;
+	//	project2_id = 0;
+	//	value1 = 0;
+	//	value2 = 0;
+	//}
 
 	Mark(size_t markId, size_t _number, size_t userId, size_t project1Id, size_t project2Id, float _value) : mark_id(
 		markId), number(_number), user_id(userId), project1_id(project1Id), project2_id(project2Id), value1(_value), value2(1 - _value) {}
@@ -171,11 +171,11 @@ class MarkSock : public Mark {
 public:
 	SOCKET sock;
 
-	explicit MarkSock(const SOCKET& _sock, std::map<std::string, size_t> mpU, std::map<string, size_t> mpP) : Mark(std::move(mpU), std::move(mpP)) {
+	explicit MarkSock(const SOCKET& _sock){
 		this->sock = _sock;
 	}
 
-	void enterMark() {
+	void enterMark(std::map<std::string, size_t> mpUsers, std::map<string, size_t> mpProjects) {
 		size_t _number, userId, project1Id, project2Id;
 		std::string numberStr, userIdStr, project1IdStr, project2IdStr, _valueStr;
 		float _value;
@@ -184,6 +184,7 @@ public:
 		// Number авто из БД
 		// expert_Id из БД (текущий пользователь)
 		// project1_id и project2_id выбор из БД
+		// ----- Выбор эксперта -----
 		vector<string> vc = toVector(mpUsers);
 		sendString(sock, "menu");
 		sendString(sock, toString(vc));
@@ -191,6 +192,8 @@ public:
 		if (ch > 0) userId = mpUsers[vc[ch - 1]];
 		else return;
 		vc.clear();
+
+		// ----- Выбор проекта -----
 		vc = toVector(mpProjects);
 		sendString(sock, "menu");
 		sendString(sock, toString(vc));

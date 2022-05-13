@@ -220,7 +220,8 @@ std::string toString(std::map<std::string, size_t> a, std::string text = "") {
     return text;
 }
 //----------------------------------------------------------------------------
-std::vector<std::string> toVector(std::map<std::string, size_t> a) {
+template<typename T>
+std::vector<std::string> toVector(std::map<std::string, T> a) {
     std::vector<std::string> tmp;
     for (auto it : a) {
         tmp.push_back(it.first);

@@ -5,72 +5,144 @@
 #include "../Utils/stdafx.h"
 #include <vector>
 #include "Project.h"
+#include "Mark.h"
 
 class Rating {
 public:
-    size_t size;
-    size_t cntProjects;
-    size_t cntExperts;
-    vector<Project> vcProjects;
-    size_t number;
+	size_t size;
+	size_t cntProjects;
+	size_t cntExperts;
+	std::vector<Project> vcProjects;
+	std::map<std::string, size_t> mpExperts;
+	size_t number;
+	SOCKET sock;
 
-    Rating() {
-        cntProjects = 0;
-        cntExperts = 0;
-        size = cntProjects * (cntProjects - 1) * cntExperts; // = 0;
-        number = 0;
-    }
+	Rating() {
+		cntProjects = 0;
+		cntExperts = 0;
+		size = cntProjects * (cntProjects - 1) * cntExperts; // = 0;
+		number = 0;
+	}
 
-    Rating(size_t _size, size_t _cntProjects, size_t _cntExperts, const vector <size_t> &_vcProjects, size_t _number) : 
-        size(_size),
-        cntProjects(_cntProjects),
-        cntExperts(_cntExperts),
-        vcProjects(_vcProjects),
-        number(_number) {}
+	explicit Rating(const SOCKET& _sock) {
+		this->sock = _sock;
+		cntProjects = 0;
+		cntExperts = 0;
+		size = cntProjects * (cntProjects - 1) * cntExperts; // = 0;
+		number = 0;
+	}
 
-    size_t getSize() const {
-        return size;
-    }
+	//Rating(size_t _size, size_t _cntProjects, size_t _cntExperts, const vector <size_t>& _vcProjects, size_t _number) :
+	Rating(size_t _size, size_t _cntProjects, size_t _cntExperts, size_t _number) :
+		size(_size),
+		cntProjects(_cntProjects),
+		cntExperts(_cntExperts),
+		number(_number) {
+	}
 
-    void setSize(size_t _size) {
-        Rating::size = _size;
-    }
+	size_t getSize() const {
+		return size;
+	}
 
-    size_t getCntProjects() const {
-        return cntProjects;
-    }
+	void setSize(size_t _size) {
+		Rating::size = _size;
+	}
 
-    void setCntProjects(size_t _cntProjects) {
-        cntProjects = _cntProjects;
-    }
+	size_t getCntProjects() const {
+		return cntProjects;
+	}
 
-    size_t getCntExperts() const {
-        return cntExperts;
-    }
+	void setCntProjects(size_t _cntProjects) {
+		cntProjects = _cntProjects;
+	}
 
-    void setCntExperts(size_t _cntExperts) {
-        cntExperts = _cntExperts;
-    }
+	size_t getCntExperts() const {
+		return cntExperts;
+	}
 
-    size_t getNumber() const {
-        return number;
-    }
+	void setCntExperts(size_t _cntExperts) {
+		cntExperts = _cntExperts;
+	}
 
-    void setNumber(size_t _number) {
-        number = _number;
-    }
+	size_t getNumber() const {
+		return number;
+	}
 
-    void addProject(Project tmp) {
-        vcProjects.push_back(tmp);
-    }
+	void setNumber(size_t _number) {
+		number = _number;
+	}
 
-    //const vector <size_t> &getVcProjects() const {
-    //    return vcProjects;
-    //}
+	void addProject(Project tmp) {
+		vcProjects.push_back(tmp);
+	}
 
-    //void setVcProjects(const vector <size_t> &vcProjects) {
-    //    Rating::vcProjects = vcProjects;
-    //}
+	void clear() {
+		size = 0;
+		cntExperts = 0;
+		cntProjects = 0;
+		vcProjects.clear();
+		number = 0;
+	}
+
+	void selectExperts(std::map<std::string, size_t> mpExp) {
+		vector<string> vc = toVector(mpExp);
+		cntExperts = 0;
+		mpExperts.clear();
+		do {
+			sendString(sock, "menu2");
+			sendString(sock, toString(vc));
+			size_t ch = takeInt(sock);
+			if (ch == 0) break;
+			else if (ch != vc.size()) { 
+				mpExperts.insert(make_pair(vc[ch - 1], mpExp[vc[ch - 1]]));
+				auto iter = vc.cbegin(); // указатель на первый элемент
+				vc.erase(iter + (ch - 1));
+				if (vc.size() == 0) break;
+			}
+			else {
+				for (auto it : vc) {
+					mpExperts.insert(make_pair(it, mpExp[it]));
+				}
+				vc.clear();
+				break;
+			}
+		} while (true);
+		cntExperts = mpExperts.size();
+	}
+
+	void selectProjects(std::map<std::string, Project> mpPro) {
+		vector<string> vc = toVector(mpPro);
+		cntProjects = 0;
+		vcProjects.clear();
+		do {
+			sendString(sock, "menu2");
+			sendString(sock, toString(vc));
+			size_t ch = takeInt(sock);
+			if (ch == 0) break;
+			else if (ch != vc.size()) {
+				vcProjects.push_back(mpPro[vc[ch - 1]]);
+				auto iter = vc.cbegin(); // указатель на первый элемент
+				vc.erase(iter + (ch - 1));
+				if (vc.size() == 0) break;
+			}
+			else {
+				for (auto& it : vc) {
+					vcProjects.push_back(mpPro[it]);
+				}
+				vc.clear();
+				break;
+			}
+		} while (true);
+		cntProjects = vcProjects.size();
+	}
+
+	//const vector <size_t> &getVcProjects() const {
+	//    return vcProjects;
+	//}
+
+	//void setVcProjects(const vector <size_t> &vcProjects) {
+	//    Rating::vcProjects = vcProjects;
+	//}
 
 //    friend std::ostream &operator<<(std::ostream &os, const Rating &rating) {
 //        os << "width: " << rating.width << " number_projects: " << rating.number_projects << " number_experts: "

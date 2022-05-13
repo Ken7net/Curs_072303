@@ -798,8 +798,8 @@ public:
 
 	//---------- Ввод новой оценки ----------
 	void addMark() {
-		MarkSock mark(sock, db.getGuideMap("user", 2, 1), db.getGuideMap("project", 2));
-		mark.enterMark();
+		MarkSock mark(sock);
+		mark.enterMark(db.getGuideMap("user", 2, 1), db.getGuideMap("project", 2));
 		//mark.setCompanyId(db.getCompany("company_name", project.Companies[project.getCompanyId()]).getId());
 		std::cout << mark;
 		db.addMark(mark);
@@ -838,8 +838,8 @@ public:
 		std::cout << "-------- Редактирование оценки --------" << std::endl;
 		std::cout << oldMark;
 		std::cout << "---------------------------------------" << std::endl;
-		MarkSock newMark(sock, db.getGuideMap("user", 2, 1), db.getGuideMap("project", 2));
-		newMark.enterMark();
+		MarkSock newMark(sock);
+		newMark.enterMark(db.getGuideMap("user", 2, 1), db.getGuideMap("project", 2));
 		newMark.setMarKId(oldMark.getMarkId());
 		//newProject.setCompanyId(db.getCompany("company_name", newProject.Companies[newProject.getCompanyId()]).getId());
 		//db.editProject(newProject, oldProject.getProjectId());
