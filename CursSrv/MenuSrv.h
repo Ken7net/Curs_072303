@@ -5,6 +5,7 @@
 #include "User.h"
 #include "Company.h"
 #include "DBWork.h"
+#include "Rating.h"
 
 
 using namespace std;
@@ -896,6 +897,7 @@ public:
 			UserSock user(sock, db.getGuide("user_role", 1));
 			CompanySock cmp(sock);
 			ProjectSock project(sock, db.getGuide("company", 2));
+			Rating rating(sock);
 			switch (i) {
 			case 1:
 				//Подключение пользователя
@@ -943,12 +945,13 @@ public:
 
 
 
-				ch = listProject(userS, 2); //, 2
-				std::cout << ch;
+				//ch = listProject(userS, 2); //, 2
+				//std::cout << ch;
 
 				//deleteMark();
-
-
+				
+				rating.selectExperts(db.getGuideMap("user", 2, 1));
+				//rating.selectProjects(db.getGuideMap("project", 2));
 
 				//menuAdmin();
 				break;

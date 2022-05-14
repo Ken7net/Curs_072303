@@ -86,14 +86,16 @@ public:
 
 	void selectExperts(std::map<std::string, size_t> mpExp) {
 		vector<string> vc = toVector(mpExp);
+		size_t cntVc = 0;
 		cntExperts = 0;
 		mpExperts.clear();
 		do {
-			sendString(sock, "menu2");
+			cntVc = vc.size();
+			sendString(sock, "menu5");
 			sendString(sock, toString(vc));
 			size_t ch = takeInt(sock);
 			if (ch == 0) break;
-			else if (ch != vc.size()) { 
+			else if (ch != vc.size()+1) { 
 				mpExperts.insert(make_pair(vc[ch - 1], mpExp[vc[ch - 1]]));
 				auto iter = vc.cbegin(); // указатель на первый элемент
 				vc.erase(iter + (ch - 1));
