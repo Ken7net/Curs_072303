@@ -420,6 +420,30 @@ public:
 		delete result;
 		return tmp;
 	}
+	// Получить отражение оценок для набора и пользователя
+	std::map<size_t, std::vector<Mark>> getMpMarks(size_t _number /*, size_t _userId*/) {
+		Mark tmp;
+		std::map<size_t, std::vector<Mark>> tmpRn;
+		std::vector<Mark> tmpMrk;
+		pstmt = con->prepareStatement("SELECT * FROM mark WHERE number = ? ORDER BY user_id, project1_id, project2_id;"); // AND user_id = ? ; ");
+		pstmt->setInt(1, _number);
+		//pstmt->setInt(2, _userId);
+		size_t lastUser = -1;
+		result = pstmt->executeQuery();
+		while (result->next()) {
+			tmp.setMark(result->getInt(1), result->getInt(2), result->getInt(3), result->getInt(4), result->getInt(5),
+				result->getDouble(6)); //, result->getDouble(7)
+			if (lastUser != -1 && lastUser != tmp.getUserId()) {
+				tmpRn.insert(make_pair(lastUser, tmpMrk));
+				lastUser = tmp.getUserId();
+				tmpMrk.clear();
+			}
+			tmpMrk.push_back(tmp);
+		}
+		delete result;
+		return tmpRn;
+	}
+
 	// Удалить оценку по id
 	void deleteMark(size_t m_id) {
 		try {

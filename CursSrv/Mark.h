@@ -74,11 +74,11 @@ public:
 		return value2;
 	}
 
-	void setMarKId(size_t markId) {
+	void setMarkId(size_t markId) {
 		mark_id = markId;
 	}
 
-	void setNumberMark(size_t _number) {
+	void setNumber(size_t _number) {
 		number = _number;
 	}
 
@@ -99,6 +99,18 @@ public:
 		value2 = 1 - _mark;
 	}
 
+	void clear() {
+		mark_id = 0;
+		number = 0;
+		user_id = 0;
+		project1_id = 0;
+		project2_id = 0;
+		value1 = 0;
+		value2 = 0;
+	}
+
+	Mark& operator=(const Mark& M) = default;
+
 	bool operator==(const Mark& rhs) const {
 		return mark_id == rhs.mark_id &&
 			number == rhs.number &&
@@ -110,6 +122,14 @@ public:
 
 	bool operator!=(const Mark& rhs) const {
 		return !(rhs == *this);
+	}
+
+	Mark& Mark::operator+= (Mark const& rhs) {
+		project1_id = rhs.getProject1Id();
+		project2_id = rhs.getProject2Id();
+		value1 += rhs.getValue1();
+		value2 += rhs.getValue2();
+		return *this;
 	}
 
 	void setMark(size_t markId, size_t _number, size_t userId, size_t project1Id, size_t project2Id, float _value) {
@@ -232,6 +252,45 @@ public:
 		} while (true);
 		sendString(sock, "end");
 		setMark(0, _number, userId, project1Id, project2Id, _value);
+	}
+
+	void enterMark(size_t _number, size_t userId, size_t project1Id, size_t project2Id) {
+		std::string numberStr, userIdStr, project1IdStr, project2IdStr, _valueStr;
+		float _value;
+
+		sendString(sock, "data");
+		//sendString(sock, "Номер ранжа: ");
+		//do {
+		//	numberStr = takeString(sock);
+		//	if (Checks::checkNoLetters(_valueStr)) {
+		//		_number = std::stol(numberStr);
+		//		break;
+		//	}
+		//	else
+		//		cout << "Некорректный ввод. Повторите попытку.\nНомер ранжа: ";
+		//} while (true);
+		sendString(sock, "Оценку: ");
+		do {
+			_valueStr = takeString(sock);
+			if (Checks::checkNoLetters(_valueStr)) {
+				_value = std::stof(_valueStr);
+				break;
+			}
+			else
+				cout << "Некорректный ввод. Повторите попытку.\nОценку: ";
+		} while (true);
+		sendString(sock, "end");
+		setMark(0, _number, userId, project1Id, project2Id, _value);
+	}
+
+	static Mark toMark(MarkSock& tmp) {
+		Mark mrk;
+		mrk.setMarkId(tmp.getMarkId());
+		mrk.setNumber(tmp.getNumber());
+		mrk.setUserId(tmp.getUserId());
+		mrk.setProject1Id(tmp.getProject1Id());
+		mrk.setProject2Id(tmp.getProject2Id());
+		mrk.setValue(tmp.getValue1());
 	}
 };
 

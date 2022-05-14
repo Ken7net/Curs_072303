@@ -5,7 +5,6 @@
 #include "User.h"
 #include "Company.h"
 #include "DBWork.h"
-#include "Rating.h"
 
 
 using namespace std;
@@ -247,8 +246,9 @@ public:
 
 	explicit A_menu(SOCKET connection) {
 		sock = connection;
-		db.connect("10.182.67.148:3306", "myuser", "MyPas$curs2", "curs");
-		//db.connect("tcp://127.0.0.1:3306", "myuser", "mypass", "curs");
+		//db.connect("10.182.67.148:3306", "myuser", "MyPas$curs2", "curs");
+		//db.connect("tcp://127.0.0.1:3306", "myuser", "MyPas$curs2", "curs");
+		db.connect("tcp://127.0.0.1:3306", "root", "root", "curs");
 	}
 
 	// Деструктор
@@ -841,7 +841,7 @@ public:
 		std::cout << "---------------------------------------" << std::endl;
 		MarkSock newMark(sock);
 		newMark.enterMark(db.getGuideMap("user", 2, 1), db.getGuideMap("project", 2));
-		newMark.setMarKId(oldMark.getMarkId());
+		newMark.setMarkId(oldMark.getMarkId());
 		//newProject.setCompanyId(db.getCompany("company_name", newProject.Companies[newProject.getCompanyId()]).getId());
 		//db.editProject(newProject, oldProject.getProjectId());
 		db.editMark(newMark, newMark.getMarkId());
@@ -897,7 +897,6 @@ public:
 			UserSock user(sock, db.getGuide("user_role", 1));
 			CompanySock cmp(sock);
 			ProjectSock project(sock, db.getGuide("company", 2));
-			Rating rating(sock);
 			switch (i) {
 			case 1:
 				//Подключение пользователя
@@ -945,13 +944,12 @@ public:
 
 
 
-				//ch = listProject(userS, 2); //, 2
-				//std::cout << ch;
+				ch = listProject(userS, 2); //, 2
+				std::cout << ch;
 
 				//deleteMark();
-				
-				rating.selectExperts(db.getGuideMap("user", 2, 1));
-				//rating.selectProjects(db.getGuideMap("project", 2));
+
+
 
 				//menuAdmin();
 				break;

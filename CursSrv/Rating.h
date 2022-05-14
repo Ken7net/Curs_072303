@@ -1,4 +1,4 @@
-#ifndef CURSSRV_RATING_H
+﻿#ifndef CURSSRV_RATING_H
 #define CURSSRV_RATING_H
 
 #include <ostream>
@@ -16,12 +16,17 @@ public:
 	std::map<std::string, size_t> mpExperts;
 	size_t number;
 	SOCKET sock;
+	std::map<size_t, std::vector<Mark>> ranking;
+	std::vector<Mark> rankingTotal;
+	float total;
 
 	Rating() {
 		cntProjects = 0;
 		cntExperts = 0;
 		size = cntProjects * (cntProjects - 1) * cntExperts; // = 0;
 		number = 0;
+		sock = -1;
+		total = 0;
 	}
 
 	explicit Rating(const SOCKET& _sock) {
@@ -33,11 +38,12 @@ public:
 	}
 
 	//Rating(size_t _size, size_t _cntProjects, size_t _cntExperts, const vector <size_t>& _vcProjects, size_t _number) :
-	Rating(size_t _size, size_t _cntProjects, size_t _cntExperts, size_t _number) :
+	Rating(SOCKET _sock, size_t _size, size_t _cntProjects, size_t _cntExperts, size_t _number) :
 		size(_size),
 		cntProjects(_cntProjects),
 		cntExperts(_cntExperts),
 		number(_number) {
+		sock = _sock;
 	}
 
 	size_t getSize() const {
@@ -86,18 +92,16 @@ public:
 
 	void selectExperts(std::map<std::string, size_t> mpExp) {
 		vector<string> vc = toVector(mpExp);
-		size_t cntVc = 0;
 		cntExperts = 0;
 		mpExperts.clear();
 		do {
-			cntVc = vc.size();
-			sendString(sock, "menu5");
+			sendString(sock, "menu2");
 			sendString(sock, toString(vc));
 			size_t ch = takeInt(sock);
 			if (ch == 0) break;
-			else if (ch != vc.size()+1) { 
+			else if (ch != vc.size()) { 
 				mpExperts.insert(make_pair(vc[ch - 1], mpExp[vc[ch - 1]]));
-				auto iter = vc.cbegin(); // ��������� �� ������ �������
+				auto iter = vc.cbegin(); // указатель на первый элемент
 				vc.erase(iter + (ch - 1));
 				if (vc.size() == 0) break;
 			}
@@ -123,7 +127,7 @@ public:
 			if (ch == 0) break;
 			else if (ch != vc.size()) {
 				vcProjects.push_back(mpPro[vc[ch - 1]]);
-				auto iter = vc.cbegin(); // ��������� �� ������ �������
+				auto iter = vc.cbegin(); // указатель на первый элемент
 				vc.erase(iter + (ch - 1));
 				if (vc.size() == 0) break;
 			}
@@ -136,6 +140,66 @@ public:
 			}
 		} while (true);
 		cntProjects = vcProjects.size();
+	}
+
+	//Ввод оценок
+	void enterRank() {
+		MarkSock tmpMark(sock);
+		std::vector<Mark> mrk;
+		for (auto& it : mpExperts) {
+			mrk.clear();
+			for (size_t j = 0; j < cntProjects; j++) {
+				for (size_t k = j + 1; k < cntProjects; k++) {
+					std::cout << it.second << " -- " << j << " : " << k << std::endl;
+					tmpMark.enterMark(number, it.second, vcProjects[j].getProjectId(), vcProjects[k].getProjectId());
+					mrk.push_back(MarkSock::toMark(tmpMark));
+				}
+			}
+			ranking.insert(make_pair(it.second, mrk));
+		}
+	}
+	//Расчет суммарных значений
+	void calcTotal() {
+		if (cntExperts == 0 || cntProjects == 0 || ranking.size() == 0) return;
+		rankingTotal.clear();
+		Mark tmp{};
+		size_t cntTotal = 0;
+		total = 0;
+		for (auto& it : ranking) {
+			tmp.clear();
+			rankingTotal.push_back(tmp);
+			for (auto iit : it.second) {
+				rankingTotal[cntTotal] += iit;
+				total = total + iit.getValue1() + iit.getValue2();
+			}
+			cntTotal++;
+		}
+	}
+
+	//Расчет весов
+	void calcWeights() {
+		size_t cnt = 0;
+		for (size_t i = 0; i < vcProjects.size(); i++) {
+			for (size_t j = 0; j < rankingTotal.size(); j++) {
+				if (rankingTotal[j].getProject1Id() == vcProjects[i].getProjectId()) vcProjects[i].setWeight(vcProjects[i].getWeight() + rankingTotal[j].getValue1());
+				if (rankingTotal[j].getProject2Id() == vcProjects[i].getProjectId()) vcProjects[i].setWeight(vcProjects[i].getWeight() + rankingTotal[j].getValue2());
+				if (rankingTotal[j].getProject1Id() == vcProjects[i].getProjectId() || rankingTotal[j].getProject2Id() == vcProjects[i].getProjectId()) cnt++;
+				if (cnt == vcProjects.size()) break; //прерываем чтобы лишние разы не крутить
+			}
+			vcProjects[i].setWeight(total / vcProjects[i].getWeight());
+		}
+		sort(vcProjects.begin(), vcProjects.end(), compareWeight); //Сортируем по весам
+	}
+
+	void createRank() {
+		for (size_t i = 0; i < cntExperts; i++) {
+			for (size_t j = 0; j < cntProjects; j++) {
+				for (size_t k = j + 1; k < cntProjects; k++) {
+					std::cout << i << " -- " << j << " : " << k << std::endl;
+					//rank.insert(make_pair())
+				}
+			}
+		}
 	}
 
 	//const vector <size_t> &getVcProjects() const {
