@@ -5,7 +5,7 @@
 #include "User.h"
 #include "Company.h"
 #include "DBWork.h"
-
+#include "Rating.h"
 
 using namespace std;
 
@@ -246,9 +246,9 @@ public:
 
 	explicit A_menu(SOCKET connection) {
 		sock = connection;
-		//db.connect("10.182.67.148:3306", "myuser", "MyPas$curs2", "curs");
+		db.connect("10.182.67.148:3306", "myuser", "MyPas$curs2", "curs");
 		//db.connect("tcp://127.0.0.1:3306", "myuser", "MyPas$curs2", "curs");
-		db.connect("tcp://127.0.0.1:3306", "root", "root", "curs");
+		//db.connect("tcp://127.0.0.1:3306", "root", "root", "curs");
 	}
 
 	// Деструктор
@@ -897,6 +897,7 @@ public:
 			UserSock user(sock, db.getGuide("user_role", 1));
 			CompanySock cmp(sock);
 			ProjectSock project(sock, db.getGuide("company", 2));
+			Rating rating(sock);
 			switch (i) {
 			case 1:
 				//Подключение пользователя
@@ -944,11 +945,27 @@ public:
 
 
 
-				ch = listProject(userS, 2); //, 2
-				std::cout << ch;
+				//ch = listProject(userS, 2); //, 2
+				//std::cout << ch;
 
 				//deleteMark();
 
+				//// Выбор экспертов
+				//rating.selectExperts(db.getGuideMap("user", 2, 1));
+				//// Выбор проектов
+				//rating.selectProjects(db.getProjectMp());
+				//// Ввод оценок
+				//rating.setNumber(3);
+				//rating.enterRank();
+				//for (auto& it : rating.ranking) {
+				//	for (auto& iit : it.second) {
+				//		db.addMark(iit);
+				//	}
+				//}
+
+				rating.ranking = db.getMpMarks(3);
+				rating.mpExperts = db.getExpertMap(3);
+				rating.setCntExperts();
 
 
 				//menuAdmin();

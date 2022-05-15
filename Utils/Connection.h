@@ -1,4 +1,4 @@
-#ifndef CURSSRV_CONNECTION_H
+п»ї#ifndef CURSSRV_CONNECTION_H
 #define CURSSRV_CONNECTION_H
 
 #include <string>
@@ -17,16 +17,16 @@ private:
 public:
     SOCKET sock;
     Connection() {
-        wVersionRequested = MAKEWORD(2, 2);//первая цифра версии находится в младшем байте, вторая - в старшем.
-        int err = WSAStartup(wVersionRequested, &wsaData);//инициализируем работу с WinSock dll
-        if (err != 0) exit(-1); // Ошибка инициализации
+        wVersionRequested = MAKEWORD(2, 2);//РїРµСЂРІР°СЏ С†РёС„СЂР° РІРµСЂСЃРёРё РЅР°С…РѕРґРёС‚СЃСЏ РІ РјР»Р°РґС€РµРј Р±Р°Р№С‚Рµ, РІС‚РѕСЂР°СЏ - РІ СЃС‚Р°СЂС€РµРј.
+        int err = WSAStartup(wVersionRequested, &wsaData);//РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј СЂР°Р±РѕС‚Сѓ СЃ WinSock dll
+        if (err != 0) exit(-1); // РћС€РёР±РєР° РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
     }
     void createConnect(const char *ip, size_t _port){
-        struct sockaddr_in peer;//адресная структура
+        struct sockaddr_in peer;//Р°РґСЂРµСЃРЅР°СЏ СЃС‚СЂСѓРєС‚СѓСЂР°
         peer.sin_family = AF_INET;
-        peer.sin_port = htons(_port);//порт соединения
-        peer.sin_addr.s_addr = inet_addr(ip);// т.к. клиент и сервер на одном компьютере
-        sock = socket(AF_INET, SOCK_STREAM, 0);//создаем TCP-сокет с интернет-адресацией
+        peer.sin_port = htons(_port);//РїРѕСЂС‚ СЃРѕРµРґРёРЅРµРЅРёСЏ
+        peer.sin_addr.s_addr = inet_addr(ip);// С‚.Рє. РєР»РёРµРЅС‚ Рё СЃРµСЂРІРµСЂ РЅР° РѕРґРЅРѕРј РєРѕРјРїСЊСЋС‚РµСЂРµ
+        sock = socket(AF_INET, SOCK_STREAM, 0);//СЃРѕР·РґР°РµРј TCP-СЃРѕРєРµС‚ СЃ РёРЅС‚РµСЂРЅРµС‚-Р°РґСЂРµСЃР°С†РёРµР№
 
     }
     ~Connection(){

@@ -124,7 +124,7 @@ public:
 		return !(rhs == *this);
 	}
 
-	Mark& Mark::operator+= (Mark const& rhs) {
+	Mark& operator+= (Mark const& rhs) {
 		project1_id = rhs.getProject1Id();
 		project2_id = rhs.getProject2Id();
 		value1 += rhs.getValue1();
@@ -153,12 +153,13 @@ public:
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const Mark& mark) {
-		os << " mark_id: " << mark.mark_id << std::endl; 
-		os << " number: " << mark.number << std::endl; 
-		os << " user_id: " << mark.user_id << std::endl; 
-		os << " project1_id: " << mark.project1_id << std::endl; 
-		os << " project2_id: " << mark.project2_id << std::endl; 
-		os << " value1: " << mark.value1 << std::endl; 
+		os << "- - - - - - - - -  - - - - - - -" << std::endl;
+		os << " mark_id: " << mark.mark_id << std::endl;
+		os << " number: " << mark.number << std::endl;
+		os << " user_id: " << mark.user_id << std::endl;
+		os << " project1_id: " << mark.project1_id << std::endl;
+		os << " project2_id: " << mark.project2_id << std::endl;
+		os << " value1: " << mark.value1 << std::endl;
 		os << " value2: " << mark.value2 << std::endl;
 		return os;
 	}
@@ -191,7 +192,7 @@ class MarkSock : public Mark {
 public:
 	SOCKET sock;
 
-	explicit MarkSock(const SOCKET& _sock){
+	explicit MarkSock(const SOCKET& _sock) {
 		this->sock = _sock;
 	}
 
@@ -254,10 +255,9 @@ public:
 		setMark(0, _number, userId, project1Id, project2Id, _value);
 	}
 
-	void enterMark(size_t _number, size_t userId, size_t project1Id, size_t project2Id) {
+	void enterMark(size_t _number, std::pair<std::string, size_t> userId, size_t project1Id, size_t project2Id) {
 		std::string numberStr, userIdStr, project1IdStr, project2IdStr, _valueStr;
 		float _value;
-
 		sendString(sock, "data");
 		//sendString(sock, "Номер ранжа: ");
 		//do {
@@ -269,7 +269,11 @@ public:
 		//	else
 		//		cout << "Некорректный ввод. Повторите попытку.\nНомер ранжа: ";
 		//} while (true);
-		sendString(sock, "Оценку: ");
+		std::string str = "Эксперт " + userId.first;
+		str += ". Оценкa(" + to_string(project1Id);
+		str += " <-> " + to_string(project2Id);
+		str += ") : ";
+		sendString(sock, str);
 		do {
 			_valueStr = takeString(sock);
 			if (Checks::checkNoLetters(_valueStr)) {
@@ -277,10 +281,10 @@ public:
 				break;
 			}
 			else
-				cout << "Некорректный ввод. Повторите попытку.\nОценку: ";
+				cout << "Некорректный ввод. Повторите попытку.\nОценка: ";
 		} while (true);
 		sendString(sock, "end");
-		setMark(0, _number, userId, project1Id, project2Id, _value);
+		setMark(0, _number, userId.second, project1Id, project2Id, _value);
 	}
 
 	static Mark toMark(MarkSock& tmp) {
@@ -291,6 +295,7 @@ public:
 		mrk.setProject1Id(tmp.getProject1Id());
 		mrk.setProject2Id(tmp.getProject2Id());
 		mrk.setValue(tmp.getValue1());
+		return mrk;
 	}
 };
 

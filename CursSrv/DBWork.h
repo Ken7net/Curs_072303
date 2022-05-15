@@ -65,7 +65,7 @@ public:
 			driver = get_driver_instance();
 			//for demonstration only. never save password in the code!
 			//con = driver->connect(server.c_str(), username.c_str(), password.c_str());
-            con = driver->connect(server, username, password);
+			con = driver->connect(server, username, password);
 		}
 		catch (sql::SQLException e) {
 			cout << "Could not connect to server. Error message: " << e.what() << endl;
@@ -338,6 +338,21 @@ public:
 		delete result;
 		return tmp;
 	}
+	// Получение map проектов
+	std::map<std::string, Project> getProjectMp(/*const std::string& field_name, const std::string& p_name*/) {
+		Project tmp;
+		std::map<std::string, Project> tmpMp;
+		pstmt = con->prepareStatement("SELECT * FROM project;");
+		//pstmt->setString(1, p_name);
+		result = pstmt->executeQuery();
+		while (result->next()) {
+			tmp.setProject(result->getInt(1), result->getString(2), result->getInt(3), result->getInt(4),
+				result->getString(5), result->getString(6), result->getInt(7));
+			tmpMp.insert(make_pair(tmp.getProjectName(), tmp));
+		}
+		delete result;
+		return tmpMp;
+	}
 
 	// Удалить проект по id
 	void deleteProject(size_t u_id) {
@@ -372,7 +387,7 @@ public:
 		try {
 			pstmt = con->prepareStatement(
 				"INSERT INTO mark (number, user_id, project1_id, project2_id, mark1, mark2) VALUES(?, ?, ?, ?, ?, ?);");
-			pstmt->setInt(1, mark.getNumber());	
+			pstmt->setInt(1, mark.getNumber());
 			pstmt->setInt(2, mark.getUserId());
 			pstmt->setInt(3, mark.getProject1Id());
 			pstmt->setInt(4, mark.getProject2Id());
@@ -431,8 +446,11 @@ public:
 		size_t lastUser = -1;
 		result = pstmt->executeQuery();
 		while (result->next()) {
+			//setMark(size_t markId, size_t _number, size_t userId, size_t project1Id, size_t project2Id, float _value)
 			tmp.setMark(result->getInt(1), result->getInt(2), result->getInt(3), result->getInt(4), result->getInt(5),
 				result->getDouble(6)); //, result->getDouble(7)
+			std::cout << tmp;
+			if (lastUser == -1) lastUser = tmp.getUserId();
 			if (lastUser != -1 && lastUser != tmp.getUserId()) {
 				tmpRn.insert(make_pair(lastUser, tmpMrk));
 				lastUser = tmp.getUserId();
@@ -441,7 +459,29 @@ public:
 			tmpMrk.push_back(tmp);
 		}
 		delete result;
+		tmpRn.insert(make_pair(lastUser, tmpMrk));
 		return tmpRn;
+	}
+
+	// Получение экспертов из ранжа
+	std::map<string, size_t> getExpertMap(size_t _number) {
+		std::map<std::string, size_t> tmp;
+		std::string strQuery;
+		strQuery = "SELECT user.user_name, mark.user_id ";
+		strQuery += "FROM mark Inner Join user ON mark.user_id = user.user_id ";
+		strQuery += "WHERE mark.number = ? ";
+		strQuery += "GROUP BY mark.user_id ORDER BY mark.user_id ASC;";
+
+		pstmt = con->prepareStatement(strQuery);
+		pstmt->setInt(1, _number);
+		result = pstmt->executeQuery();
+		while (result->next()) {
+			//printf("%s\n", result->getString(_numField).c_str());
+			//tmp.push_back(result->getString(_numField).c_str());
+			tmp.insert(make_pair(result->getString(1).c_str(), result->getInt(2)));
+		}
+		delete result;
+		return tmp;
 	}
 
 	// Удалить оценку по id
@@ -460,3 +500,109 @@ public:
 };
 
 #endif //DBWORK_H
+
+
+/* Запрос проектов в ранже
+SELECT
+  A.*,
+  project.project_name,
+  project.sum_credit,
+  project.credit_time,
+  project.sud_reestr,
+  project.application_date,
+  project.company_id
+FROM
+  (
+	SELECT
+	  project1_id AS project_id
+	FROM
+	  mark
+	WHERE
+	  number = 3
+	UNION ALL
+	select
+	  project2_id AS project_id
+	FROM
+	  mark
+	WHERE
+	  number = 3
+  ) A
+  INNER JOIN project ON A.project_id = project.project_id
+GROUP BY
+  A.project_id;
+*/
+
+
+/* Запрос суммирование
+* SELECT
+mark.project1_id,
+mark.project2_id,
+Sum(mark.mark1),
+Sum(mark.mark2)
+FROM
+mark
+WHERE mark.number = '3'
+GROUP BY
+mark.project1_id, 
+mark.project2_id
+ORDER BY
+mark.project1_id ASC
+* 
+*/
+
+
+/* Запрос для вычисления весов по проектам в ранже
+SELECT
+  A.project_id,
+  project.project_name,
+  project.sum_credit,
+  project.credit_time,
+  project.sud_reestr,
+  project.application_date,
+  project.company_id,
+  SUM(A.mark)/(
+	SELECT
+	  SUM(mark)
+	FROM
+	  (
+		SELECT
+		  project1_id AS project_id,
+		  mark1 AS mark
+		FROM
+		  mark
+		WHERE
+		  number = 3
+		UNION ALL
+		select
+		  project2_id AS project_id,
+		  mark2 AS mark
+		FROM
+		  mark
+		WHERE
+		  number = 3
+	  ) B
+  ) as weight
+FROM
+  (
+	SELECT
+	  project1_id AS project_id,
+	  mark1 AS mark
+	FROM
+	  mark
+	WHERE
+	  number = 3
+	UNION ALL
+	select
+	  project2_id AS project_id,
+	  mark2 AS mark
+	FROM
+	  mark
+	WHERE
+	  number = 3
+  ) A
+  INNER JOIN project ON A.project_id = project.project_id
+GROUP BY
+  A.project_id
+ORDER BY
+  weight DESC
+*/

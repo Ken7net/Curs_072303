@@ -70,6 +70,10 @@ public:
 		cntExperts = _cntExperts;
 	}
 
+	void setCntExperts() {
+		cntExperts = mpExperts.size();
+	}
+
 	size_t getNumber() const {
 		return number;
 	}
@@ -94,19 +98,24 @@ public:
 		vector<string> vc = toVector(mpExp);
 		cntExperts = 0;
 		mpExperts.clear();
+		std::cout << "--------------------------------------------" << std::endl;
+		std::cout << "Список экспертов очищен (для ранжирования)!" << std::endl;
 		do {
 			sendString(sock, "menu2");
 			sendString(sock, toString(vc));
 			size_t ch = takeInt(sock);
 			if (ch == 0) break;
-			else if (ch != vc.size()) { 
+			else if (ch != vc.size() + 1) {
+				std::cout << "Добавить эксперта: " << vc[ch - 1] << ", id: " << mpExp[vc[ch - 1]] << std::endl;
 				mpExperts.insert(make_pair(vc[ch - 1], mpExp[vc[ch - 1]]));
 				auto iter = vc.cbegin(); // указатель на первый элемент
 				vc.erase(iter + (ch - 1));
 				if (vc.size() == 0) break;
 			}
 			else {
+				std::cout << "Добавить всех экспертов:" << std::endl;
 				for (auto it : vc) {
+					std::cout << "Добавить эксперта: " << it << ", id: " << mpExp[it] << std::endl;
 					mpExperts.insert(make_pair(it, mpExp[it]));
 				}
 				vc.clear();
@@ -114,25 +123,31 @@ public:
 			}
 		} while (true);
 		cntExperts = mpExperts.size();
+		std::cout << "В список добавлено " << cntExperts << " экспертов(a)." << std::endl;
 	}
 
 	void selectProjects(std::map<std::string, Project> mpPro) {
 		vector<string> vc = toVector(mpPro);
 		cntProjects = 0;
 		vcProjects.clear();
+		std::cout << "--------------------------------------------" << std::endl;
+		std::cout << "Список проектов очищен (для ранжирования)!" << std::endl;
 		do {
 			sendString(sock, "menu2");
 			sendString(sock, toString(vc));
 			size_t ch = takeInt(sock);
 			if (ch == 0) break;
-			else if (ch != vc.size()) {
+			else if (ch != vc.size() + 1) {
+				std::cout << "Добавить проект: " << vc[ch - 1] << ", id: " << mpPro[vc[ch - 1]].getProjectId() << std::endl;
 				vcProjects.push_back(mpPro[vc[ch - 1]]);
 				auto iter = vc.cbegin(); // указатель на первый элемент
 				vc.erase(iter + (ch - 1));
 				if (vc.size() == 0) break;
 			}
 			else {
+				std::cout << "Добавить все проекты:" << std::endl;
 				for (auto& it : vc) {
+					std::cout << "Добавить проект: " << it << ", id: " << mpPro[it].getProjectId() << std::endl;
 					vcProjects.push_back(mpPro[it]);
 				}
 				vc.clear();
@@ -140,18 +155,23 @@ public:
 			}
 		} while (true);
 		cntProjects = vcProjects.size();
+		std::cout << "В список добавлено " << cntProjects << " проекта(ов)." << std::endl;
 	}
 
 	//Ввод оценок
 	void enterRank() {
 		MarkSock tmpMark(sock);
 		std::vector<Mark> mrk;
+		std::cout << "--------------------------------------------" << std::endl;
+		std::cout << "Ввод оценок (для ранжирования)!" << std::endl;
 		for (auto& it : mpExperts) {
 			mrk.clear();
 			for (size_t j = 0; j < cntProjects; j++) {
 				for (size_t k = j + 1; k < cntProjects; k++) {
-					std::cout << it.second << " -- " << j << " : " << k << std::endl;
-					tmpMark.enterMark(number, it.second, vcProjects[j].getProjectId(), vcProjects[k].getProjectId());
+					std::cout << "Эксперт " << it.first << "(" << it.second << ")" << " -- " << j + 1 <<
+						"(" << vcProjects[j].getProjectId() << ") : " << k + 1 << "(" << vcProjects[k].getProjectId() << "): ";
+					tmpMark.enterMark(number, it, vcProjects[j].getProjectId(), vcProjects[k].getProjectId());
+					std::cout << tmpMark.getValue1() << " :: " << tmpMark.getValue2() << std::endl;
 					mrk.push_back(MarkSock::toMark(tmpMark));
 				}
 			}
@@ -186,7 +206,7 @@ public:
 				if (rankingTotal[j].getProject1Id() == vcProjects[i].getProjectId() || rankingTotal[j].getProject2Id() == vcProjects[i].getProjectId()) cnt++;
 				if (cnt == vcProjects.size()) break; //прерываем чтобы лишние разы не крутить
 			}
-			vcProjects[i].setWeight(total / vcProjects[i].getWeight());
+			vcProjects[i].setWeight(vcProjects[i].getWeight() / total);
 		}
 		sort(vcProjects.begin(), vcProjects.end(), compareWeight); //Сортируем по весам
 	}

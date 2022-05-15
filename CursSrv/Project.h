@@ -245,7 +245,7 @@ public:
 
 // Сравнение по весу
 bool compareWeight(Project obj1, Project obj2) {
-	return (obj1.getWeight() < obj2.getWeight());                       
+	return (obj1.getWeight() < obj2.getWeight());
 }
 
 class ProjectSock : public Project {
