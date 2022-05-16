@@ -99,6 +99,11 @@ public:
 		value2 = 1 - _mark;
 	}
 
+	void setValues(float _mark1, float _mark2) {
+		value1 = _mark1;
+		value2 = _mark2;
+	}
+
 	void clear() {
 		mark_id = 0;
 		number = 0;

@@ -49,7 +49,6 @@ private:
 	SOCKET cn;
 public:
 	std::vector<std::string> vcMenu;
-	//All_info ai;
 
 	// Конструктор
 	A_menu() {
@@ -112,6 +111,10 @@ public:
 		//        return vcChoice("-=-=-=-=  М е н ю  =-=-=-=-", vcMainMenu, 0)
 	}
 
+	void toStream(std::string st, ostream& fout = std::cout) const {
+		fout << st;
+	}
+
 	void start() {
 		int v = 1;
 		std::string str;
@@ -133,17 +136,6 @@ public:
 				str = "";
 				v = 1;
 			}
-			//if ((str == "menu") || (str == "menu0")) {
-			//	if (!vcMenu.empty()) {
-			//		vcMenu.clear();
-			//	}
-			//	vcMenu = takeMenu(cn);
-			//	if (str == "menu0") v = 0;
-			//	//if (vcMenu[0] != "") v = 0;
-			//	sendInt(cn, vcChoice(vcMenu, v));
-			//	str = "";
-			//	v = 1;
-			//}
 			if (str == "data") {
 				// получение и отправка данных
 				str = takeString(cn);
@@ -157,6 +149,32 @@ public:
 					}
 					sendString(cn, str);
 					str = takeString(cn);
+				}
+			}
+			if (str.find("output") != std::string::npos) {
+				// получение и отправка данных 
+				bool flagFile = false;
+				ofstream fout;
+				if (str.find("file") != std::string::npos) {
+					flagFile = true;
+					fout.exceptions(ofstream::badbit);
+					try {
+						fout.open("report.txt", ios::app | ios_base::in);
+					}
+					catch (const ofstream::failure& e) {
+						cout << "Ошибка открытия файла (report.txt)!" << endl;
+						break;
+					}
+				}
+				str = takeString(cn);
+				while (str != "end") {
+					if (flagFile) toStream(str, fout);
+					else toStream(str);
+					str = takeString(cn);
+				}
+				//system("pause");
+				if (flagFile) {
+					fout.close();
 				}
 			}
 			if (str == "exit") {

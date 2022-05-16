@@ -435,6 +435,7 @@ public:
 		delete result;
 		return tmp;
 	}
+
 	// Получить отражение оценок для набора и пользователя
 	std::map<size_t, std::vector<Mark>> getMpMarks(size_t _number /*, size_t _userId*/) {
 		Mark tmp;
@@ -464,7 +465,7 @@ public:
 	}
 
 	// Получение экспертов из ранжа
-	std::map<string, size_t> getExpertMap(size_t _number) {
+	std::map<string, size_t> getExpertMapMark(size_t _number) {
 		std::map<std::string, size_t> tmp;
 		std::string strQuery;
 		strQuery = "SELECT user.user_name, mark.user_id ";
@@ -484,6 +485,100 @@ public:
 		return tmp;
 	}
 
+	// Получение проектов из ранжа
+	std::vector<Project> getProjectVcMark(size_t _number) {
+		std::vector<Project> tmpPr;
+		Project tmp;
+		std::string strQuery;
+
+		// Запрос проектов в ранже
+
+		strQuery = "SELECT A.*, project.project_name, ";
+		strQuery += "project.sum_credit, project.credit_time, ";
+		strQuery += "project.sud_reestr, project.application_date, ";
+		strQuery += "project.company_id ";
+		strQuery += "FROM (SELECT project1_id AS project_id ";
+		strQuery += "FROM mark WHERE number = ? ";
+		strQuery += "UNION ALL ";
+		strQuery += "SELECT project2_id AS project_id ";
+		strQuery += "FROM mark WHERE number = ?) A ";
+		strQuery += "INNER JOIN project ON A.project_id = project.project_id ";
+		strQuery += "GROUP BY A.project_id;";
+
+		pstmt = con->prepareStatement(strQuery);
+		pstmt->setInt(1, _number);
+		pstmt->setInt(2, _number);
+		result = pstmt->executeQuery();
+		while (result->next()) {
+			tmp.setProject(result->getInt(1), result->getString(2), result->getInt(3), result->getInt(4),
+				result->getString(5), result->getString(6), result->getInt(7));
+			tmpPr.push_back(tmp);
+		}
+		delete result;
+		return tmpPr;
+	}
+
+	// Получение проектов из ранжа (итоги)
+	std::vector<Project> getWeightVcMark(size_t _number) {
+		std::vector<Project> tmpPr;
+		Project tmp;
+		std::string strQuery;
+
+		// Запрос для вычисления весов по проектам в ранже
+
+		strQuery = "SELECT A.project_id, project.project_name,project.sum_credit, project.credit_time, ";
+		strQuery += "project.sud_reestr, project.application_date, project.company_id, ";
+		strQuery += "ROUND(SUM(A.mark)/(SELECT SUM(mark) FROM (";
+		strQuery += "SELECT project1_id AS project_id, mark1 AS mark FROM mark WHERE number = ? ";
+		strQuery += "UNION ALL ";
+		strQuery += "SELECT project2_id AS project_id, mark2 AS mark FROM mark WHERE number = ?) B), 3) AS weight ";
+		strQuery += "FROM (SELECT project1_id AS project_id, mark1 AS mark FROM mark WHERE number = ? ";
+		strQuery += "UNION ALL ";
+		strQuery += "SELECT project2_id AS project_id, mark2 AS mark FROM mark WHERE number = ?) A ";
+		strQuery += "INNER JOIN project ON A.project_id = project.project_id ";
+		strQuery += "GROUP BY A.project_id ";
+		strQuery += "ORDER BY weight DESC;";
+
+		pstmt = con->prepareStatement(strQuery);
+		pstmt->setInt(1, _number);
+		pstmt->setInt(2, _number);
+		pstmt->setInt(3, _number);
+		pstmt->setInt(4, _number);
+		result = pstmt->executeQuery();
+		while (result->next()) {
+			tmp.setProject(result->getInt(1), result->getString(2), result->getInt(3), result->getInt(4),
+				result->getString(5), result->getString(6), result->getInt(7));
+			tmp.setWeight(result->getDouble(8));
+			tmpPr.push_back(tmp);
+		}
+		delete result;
+		return tmpPr;
+	}
+
+	// Получение сумм оценок по парам проектов
+	std::vector<Mark> getVcTotalMarks(size_t _number /*, size_t _userId*/) {
+		Mark tmp;
+		std::vector<Mark> tmpMrk;
+		std::string strQuery;
+
+		strQuery += "SELECT project1_id, project2_id, ROUND(SUM(mark.mark1), 2) AS mark1, ROUND(SUM(mark.mark2), 2) AS mark2 ";
+		strQuery += "FROM mark WHERE mark.number = ? ";
+		strQuery += "GROUP BY mark.project1_id + project2_id";
+
+		pstmt = con->prepareStatement(strQuery);
+		pstmt->setInt(1, _number);
+		result = pstmt->executeQuery();
+		while (result->next()) {
+			//setMark(size_t markId, size_t _number, size_t userId, size_t project1Id, size_t project2Id, float _value)
+			tmp.setMark(0, 0, 0, result->getInt(1), result->getInt(2), result->getDouble(3)); //, result->getDouble(7)
+			tmp.setValues(result->getDouble(3), result->getDouble(4));
+			std::cout << tmp;
+			tmpMrk.push_back(tmp);
+		}
+		delete result;
+		return tmpMrk;
+	}
+	
 	// Удалить оценку по id
 	void deleteMark(size_t m_id) {
 		try {
@@ -534,20 +629,10 @@ GROUP BY
 
 
 /* Запрос суммирование
-* SELECT
-mark.project1_id,
-mark.project2_id,
-Sum(mark.mark1),
-Sum(mark.mark2)
-FROM
-mark
-WHERE mark.number = '3'
-GROUP BY
-mark.project1_id, 
-mark.project2_id
-ORDER BY
-mark.project1_id ASC
-* 
+* SELECT mark.project1_id, mark.project2_id, ROUND(SUM(mark.mark1), 2), ROUND(SUM(mark.mark2), 2)
+FROM mark WHERE mark.number = '3'
+GROUP BY mark.project1_id, mark.project2_id
+ORDER BY mark.project1_id ASC
 */
 
 

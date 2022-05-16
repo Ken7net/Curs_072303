@@ -233,6 +233,37 @@ public:
 		} while (true);
 		tmp.setProject(_projectId, _projectName, _sumCredit, _creditTime, _sudReestr, _applicationDate.getDateStr(), _companyId);
 	}
+
+	// Вывод проекта
+	void printProject(size_t flag, size_t head = 0) {
+		if (head != 0) {
+			// заголовок
+			std::cout << "+----+----------------------------------------+------+" << std::endl;
+			std::cout << "| Id | Наименование проекта                   | Вес  |" << std::endl;
+			std::cout << "+----+----------------------------------------+------+" << std::endl;
+		}
+		if (flag == 2) {	// для ранжа
+			std::cout << "|" << std::right << std::setw(3) << project_id << " |" << std::left << std::setw(40) << project_name << "|" << std::setw(6) << weight << "|" << std::endl;
+			std::cout << "+----+----------------------------------------+------+" << std::endl;
+		}
+	}
+
+	// Вывод проекта в сокет
+	void printProjectSock(SOCKET sc, size_t flag, size_t head = 0) {
+		if (head != 0) {
+			// заголовок
+			sendString(sc, "+----+----------------------------------------+------+\n");
+			sendString(sc, "| Id | Наименование проекта                   | Вес  |\n");
+			sendString(sc, "+----+----------------------------------------+------+\n");
+		}
+		std::stringstream ss;
+		if (flag == 2) {	// для ранжа
+			ss << "|" << std::right << std::setw(3) << project_id << " |" << std::left << std::setw(40) << project_name << "|" << std::setw(6) << weight << "|" << std::endl;
+			sendString(sc, ss.str());
+			sendString(sc, "+----+----------------------------------------+------+\n");
+		}
+	}
+
 	//----------------------------------------------------------------------------
 	/*static std::vector<std::string> toVector(std::map<std::string, Project> a) {
 		std::vector<std::string> tmp;

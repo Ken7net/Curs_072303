@@ -16,7 +16,7 @@ int main() {
 
     //Client cln;
     //setlocale(LC_ALL, "1251");
-    system("mode con: cols=70 lines=20");
+    //system("mode con: cols=70 lines=20");
 
     WSADATA wsaData;
     WORD wVersionRequested = MAKEWORD(2, 2);//первая цифра версии находится в младшем байте, вторая - в старшем.
