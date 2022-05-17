@@ -190,11 +190,18 @@ std::string encryptChars(char *str) {
     return str;
 }
 //----------------------------------------------------------------------------
-void encryptChars(std::string &str) {
+std::string encryptChars(std::string str) {
     char mask = (sin(3.14) * 400) - (cos(3.14) * 250 / 20);
     for (size_t i = 0; i < (str.size()); i++)
         str[i] = (str[i] ^ mask);
+    return str;
 }
+//----------------------------------------------------------------------------
+//void encryptChars(std::string& str) {
+//    char mask = (sin(3.14) * 400) - (cos(3.14) * 250 / 20);
+//    for (size_t i = 0; i < (str.size()); i++)
+//        str[i] = (str[i] ^ mask);
+//}
 //----------------------------------------------------------------------------
 std::vector<std::string> split(const std::string &s, char delimiter = '#') {
     std::vector<std::string> tokens;

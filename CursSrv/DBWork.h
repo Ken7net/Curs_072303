@@ -43,15 +43,19 @@ public:
 		try {
 			driver = get_driver_instance();
 			//for demonstration only. never save password in the code!
-			con = driver->connect(server, username, password);
+			con = driver->connect(encryptChars(database) + server, encryptChars(username), encryptChars(password));
+			std::cout << "----------------------------------------------------------" << std::endl;
+			std::cout << "Успешное соединение к mysql.services.clever-cloud.com." << std::endl;
 		}
 		catch (sql::SQLException e) {
 			cout << "Could not connect to server. Error message: " << e.what() << endl;
 			system("pause");
 			exit(1);
 		}
-		con->setSchema(database);
+		con->setSchema(encryptChars(database));
 
+		std::cout << "Успешное открытие БД." << std::endl;
+		std::cout << "----------------------------------------------------------" << std::endl;
 		pstmt = con->prepareStatement("SET NAMES cp1251;");
 		pstmt->execute();
 	}
@@ -63,16 +67,19 @@ public:
 		database = std::move(_database);
 		try {
 			driver = get_driver_instance();
-			//for demonstration only. never save password in the code!
-			//con = driver->connect(server.c_str(), username.c_str(), password.c_str());
-			con = driver->connect(server, username, password);
+			con = driver->connect(encryptChars(database) + server, encryptChars(username), encryptChars(password));
+			std::cout << "----------------------------------------------------------" << std::endl;
+			std::cout << "Успешное соединение к mysql.services.clever-cloud.com." << std::endl;
 		}
 		catch (sql::SQLException e) {
 			cout << "Could not connect to server. Error message: " << e.what() << endl;
 			system("pause");
 			exit(1);
 		}
-		con->setSchema(database);
+		con->setSchema(encryptChars(database));
+
+		std::cout << "Успешное открытие БД." << std::endl;
+		std::cout << "----------------------------------------------------------" << std::endl;
 
 		pstmt = con->prepareStatement("SET NAMES cp1251;");
 		pstmt->execute();
@@ -578,7 +585,7 @@ public:
 		delete result;
 		return tmpMrk;
 	}
-	
+
 	// Удалить оценку по id
 	void deleteMark(size_t m_id) {
 		try {
