@@ -21,12 +21,12 @@ public:
 	//static vector<std::string> vcMainMenu = {"Логин", "Регистрация", "Выход"};
 
 	std::string strMenuMain = "-=-=-=-=  М е н ю  =-=-=-=-#Логин#Регистрация#Логаут#Выход";
-	std::string strMenuAdmin = "\tАдминистратор#Добавление#Редактировать#Удаление#Сохранение информации в бд#Поиск#Просмотр инвестиционных проектов#Сортировка инвестиционных проектов#Ранжировать инвестиционные проекты#Вывести результат ранжирования ИП#Выход";
+	std::string strMenuAdmin = "\tАдминистратор#Добавление#Редактировать#Удаление#Сохранение информации в бд#Поиск#Просмотр инвестиционных проектов#Сортировка инвестиционных проектов#Ранжировать инвестиционные проекты#Выход";
 	std::string strMenuAdminAdd = "Вы хотите добавить: #Новых пользователей#Новые компании#Новые проекты#Назад";
 	std::string strMenuAdminEdit = "Вы хотите редактировать данные:#Пользователей#Компании#Проектов#Назад";
 	std::string strMenuAdminDel = "Вы хотите удалить: #Пользователя#Компанию#Проект#Назад";
 	std::string strMenuAdminSave = "Вы хотите сохранить информацию о:#Пользователях#Компаниях#Проектах#Назад";
-	std::string strMenuAdminRanking = "Ранжировать инвестиционные проекты:#Осуществить попарное сравнение проектов#Найти оценки#Вычислить веса проектов#Составить порядок предпочтений#Назад";
+	std::string strMenuAdminRanking = "Ранжировать инвестиционные проекты:#Осуществить попарное сравнение проектов#Найти оценки#Вычислить веса проектов#Составить порядок предпочтений#Вывести результат ранжирования ИП#Назад";
 	std::string strMenuCompany = "\tКомпания#Ввод данных#Редактировать данные#Сохранение информации в бд#Удаление данныхВыход";
 	std::string strMenuCompanyAdd = "Вы хотите добавить данные:#Компании#Проектов#Назад";
 	std::string strMenuCompanyEdit = "Вы хотите редактировать данные:#Компании#Проектов#Назад";
@@ -42,8 +42,8 @@ public:
 	explicit A_menu(SOCKET connection) {
 		sock = connection;
 		// Зашифрованные имя_пользователя, пароль и имя_базы_данных
-		db.connect("-mysql.services.clever-cloud.com:3306", "xgbhnnb`id{ty<~`", "Ue;LioBjUwN4]:L|T5G", "o>jc`fzotxojunu88n");
-		//db.connect("tcp://127.0.0.1:3306", "myuser", "mypass", "curs");
+		//db.connect("-mysql.services.clever-cloud.com:3306", "xgbhnnb`id{ty<~`", "Ue;LioBjUwN4]:L|T5G", "o>jc`fzotxojunu88n");
+		db.connect("tcp://127.0.0.1:3306", "myuser", "mypass", "curs");
 	}
 
 	// Деструктор
@@ -378,8 +378,7 @@ public:
 		* 6. Просмотр инвестиционных проектов#
 		* 7. Сортировка инвестиционных проектов#
 		* 8. Ранжировать инвестиционные проекты#
-		* 9. Вывести результат ранжирования ИП#
-		* 10.Выход"
+		* 9. Выход"
 		*/
 		sendString(sock, "menu");
 		sendString(sock, strMenuAdmin);
@@ -422,9 +421,6 @@ public:
 				menuAdminRanking();
 				break;
 			case 9:
-				// Вывести результаты рнажирования
-				break;
-			case 10:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuMain);
 				return;
@@ -588,7 +584,8 @@ public:
 		* 2. Осуществить попарное сравнение проектов#
 		* 3. Вычислить веса проектов#
 		* 4. Составить порядок предпочтений#
-		* 5. Назад
+		* 5. Вывести результат ранжирования ИП#
+		* 6. Назад
 		*/
 		sendString(sock, "menu");
 		sendString(sock, strMenuAdminRanking);
@@ -644,6 +641,18 @@ public:
 				rating.printRatingSock("file");
 				break;
 			case 5:
+				// Вывести результат ранжирования ИП
+
+				// Вывод таблицы ранжирования
+				rating.printRatingTable();
+				rating.printRatingTableSock();
+				rating.printRatingTableSock("file");
+				// Вывод результата ранжирования
+				rating.printRating();
+				rating.printRatingSock();
+				rating.printRatingSock("file");
+				break;
+			case 6:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuAdmin);
 				return;
