@@ -169,6 +169,22 @@ public:
 		std::cout << "В список добавлено " << cntProjects << " проекта(ов)." << std::endl;
 	}
 
+	// Выбор номера для ранжа
+	void selectNumber(std::vector<std::string> vc) {
+		std::cout << "--------------------------------------------" << std::endl;
+		sendString(sock, "menu303");
+		sendString(sock, toString(vc, "Выберите номер ранжирования:"));
+		size_t ch = takeInt(sock);
+		if (ch == 0) return;
+		else if (ch != vc.size() + 1) {
+			number = stoi(vc[ch - 1]);
+		}
+		else {
+			number = stoi(vc[vc.size() - 1]) + 1;
+		}
+		std::cout << "Выбран номер: " << number << std::endl;
+	}
+
 	//Ввод оценок одним экспертом
 	std::vector<Mark> enterRank(std::pair<std::string, size_t> expert, size_t flag = 0) {
 		MarkSock tmpMark(sock);
@@ -191,12 +207,13 @@ public:
 	}
 
 	//Ввод оценок всеми экспертами
-	void enterRanks() {
+	void enterRanks(size_t _number) {
 		MarkSock tmpMark(sock);
 		std::vector<Mark> mrk;
 		std::cout << "--------------------------------------------" << std::endl;
 		printVcProjects();
 		std::cout << "Ввод оценок (для ранжирования) от всех экспертов!" << std::endl;
+		number = _number;
 		for (auto& it : mpExperts) {
 			mrk.clear();
 			/*for (size_t j = 0; j < cntProjects; j++) {
@@ -212,6 +229,8 @@ public:
 			mrk = enterRank(it);
 		}
 	}
+
+
 
 	//Расчет суммарных значений
 	void calcTotal() {
@@ -285,8 +304,8 @@ public:
 			// Заголовок
 		}
 		for (auto& it : vcProjects) {
-			if (it == vcProjects[0]) it.printProject(2, 1);
-			else it.printProject(2);
+			if (it == vcProjects[0]) it.printProjectWeight(2, 1);
+			else it.printProjectWeight(2);
 		}
 	}
 
@@ -297,8 +316,8 @@ public:
 			// Заголовок
 		}
 		for (auto& it : vcProjects) {
-			if (it == vcProjects[0]) it.printProjectSock(sock, 2, 1);
-			else it.printProjectSock(sock, 2);
+			if (it == vcProjects[0]) it.printProjectWeightSock(sock, 2, 1);
+			else it.printProjectWeightSock(sock, 2);
 		}
 		sendString(sock, "end");
 	}

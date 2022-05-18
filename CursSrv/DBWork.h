@@ -192,6 +192,22 @@ public:
 		delete result;
 		return tmp;
 	}
+
+	// Получить всех пользователей
+	std::vector<User> getUsers() {
+		User tmp;
+		std::vector<User> tmpU;
+		pstmt = con->prepareStatement("SELECT * FROM user;");
+		result = pstmt->executeQuery();
+		while (result->next()) {
+			tmp.setUid(result->getInt(1));
+			tmp.setUser(result->getString(2), result->getString(3), result->getString(4), result->getString(5));
+			tmpU.push_back(tmp);
+		}
+		delete result;
+		return tmpU;
+	}
+
 	// Удалить пользователя по id
 	void deleteUser(size_t u_id) {
 		try {
@@ -266,6 +282,21 @@ public:
 		delete result;
 		return tmp;
 	}
+
+	// Получить компании
+	/*std::vector<Company> getCompanies() {
+		Company tmp;
+		pstmt = con->prepareStatement("SELECT * FROM company WHERE " + field_name + " = ?;");
+		pstmt->setString(1, u_name);
+		result = pstmt->executeQuery();
+		while (result->next()) {
+			tmp.setId(result->getInt(1));
+			tmp.setCompany(result->getString(2), result->getString(3), result->getInt(4));
+		}
+		delete result;
+		return tmp;
+	}*/
+
 	// Удалить компанию по id
 	void deleteCompany(size_t u_id) {
 		try {
@@ -360,6 +391,22 @@ public:
 		}
 		delete result;
 		return tmpMp;
+	}
+
+	// Получение vector проектов
+	std::vector<Project> getProjectVc(/*const std::string& field_name, const std::string& p_name*/) {
+		Project tmp;
+		std::vector<Project> tmpVc;
+		pstmt = con->prepareStatement("SELECT * FROM project;");
+		//pstmt->setString(1, p_name);
+		result = pstmt->executeQuery();
+		while (result->next()) {
+			tmp.setProject(result->getInt(1), result->getString(2), result->getInt(3), result->getInt(4),
+				result->getString(5), result->getString(6), result->getInt(7));
+			tmpVc.push_back(tmp);
+		}
+		delete result;
+		return tmpVc;
 	}
 
 	// Удалить проект по id
@@ -585,6 +632,30 @@ public:
 		}
 		delete result;
 		return tmpMrk;
+	}
+
+	// Получение номеров ранжей
+	std::vector<std::string> getNumbersMark() {
+		vector<string> tmp;
+		std::string str = "";
+		pstmt = con->prepareStatement("SELECT number, COUNT(number) * 2 AS count FROM mark GROUP BY number;");
+		result = pstmt->executeQuery();
+		while (result->next()) {
+			tmp.push_back(result->getString(1).c_str());
+		}
+		delete result;
+		return tmp;
+	}
+
+	size_t getNewNumber() {
+		size_t tmp = 0;
+		pstmt = con->prepareStatement("SELECT MAX(number) FROM mark;");
+		result = pstmt->executeQuery();
+		while (result->next()) {
+			tmp = result->getInt(1);
+		}
+		delete result;
+		return tmp + 1;
 	}
 
 	// Удалить оценку по id

@@ -18,7 +18,7 @@ int vcChoiceOld(std::vector<std::string> vc, const std::string& strMenu = "", bo
 	} while ((ch < 0) || (ch > vc.size()));
 	return ch;
 }
-int vcChoice(std::vector<std::string> vc, size_t cancel = 1) {
+int vcChoice(std::vector<std::string> vc, size_t cancel = 1, std::string topStr = "Все") {
 	std::cout << vc[0] << std::endl;
 	for (size_t i = 1; i < vc.size(); ++i) {
 		std::cout << std::setw(2) << i << ". " << vc[i] << std::endl;
@@ -28,7 +28,7 @@ int vcChoice(std::vector<std::string> vc, size_t cancel = 1) {
 	if (cancel == vc.size()) {
 		topVc = cancel;
 		cancel = 0;
-		std::cout << std::setw(2) << topVc << ". -= Все =-" << std::endl;
+		std::cout << std::setw(2) << topVc << ". -= " + topStr + " = -" << std::endl;
 	}
 	if (cancel == 0) {
 		std::cout << " 0. -= ОТМЕНА =-" << std::endl;
@@ -131,8 +131,12 @@ public:
 					vcMenu.clear();
 				}
 				vcMenu = takeMenu(cn);
-				if (v != 1 && v != 0) v = vcMenu.size();
-				sendInt(cn, vcChoice(vcMenu, v));
+				std::string topS;
+				if (v != 1 && v != 0) { 
+					if (v == 303) topS = "Новый";
+					v = vcMenu.size();
+				}
+				sendInt(cn, vcChoice(vcMenu, v, topS));
 				str = "";
 				v = 1;
 			}

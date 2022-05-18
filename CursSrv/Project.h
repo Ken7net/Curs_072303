@@ -234,8 +234,23 @@ public:
 		tmp.setProject(_projectId, _projectName, _sumCredit, _creditTime, _sudReestr, _applicationDate.getDateStr(), _companyId);
 	}
 
-	// Вывод проекта
-	void printProject(size_t flag, size_t head = 0) {
+	// Вывод проекта c весами
+	void printProject(std::string companyStr, bool head = false) {
+		if (head) {
+			// заголовок
+			std::cout << "+----+----------------------------------------+-----------+-------+---+----------+-------------------+" << std::endl;
+			std::cout << "| Id | Наименование проекта                   | Сумма     | Срок  | СР|  Дата    | Компания          |" << std::endl;
+			std::cout << "+----+----------------------------------------+-----------+-------+---+----------+-------------------+" << std::endl;
+		}
+		std::cout << "|" << std::right << std::setw(3) << project_id << " |" << std::left << std::setw(40) << project_name << "|"
+			<< std::setw(11) << sum_credit << "|" << std::setw(7) << credit_time << "|" << std::setw(3) << sud_reestr << "|" << application_date.getDateStr() << "|" << std::setw(19) << companyStr << "|" << std::endl;
+
+		std::cout << "+----+----------------------------------------+-----------+-------+---+----------+-------------------+" << std::endl;
+
+	}
+
+	// Вывод проекта c весами
+	void printProjectWeight(size_t flag, size_t head = 0) {
 		if (head != 0) {
 			// заголовок
 			std::cout << "+----+----------------------------------------+------+" << std::endl;
@@ -249,7 +264,23 @@ public:
 	}
 
 	// Вывод проекта в сокет
-	void printProjectSock(SOCKET sc, size_t flag, size_t head = 0) {
+	void printProjectSock(SOCKET sc, std::string companyStr, bool head = false) {
+			if (head) {
+				// заголовок
+				sendString(sc, "+----+----------------------------------------+-----------+-------+---+----------+-------------------+\n");
+				sendString(sc, "| Id | Наименование проекта                   | Сумма     | Срок  | СР|  Дата    | Компания          |\n");
+				sendString(sc, "+----+----------------------------------------+-----------+-------+---+----------+-------------------+\n");
+			}
+			std::stringstream ss;
+			ss << "|" << std::right << std::setw(3) << project_id << " |" << std::left << std::setw(40) << project_name << "|"
+				<< std::setw(11) << sum_credit << "|" << std::setw(7) << credit_time << "|" << std::setw(3) << sud_reestr << "|" << application_date.getDateStr() << "|" << std::setw(19) << companyStr << "|" << std::endl;
+			sendString(sc, ss.str());
+			ss.str("");
+			sendString(sc, "+----+----------------------------------------+-----------+-------+---+----------+-------------------+\n");
+	}
+
+	// Вывод проекта с весами в сокет
+	void printProjectWeightSock(SOCKET sc, size_t flag, size_t head = 0) {
 		if (head != 0) {
 			// заголовок
 			sendString(sc, "+----+----------------------------------------+------+\n");

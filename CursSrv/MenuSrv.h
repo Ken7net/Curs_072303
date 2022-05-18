@@ -43,7 +43,8 @@ public:
 		sock = connection;
 		// Зашифрованные имя_пользователя, пароль и имя_базы_данных
 		//db.connect("-mysql.services.clever-cloud.com:3306", "xgbhnnb`id{ty<~`", "Ue;LioBjUwN4]:L|T5G", "o>jc`fzotxojunu88n");
-		db.connect("tcp://127.0.0.1:3306", "myuser", "mypass", "curs");
+		db.connect("10.182.67.148:3306", "myuser", "MyPas$curs2", "curs");
+		//db.connect("tcp://127.0.0.1:3306", "myuser", "mypass", "curs");
 	}
 
 	// Деструктор
@@ -159,6 +160,17 @@ public:
 		std::cout << "---------------------------------" << std::endl;
 	}
 
+	//----- Вывод пользователей -----
+	void printUsers(std::string toFile = "") {
+		std::vector<User> users = db.getUsers();
+
+		for (auto& it : users) {
+			it.printUser(it == users[0]);
+			UserSock::printUserSock(sock, it, "", it == users[0]);
+			UserSock::printUserSock(sock, it, toFile, it == users[0]);
+		}
+	}
+
 	//--------- Ввод новой компании ---------
 	void addCompany() {
 		CompanySock cmp(sock);
@@ -215,6 +227,24 @@ public:
 		std::cout << oldCompany;
 		db.deleteCompany(oldCompany.getId());
 		std::cout << "---------------------------------" << std::endl;
+	}
+
+	//------------ Вывод проектов -----------
+	void printProjects() {
+		std:vector<Project> vcPrs = db.getProjectVc();
+		for (auto& it : vcPrs) {
+			it.printProject(db.getCompany("company_id", std::to_string(it.getCompanyId())).getName(), it == vcPrs[0]);
+		}
+	}
+
+	//------- Вывод проектов в сокет --------
+	void printProjectsSock(std::string fout = "") {
+		sendString(sock, "output" + fout);
+		std:vector<Project> vcPrs = db.getProjectVc();
+		for (auto& it : vcPrs) {
+			it.printProjectSock(sock, db.getCompany("company_id", std::to_string(it.getCompanyId())).getName(), it == vcPrs[0]);
+		}
+		sendString(sock, "end");
 	}
 
 	//--------- Ввод нового проекта ---------
@@ -302,13 +332,32 @@ public:
 	//---------- Ввод новой оценки ----------
 	void addMark() {
 		MarkSock mark(sock);
-		mark.enterMark(db.getGuideMap("user", 2, 1), db.getGuideMap("project", 2));
+		mark.enterMarkAll(db.getGuideMap("user", 2, 1), db.getGuideMap("project", 2));
 		//mark.setCompanyId(db.getCompany("company_name", project.Companies[project.getCompanyId()]).getId());
 		std::cout << mark;
 		db.addMark(mark);
 		std::cout << "---------- Ввод новой оценки ----------" << std::endl;
 		std::cout << mark;
 		std::cout << "---------------------------------------" << std::endl;
+	}
+
+	// Выбор номера ранжа
+	//--------- Список оценок map ---------
+	size_t listNumberMark(/*map<string, size_t>& vc*/) {
+		int ch = 0;
+		/*if (!vc.empty()) vc.clear();
+		vc = db.getGuideMap("mark", 2);
+		vector<string> tmp = toVector(vc);*/
+		vector<string> tmp = db.getNumbersMark();
+		sendString(sock, "menu151");
+		sendString(sock, toString(tmp, "Выберите номер оценивания: "));
+		ch = takeInt(sock);
+		if (ch != 0) {
+			////ch = vc[tmp[ch]];
+			//std::cout << tmp[ch] << " " << tmp[ch - 1] << " " << vc[tmp[ch - 1]] << endl;
+			//ch = vc[tmp[ch - 1]];
+		}
+		return ch;
 	}
 
 	//--------- Список оценок map ---------
@@ -342,7 +391,8 @@ public:
 		std::cout << oldMark;
 		std::cout << "---------------------------------------" << std::endl;
 		MarkSock newMark(sock);
-		newMark.enterMark(db.getGuideMap("user", 2, 1), db.getGuideMap("project", 2));
+		//newMark.enterMark(db.getGuideMap("user", 2, 1), db.getGuideMap("project", 2));
+		newMark.enterMark(oldMark.getNumber(), oldMark.getUserId(), oldMark.getProject1Id(), oldMark.getProject2Id());
 		newMark.setMarkId(oldMark.getMarkId());
 		//newProject.setCompanyId(db.getCompany("company_name", newProject.Companies[newProject.getCompanyId()]).getId());
 		//db.editProject(newProject, oldProject.getProjectId());
@@ -968,44 +1018,55 @@ public:
 				//rating.selectProjects(db.getProjectMp());
 				//// Ввод оценок
 				//rating.setNumber(3);
-				//rating.enterRanks();
+				//rating.enterRanks(db.getNewNumber());
 				//for (auto& it : rating.ranking) {
 				//	for (auto& iit : it.second) {
 				//		db.addMark(iit);
 				//	}
 				//}
 
-				rating.setNumber(3);
 
-				// Загрузка оценок
-				rating.ranking = db.getMpMarks(rating.getNumber());
 
-				// Загрузка экспертов в ранже
-				rating.mpExperts = db.getExpertMapMark(rating.getNumber());
-				rating.setCntExperts();
+				//rating.setNumber(listNumberMark());
+				//rating.selectNumber(db.getNumbersMark());
 
-				// Загрузка проектов в ранже
-				rating.vcProjects = db.getProjectVcMark(rating.getNumber());
-				rating.setCntProjects();
+				//// Загрузка оценок
+				//rating.ranking = db.getMpMarks(rating.getNumber());
 
-				//// Вывод проектов ранжа
-				//rating.printVcProjects();
-				//rating.printVcProjectsSock();
-				//rating.printVcProjectsSock("file");
+				//// Загрузка экспертов в ранже
+				//rating.mpExperts = db.getExpertMapMark(rating.getNumber());
+				//rating.setCntExperts();
 
-				// Расчет весов и сумм по парным сравнениям
-				rating.vcProjects = db.getWeightVcMark(rating.getNumber());
-				rating.rankingTotal = db.getVcTotalMarks(rating.getNumber());
+				//// Загрузка проектов в ранже
+				//rating.vcProjects = db.getProjectVcMark(rating.getNumber());
+				//rating.setCntProjects();
 
-				// Вывод таблицы ранжирования
-				rating.printRatingTable();
-				rating.printRatingTableSock();
-				rating.printRatingTableSock("file");
+				////// Вывод проектов ранжа
+				////rating.printVcProjects();
+				////rating.printVcProjectsSock();
+				////rating.printVcProjectsSock("file");
 
-				// Вывод результата ранжирования
-				rating.printRating();
-				rating.printRatingSock();
-				rating.printRatingSock("file");
+				//// Расчет весов и сумм по парным сравнениям
+				//rating.vcProjects = db.getWeightVcMark(rating.getNumber());
+				//rating.rankingTotal = db.getVcTotalMarks(rating.getNumber());
+
+				//// Вывод таблицы ранжирования
+				//rating.printRatingTable();
+				//rating.printRatingTableSock();
+				//rating.printRatingTableSock("file");
+
+				//// Вывод результата ранжирования
+				//rating.printRating();
+				//rating.printRatingSock();
+				//rating.printRatingSock("file");
+
+				// вывод пользователей в консоль сервера
+				//printUsers("file");
+
+				// вывод проектов в консоль сервера
+				printProjects();
+				printProjectsSock();
+				printProjectsSock("file");
 
 				//menuAdmin();
 				break;

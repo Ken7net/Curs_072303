@@ -201,15 +201,35 @@ public:
 		this->sock = _sock;
 	}
 
-	void enterMark(std::map<std::string, size_t> mpUsers, std::map<string, size_t> mpProjects) {
-		size_t _number, userId, project1Id, project2Id;
-		std::string numberStr, userIdStr, project1IdStr, project2IdStr, _valueStr;
+	void enterMark(size_t _number, size_t userId, size_t project1Id, size_t project2Id) {
+		std::string _valueStr;
 		float _value;
 
 		// получение
 		// Number авто из БД
 		// expert_Id из БД (текущий пользователь)
 		// project1_id и project2_id выбор из БД
+		// ----- Выбор эксперта -----
+		sendString(sock, "data");
+		sendString(sock, "Оценку ( " + std::to_string(project1Id) + " <-> " + std::to_string(project2Id) + " ): ");
+		do {
+			_valueStr = takeString(sock);
+			if (Checks::checkNoLetters(_valueStr)) {
+				_value = std::stof(_valueStr);
+				break;
+			}
+			else
+				cout << "Некорректный ввод. Повторите попытку.\nОценку: ";
+		} while (true);
+		sendString(sock, "end");
+		setMark(0, _number, userId, project1Id, project2Id, _value);
+	}
+
+	void enterMarkAll(std::map<std::string, size_t> mpUsers, std::map<string, size_t> mpProjects) {
+		size_t _number, userId, project1Id, project2Id;
+		std::string numberStr, userIdStr, project1IdStr, project2IdStr, _valueStr;
+		float _value;
+
 		// ----- Выбор эксперта -----
 		vector<string> vc = toVector(mpUsers);
 		sendString(sock, "menu");
@@ -264,16 +284,7 @@ public:
 		std::string numberStr, userIdStr, project1IdStr, project2IdStr, _valueStr;
 		float _value;
 		sendString(sock, "data");
-		//sendString(sock, "Номер ранжа: ");
-		//do {
-		//	numberStr = takeString(sock);
-		//	if (Checks::checkNoLetters(_valueStr)) {
-		//		_number = std::stol(numberStr);
-		//		break;
-		//	}
-		//	else
-		//		cout << "Некорректный ввод. Повторите попытку.\nНомер ранжа: ";
-		//} while (true);
+
 		std::string str = "Эксперт " + userId.first;
 		str += ". Оценкa(" + to_string(project1Id);
 		str += " <-> " + to_string(project2Id);
