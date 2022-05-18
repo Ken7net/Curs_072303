@@ -284,18 +284,19 @@ public:
 	}
 
 	// Получить компании
-	/*std::vector<Company> getCompanies() {
+	std::vector<Company> getCompanies() {
+		std::vector<Company> tmpVc;
 		Company tmp;
-		pstmt = con->prepareStatement("SELECT * FROM company WHERE " + field_name + " = ?;");
-		pstmt->setString(1, u_name);
+		pstmt = con->prepareStatement("SELECT * FROM company;");
 		result = pstmt->executeQuery();
 		while (result->next()) {
 			tmp.setId(result->getInt(1));
 			tmp.setCompany(result->getString(2), result->getString(3), result->getInt(4));
+			tmpVc.push_back(tmp);
 		}
 		delete result;
-		return tmp;
-	}*/
+		return tmpVc;
+	}
 
 	// Удалить компанию по id
 	void deleteCompany(size_t u_id) {

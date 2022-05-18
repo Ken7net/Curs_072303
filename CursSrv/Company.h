@@ -73,18 +73,46 @@ public:
 		//return *this;
 	}
 
-	// Функция для просмотра сотрудника администратором
+	bool operator==(const Company& rhs) const {
+		return id == rhs.id &&
+			name == rhs.name &&
+			activity == rhs.activity &&
+			finance == rhs.finance;
+	}
+
+	bool operator!=(const Company& rhs) const {
+		return !(rhs == *this);
+	}
+
+	// Вывод компании в конссоль или файл
 	void printCompany(bool one = false, ostream& fout = std::cout) const {
-		//        if (one) {
-		//            fout << "+-------------------------------------+------------------------+--------+-------------+----------+"
-		//                 << endl;
-		//        }
-		//        fout << "|" << setw(37) << left << this->getFio() << "|"
-		//             << setw(24) << left << this->getLogin() << "|"
-		//             << setw(13) << this->getPass() << "|"
-		//             << setw(13) << this->getRole() << "|" << endl;
-		//        fout << "+-------------------------------------+------------------------+--------+-------------+----------+"
-		//             << endl;
+		if (one) {
+		    fout << "+----+---------------+--------------------+------------+" << endl;
+			fout << "| Id | Наименование  | Вид деятельности   | Финансы    |" << endl;
+			fout << "+----+---------------+--------------------+------------+" << endl;
+		}
+		fout << "|" << setw(4) << right << id << "|"
+		        << setw(15) << left << name << "|"
+		        << setw(20) << activity << "|"
+		        << setw(12) << finance << "|" << endl;
+		fout << "+----+---------------+--------------------+------------+" << endl;
+	}
+
+	// Вывод компании в сокет
+	void printCompanySock(SOCKET sc, bool one = false) const {
+		if (one) {
+			sendString(sc, "+----+---------------+--------------------+------------+\n");
+			sendString(sc, "| Id | Наименование  | Вид деятельности   | Финансы    |\n");
+			sendString(sc, "+----+---------------+--------------------+------------+\n");
+		}
+		std::stringstream ss;
+		ss << "|" << setw(4) << right << id << "|"
+			<< setw(15) << left << name << "|"
+			<< setw(20) << activity << "|"
+			<< setw(12) << finance << "|" << endl;
+		sendString(sc, ss.str());
+		ss.str("");
+		sendString(sc, "+----+---------------+--------------------+------------+\n");
 	}
 
 	static void enterCompany(Company& tmp) {

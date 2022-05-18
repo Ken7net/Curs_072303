@@ -229,9 +229,28 @@ public:
 		std::cout << "---------------------------------" << std::endl;
 	}
 
+	//------------ Вывод компаний -----------
+	void printCompanies() {
+		std:vector<Company> vcCmps = db.getCompanies();
+		for (auto& it : vcCmps) {
+			it.printCompany(it == vcCmps[0]);
+		}
+	}
+
+	//------- Вывод компаний в сокет --------
+	void printCompaniesSock(std::string fout = "") {
+		sendString(sock, "output" + fout);
+		std:vector<Company> vcCmps = db.getCompanies();
+		for (auto& it : vcCmps) {
+			//it.printCompanySock(sock, db.getCompany("company_id", std::to_string(it.getCompanyId())).getName(), it == vcPrs[0]);
+			it.printCompanySock(sock, it == vcCmps[0]);
+		}
+		sendString(sock, "end");
+	}
+
 	//------------ Вывод проектов -----------
 	void printProjects() {
-		std:vector<Project> vcPrs = db.getProjectVc();
+	std:vector<Project> vcPrs = db.getProjectVc();
 		for (auto& it : vcPrs) {
 			it.printProject(db.getCompany("company_id", std::to_string(it.getCompanyId())).getName(), it == vcPrs[0]);
 		}
@@ -240,7 +259,7 @@ public:
 	//------- Вывод проектов в сокет --------
 	void printProjectsSock(std::string fout = "") {
 		sendString(sock, "output" + fout);
-		std:vector<Project> vcPrs = db.getProjectVc();
+	std:vector<Project> vcPrs = db.getProjectVc();
 		for (auto& it : vcPrs) {
 			it.printProjectSock(sock, db.getCompany("company_id", std::to_string(it.getCompanyId())).getName(), it == vcPrs[0]);
 		}
@@ -1063,10 +1082,14 @@ public:
 				// вывод пользователей в консоль сервера
 				//printUsers("file");
 
-				// вывод проектов в консоль сервера
-				printProjects();
-				printProjectsSock();
-				printProjectsSock("file");
+				//// вывод проектов в консоль сервера
+				//printProjects();
+				//printProjectsSock();
+				//printProjectsSock("file");
+
+				printCompanies();
+				printCompaniesSock();
+				printCompaniesSock("file");
 
 				//menuAdmin();
 				break;
