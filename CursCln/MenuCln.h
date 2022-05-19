@@ -18,7 +18,7 @@ int vcChoiceOld(std::vector<std::string> vc, const std::string& strMenu = "", bo
 	} while ((ch < 0) || (ch > vc.size()));
 	return ch;
 }
-int vcChoice(std::vector<std::string> vc, size_t cancel = 1, std::string topStr = "Все") {
+int vcChoice(std::vector<std::string> vc, std::string topStr, size_t cancel = 1) {
 	std::cout << vc[0] << std::endl;
 	for (size_t i = 1; i < vc.size(); ++i) {
 		std::cout << std::setw(2) << i << ". " << vc[i] << std::endl;
@@ -131,12 +131,12 @@ public:
 					vcMenu.clear();
 				}
 				vcMenu = takeMenu(cn);
-				std::string topS;
+				std::string topS = "Все";
 				if (v != 1 && v != 0) { 
 					if (v == 303) topS = "Новый";
 					v = vcMenu.size();
 				}
-				sendInt(cn, vcChoice(vcMenu, v, topS));
+				sendInt(cn, vcChoice(vcMenu, topS, v));
 				str = "";
 				v = 1;
 			}
@@ -145,7 +145,7 @@ public:
 				str = takeString(cn);
 				while (str != "end") {
 					std::cout << str;
-					if (str.find("Пароль: ", 0) != std::string::npos) {
+					if (str.find("Пароль", 0) != std::string::npos) {
 						str = input_pass();
 					}
 					else {

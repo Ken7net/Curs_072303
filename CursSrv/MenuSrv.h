@@ -1,5 +1,5 @@
-﻿#ifndef CURSCLN_MENUSRV_H
-#define CURSCLN_MENUSRV_H
+﻿#ifndef CURSSRV_MENUSRV_H
+#define CURSSRV_MENUSRV_H
 
 #include "..\Utils\stdafx.h"
 #include "User.h"
@@ -9,14 +9,14 @@
 
 using namespace std;
 
-
 class A_menu {
 private:
 	SOCKET sock;
 	DBWork db;
-	tUser userC;
-	vector<size_t> vcProjectOp;	//Вектор проектов для оценивания
-	vector<double> vcMarksOp;	//Вектор оценок проектов
+	UserSock curUser;
+	//vector<size_t> vcProjectOp;	//Вектор проектов для оценивания
+	//vector<double> vcMarksOp;	//Вектор оценок проектов
+
 public:
 	//static vector<std::string> vcMainMenu = {"Логин", "Регистрация", "Выход"};
 
@@ -33,6 +33,7 @@ public:
 	std::string strMenuCompanySave = "Вы хотите сохранить информацию о:#Компании#Проектах#Назад";
 	std::string strMenuCompanyDel = "Вы хотите удалить информацию о:#Компании#Проекте#Назад";
 	std::string strMenuExpert = "\tЭксперт#Выставление оценок#Редактировать данные о себе#Просмотреть информацию об инвестиционных проектах#Выход";
+	std::string strMenuEditUserSelf = "-= Редактирование пользователя#Фамилия Имя#Логин#Пароль";
 
 	// Конструктор
 	A_menu() {
@@ -41,10 +42,10 @@ public:
 
 	explicit A_menu(SOCKET connection) {
 		sock = connection;
+		curUser.setSock(sock);
 		// Зашифрованные имя_пользователя, пароль и имя_базы_данных
 		//db.connect("-mysql.services.clever-cloud.com:3306", "xgbhnnb`id{ty<~`", "Ue;LioBjUwN4]:L|T5G", "o>jc`fzotxojunu88n");
-		db.connect("10.182.67.148:3306", "myuser", "MyPas$curs2", "curs");
-		//db.connect("tcp://127.0.0.1:3306", "myuser", "mypass", "curs");
+		db.connect("tcp://127.0.0.1:3306", "myuser", "mypass", "curs");
 	}
 
 	// Деструктор
@@ -144,6 +145,35 @@ public:
 		std::cout << "---------------------------------" << std::endl;
 	}
 
+	//-- Редактирование пользователя собой --
+	void editUserSelf() {
+
+		sendString(sock, "menu" + std::to_string(split(strMenuEditUserSelf).size()));
+		sendString(sock, strMenuEditUserSelf);
+
+		/*sendString(sock, "menu" + std::to_string(mode));
+		sendString(sock, toString(tmp, "Выберите проект: "));*/
+		UserSock oldUser = curUser;
+		size_t ch = takeInt(sock);
+		if (ch > 0) {
+			std::cout << ch << std::endl;
+			//UserSock user(sock, db.getGuide("user_role", 1));
+			//user.enterUser();
+			//user.setUid(oldUser.getUid());
+			curUser.editUserSock(ch);
+			db.editUser(curUser, oldUser.getUid());
+			std::cout << "-- Редактирование пользователя --" << std::endl;
+			std::cout << oldUser;
+			std::cout << "---------------------------------" << std::endl;
+			std::cout << curUser;
+			std::cout << "---------------------------------" << std::endl;
+		}
+		else {
+			std::cout << "- Редактирование пользователя отменено -" << std::endl;
+			return;
+		}
+	}
+
 	//----- Удаление пользователя -----
 	void deleteUser() {
 		vector<std::string> users;
@@ -231,7 +261,7 @@ public:
 
 	//------------ Вывод компаний -----------
 	void printCompanies() {
-		std:vector<Company> vcCmps = db.getCompanies();
+	std:vector<Company> vcCmps = db.getCompanies();
 		for (auto& it : vcCmps) {
 			it.printCompany(it == vcCmps[0]);
 		}
@@ -240,7 +270,7 @@ public:
 	//------- Вывод компаний в сокет --------
 	void printCompaniesSock(std::string fout = "") {
 		sendString(sock, "output" + fout);
-		std:vector<Company> vcCmps = db.getCompanies();
+	std:vector<Company> vcCmps = db.getCompanies();
 		for (auto& it : vcCmps) {
 			//it.printCompanySock(sock, db.getCompany("company_id", std::to_string(it.getCompanyId())).getName(), it == vcPrs[0]);
 			it.printCompanySock(sock, it == vcCmps[0]);
@@ -923,6 +953,7 @@ public:
 		strcpy(p, "");
 		p[0] = '\0';
 		std::string command;
+		Rating rating(sock);
 		int c = -1;
 		while (c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
 			int i = atoi(p);
@@ -930,12 +961,38 @@ public:
 			switch (i) {
 			case 1:
 				// Выставление оценок
+				rating.selectNumber(db.getNumbersMark());
+				if (rating.getNumber() == db.getNewNumber()) {
+					// Новый Ранж
+					rating.selectProjects(db.getProjectMp());
+					rating.addExpert(curUser.getName(), curUser.getUid());
+					rating.enterRank(make_pair(curUser.getName(), curUser.getUid()), 1);
+					db.addMarkVc(rating.ranking[curUser.getUid()]);
+				}
+				else {
+					if (db.getCountExpert(rating.number, curUser.getUid()) == 0) {
+						// Ранж есть, оценок нет
+						rating.vcProjects = db.getProjectVcMark(rating.getNumber());
+						rating.setCntProjects();
+						rating.addExpert(curUser.getName(), curUser.getUid());
+						rating.enterRank(make_pair(curUser.getName(), curUser.getUid()), 1);
+						db.addMarkVc(rating.ranking[curUser.getUid()]);
+					}
+					else {
+						// Ранж есть , оценка есть - редактирование ???
+					}
+				}
 				break;
 			case 2:
 				// Редактировать информацию о себе
+				if (!curUser.isEmptyId()) editUserSelf();
 				break;
 			case 3:
 				// Информация о инвестиционных проектах
+				//// вывод проектов в консоль сервера
+				printProjects();
+				printProjectsSock();
+				//printProjectsSock("file");
 				break;
 			case 4:
 				//sendString(sock, "menu");
@@ -972,9 +1029,11 @@ public:
 			//std::cout << "<- " << com << std::endl;
 			int i = atoi(command.c_str());
 			User oldUser;
+			tUser userC;
 			vector<std::string> users;
 			std::map<std::string, size_t> userS;
 			size_t ch;
+			curUser.setSock(sock);
 			UserSock user(sock, db.getGuide("user_role", 1));
 			CompanySock cmp(sock);
 			ProjectSock project(sock, db.getGuide("company", 2));
@@ -983,18 +1042,22 @@ public:
 			case 1:
 				//Подключение пользователя
 
-				//sendString(sock, "data");
-				//sendString(sock, "Логин: ");
-				//userC.login = takeString(sock);
-				//// ищем пользователя в базе
-				//oldUser = db.getUser("login", userC.login);
-				//// если находим
-				//sendString(sock, "Пароль: ");
-				//userC.pass = takeString(sock);
-				//sendString(sock, "end");
-				//if (userC.pass == oldUser.getPass()) {
-				//	userC.Role = oldUser.getRole();
-				//	std::cout << "login: " << userC.login << " - " << userC.pass << " - " << userC.Role << endl;
+				sendString(sock, "data");
+				sendString(sock, "Логин: ");
+				userC.login = takeString(sock);
+				// ищем пользователя в базе
+				oldUser = db.getUser("login", userC.login);
+				// если находим
+				sendString(sock, "Пароль: ");
+				userC.pass = takeString(sock);
+				sendString(sock, "end");
+				if (userC.pass == encryptChars(oldUser.getPass())) {
+					//if (userC.pass == oldUser.getPass()) {
+					userC.Role = oldUser.getRole();
+					curUser.setUser(oldUser);
+					std::cout << "login: " << curUser.getLogin() << " - " << curUser.getPass() << " - " << curUser.getRole() << endl;
+				}
+
 				//	if (oldUser.getRole() == "Администратор") menuAdmin();
 				//	else if (oldUser.getRole() == "Эксперт") menuExpert();
 				//	else menuCompany();
@@ -1005,7 +1068,10 @@ public:
 				//}
 				//                std::cout << "login: " << user.login << " - " << user.pass << endl;
 				//if user = Admin
-				menuAdmin();
+
+				//editUserSelf();
+
+				//menuAdmin();
 				//menuCompany();
 				break;
 			case 2:
@@ -1087,9 +1153,14 @@ public:
 				//printProjectsSock();
 				//printProjectsSock("file");
 
-				printCompanies();
-				printCompaniesSock();
-				printCompaniesSock("file");
+				//// вывод проектов в консоль сервера
+				//printCompanies();
+				//printCompaniesSock();
+				//printCompaniesSock("file");
+
+				//editUserSelf();
+
+				menuExpert();
 
 				//menuAdmin();
 				break;
@@ -1115,4 +1186,4 @@ public:
 	}
 };
 
-#endif //CURSCLN_MENUSRV_H
+#endif //CURSSRV_MENUSRV_H

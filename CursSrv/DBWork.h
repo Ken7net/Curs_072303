@@ -458,6 +458,13 @@ public:
 			//exit(1);
 		}
 	}
+
+	void addMarkVc(std::vector<Mark> _mark) {
+		for (auto&& it : _mark) {
+			addMark(it);
+		}
+	}
+
 	// Редактировать оценку
 	void editMark(Mark mark, size_t m_id) {
 		try {
@@ -658,6 +665,21 @@ public:
 		delete result;
 		return tmp + 1;
 	}
+
+	size_t getCountExpert(size_t _number, size_t _uid) {
+		size_t cnt = 0;
+		size_t tmp = 0;
+		pstmt = con->prepareStatement("SELECT COUNT(number) FROM mark WHERE number = ? AND user_id = ? GROUP BY number;");
+		pstmt->setInt(1, _number);
+		pstmt->setInt(2, _uid);
+		result = pstmt->executeQuery();
+		while (result->next()) {
+			cnt = result->getInt(1);
+		}
+		delete result;
+		return cnt;
+	}
+
 
 	// Удалить оценку по id
 	void deleteMark(size_t m_id) {

@@ -94,11 +94,20 @@ public:
 	}
 
 	void setUser(const User& rhs) {
+		this->uid = rhs.uid;
 		this->name = rhs.name;
 		this->login = rhs.login;
 		this->pass = rhs.pass;
 		this->role = rhs.role;
 		//return *this;
+	}
+
+	bool isEmpty() {
+		return (login == "");
+	}
+
+	bool isEmptyId() {
+		return (uid == 0);
 	}
 
 	// Функция для просмотра сотрудника администратором
@@ -116,7 +125,7 @@ public:
 			<< endl;
 	}
 
-    virtual void enterUser() {
+	virtual void enterUser() {
 		//User tmp;
 		string _name, _login, _pass, _role;
 		//ФИО
@@ -200,10 +209,102 @@ private:
 public:
 	SOCKET sock;
 
+	UserSock() {
+		sock = NULL;
+	}
+
 	UserSock(SOCKET _sock, std::vector<std::string> vc) : User(std::move(vc)) {
 		this->sock = _sock;
 	}
 
+	void setSock(SOCKET sc) {
+		sock = sc;
+	}
+
+	//
+
+	//- Редактирование Фамилии Имени -
+	void editName(std::string oldStr) {
+		std::string _name, _name2;
+		//-----------------------------------
+		sendString(sock, "Старое значение: " + oldStr + "\nФамилия: ");
+		do {
+			_name = takeString(sock);
+			if (Checks::checkNoNumbers(_name)) {
+				break;
+			}
+			else
+				sendString(sock, "Некорректный ввод. Повторите попытку.\nФамилия: ");
+		} while (true);
+		sendString(sock, "Имя: ");
+		do {
+			_name2 = takeString(sock);
+			if (Checks::checkNoNumbers(_name2)) {
+				break;
+			}
+			else
+				sendString(sock, "Некорректный ввод. Повторите попытку.\nИмя: ");
+		} while (true);
+		_name += " " + _name2;
+		setName(_name);
+	}
+
+	//- Редактирование Логина -
+	void editLogin(std::string oldStr) {
+		std::string _login;
+		sendString(sock, "Логин (" + oldStr + "): ");
+		_login = takeString(sock);
+		setLogin(_login);
+	}
+
+	//- Редактирование пароля -
+	void editPass(std::string oldStr) {
+		std::string _pass;
+		sendString(sock, "Пароль (" + oldStr + "): ");
+		_pass = takeString(sock);
+		setPass(encryptChars(_pass));
+	}
+
+	//- Редактирование роли -
+	void editRole(std::string oldStr) {
+		std::string _role;
+		size_t ch;
+		sendString(sock, "Старое значение: " + oldStr);
+		sendString(sock, "end");
+		sendString(sock, "menu");
+		sendString(sock, toString(Roles));
+		ch = takeInt(sock);
+		if (ch > 0) _role = Roles[ch - 1];
+		else return;
+		setRole(_role);
+	}
+
+	//- Редактирование пользователя -
+	void editUserSock(size_t mode = 4) {
+		sendString(sock, "data");
+		switch (mode)
+		{
+		case 1:
+			editName(getName());
+			break;
+		case 2:
+			editLogin(getLogin());
+			break;
+		case 3:
+			editPass(encryptChars(getPass()));
+			break;
+		case 4:
+			editName(getName());
+			editLogin(getLogin());
+			editPass(getPass());
+			break;
+		default:
+			break;
+		}
+		sendString(sock, "end");
+	}
+
+	//- Ввод нового пользователя --------
 	void enterUser() override {
 		//UserSock tmp;
 		string _name, _login, _pass, _role;
@@ -232,37 +333,19 @@ public:
 		//-----------------------------------
 		sendString(sock, "Логин: ");
 		_login = takeString(sock);
-		//do {
-		//	_login = takeString(sock);
-		//	if (Checks::checkNoNumbers(_login)) {
-		//		break;
-		//	}
-		//	else
-		//		sendString(sock, "Некорректный ввод. Повторите попытку.\nЛогин: ");
-		//} while (true);
 		//-----------------------------------
 		sendString(sock, "Пароль: ");
-		do {
-			_pass = takeString(sock);
-			if (Checks::checkNoLetters(_pass)) {
-				break;
-			}
-			else
-				sendString(sock, "Некорректный ввод. Повторите попытку.\nПароль: ");
-		} while (true);
+		_pass = takeString(sock);
 		//-----------------------------------
 		sendString(sock, "end");
-		//size_t ch = vcChoice("Роль", Roles);
 		size_t ch;
 		sendString(sock, "menu");
 		sendString(sock, toString(Roles));
 		ch = takeInt(sock);
 		if (ch > 0) _role = Roles[ch - 1];
 		else return;
-		//setlocale(LC_ALL, ".1251");
-		//sendString(sock, "end");
-		setUser(_name, _login, _pass, _role);
-		//tmp.setUser(_name, _surname, _login, _pass, _role);
+		setUser(_name, _login, encryptChars(_pass), _role);
+		//tmp.setUser(_name, _surname, _login, encryptChars(_pass), _role);
 	}
 
 	static void printUserSock(SOCKET _sock, User& us, std::string fout = "", bool one = false) {
@@ -281,6 +364,14 @@ public:
 		ss.str("");
 		sendString(_sock, "+-------------------------------------+------------------------+-------------+----------------------+\n");
 		sendString(_sock, "end");
+	}
+
+	friend ostream& operator<<(ostream& out, UserSock& obj) {
+		out << "Фамилия Имя: " << obj.getName() << endl;
+		out << "Логин: " << obj.getLogin() << endl;
+		out << "Пароль: " << obj.getPass() << endl;
+		out << "Роль: " << obj.getRole() << endl;
+		return out;
 	}
 };
 

@@ -88,6 +88,12 @@ public:
 
 	void addProject(Project tmp) {
 		vcProjects.push_back(tmp);
+		setCntProjects();
+	}
+
+	void addExpert(std::string tmpName, size_t tmpId) {
+		mpExperts.insert(make_pair(tmpName, tmpId));
+		setCntExperts();
 	}
 
 
@@ -186,7 +192,7 @@ public:
 	}
 
 	//Ввод оценок одним экспертом
-	std::vector<Mark> enterRank(std::pair<std::string, size_t> expert, size_t flag = 0) {
+	void enterRank(std::pair<std::string, size_t> expert, size_t flag = 0) {
 		MarkSock tmpMark(sock);
 		std::vector<Mark> mrk;
 		if (flag == 1) {
@@ -207,13 +213,12 @@ public:
 	}
 
 	//Ввод оценок всеми экспертами
-	void enterRanks(size_t _number) {
+	void enterRanks() {
 		MarkSock tmpMark(sock);
 		std::vector<Mark> mrk;
 		std::cout << "--------------------------------------------" << std::endl;
 		printVcProjects();
 		std::cout << "Ввод оценок (для ранжирования) от всех экспертов!" << std::endl;
-		number = _number;
 		for (auto& it : mpExperts) {
 			mrk.clear();
 			/*for (size_t j = 0; j < cntProjects; j++) {
@@ -226,7 +231,7 @@ public:
 				}
 			}
 			ranking.insert(make_pair(it.second, mrk));*/
-			mrk = enterRank(it);
+			enterRank(it);
 		}
 	}
 
