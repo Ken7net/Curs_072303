@@ -980,6 +980,12 @@ public:
 					}
 					else {
 						// Ранж есть , оценка есть - редактирование ???
+						rating.vcProjects = db.getProjectVcMark(rating.getNumber());
+						rating.setCntProjects();
+						rating.addExpert(curUser.getName(), curUser.getUid());
+						rating.enterRank(make_pair(curUser.getName(), curUser.getUid()), 1);
+						db.deleteMark(rating.getNumber(), curUser.getUid());
+						db.addMarkVc(rating.ranking[curUser.getUid()]);
 					}
 				}
 				break;
@@ -1149,14 +1155,14 @@ public:
 				//printUsers("file");
 
 				//// вывод проектов в консоль сервера
-				//printProjects();
+				printProjects();
 				//printProjectsSock();
-				//printProjectsSock("file");
+				//printProjectsSock("file#projects");
 
 				//// вывод проектов в консоль сервера
 				//printCompanies();
 				//printCompaniesSock();
-				//printCompaniesSock("file");
+				//printCompaniesSock("file#companies");
 
 				//editUserSelf();
 

@@ -132,7 +132,7 @@ public:
 				}
 				vcMenu = takeMenu(cn);
 				std::string topS = "Все";
-				if (v != 1 && v != 0) { 
+				if (v != 1 && v != 0) {
 					if (v == 303) topS = "Новый";
 					v = vcMenu.size();
 				}
@@ -161,9 +161,13 @@ public:
 				ofstream fout;
 				if (str.find("file") != std::string::npos) {
 					flagFile = true;
+					std::string toFile = "report";
 					fout.exceptions(ofstream::badbit);
 					try {
-						fout.open("report.txt", ios::app | ios_base::in);
+						if (str.find("#") != std::string::npos) {
+							toFile = str.substr(11, str.size() - 11);
+						}
+						fout.open(toFile + ".txt", ios::app | ios_base::in);
 					}
 					catch (const ofstream::failure& e) {
 						cout << "Ошибка открытия файла (report.txt)!" << endl;

@@ -192,6 +192,31 @@ public:
 	}
 
 	//Ввод оценок одним экспертом
+	void editRank(std::pair<std::string, size_t> expert, size_t flag = 0) {
+		MarkSock tmpMark(sock);
+		std::vector<Mark> mrk;
+		if (flag == 1) {
+			std::cout << "--------------------------------------------" << std::endl;
+			std::cout << "Ввод оценок (для ранжирования) одним экспертом!" << std::endl;
+			printVcProjects();
+		}
+		for (auto& it : ranking[expert.second]) {
+			/// Редактирование существующих оценок (не забыть про вектор проектов)
+		}
+
+		/*for (size_t j = 0; j < cntProjects; j++) {
+			for (size_t k = j + 1; k < cntProjects; k++) {
+				std::cout << "Эксперт " << expert.first << "(" << expert.second << ")" << " -- " << j + 1 <<
+					"(" << vcProjects[j].getProjectId() << ") : " << k + 1 << "(" << vcProjects[k].getProjectId() << "): ";
+				tmpMark.enterMark(number, expert, vcProjects[j].getProjectId(), vcProjects[k].getProjectId());
+				std::cout << tmpMark.getValue1() << " :: " << tmpMark.getValue2() << std::endl;
+				mrk.push_back(MarkSock::toMark(tmpMark));
+			}
+		}
+		ranking.insert(make_pair(expert.second, mrk));*/
+	}
+
+	//Ввод оценок одним экспертом
 	void enterRank(std::pair<std::string, size_t> expert, size_t flag = 0) {
 		MarkSock tmpMark(sock);
 		std::vector<Mark> mrk;
@@ -234,8 +259,6 @@ public:
 			enterRank(it);
 		}
 	}
-
-
 
 	//Расчет суммарных значений
 	void calcTotal() {
