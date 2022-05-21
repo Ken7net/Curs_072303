@@ -23,7 +23,7 @@ public:
 	Rating() {
 		cntProjects = 0;
 		cntExperts = 0;
-		size = cntProjects * (cntProjects - 1) * cntExperts; // = 0;
+		size = cntProjects * (cntProjects - 1) / 2; // = 0;
 		number = 0;
 		sock = -1;
 		total = 0;
@@ -33,7 +33,7 @@ public:
 		this->sock = _sock;
 		cntProjects = 0;
 		cntExperts = 0;
-		size = cntProjects * (cntProjects - 1) * cntExperts; // = 0;
+		size = cntProjects * (cntProjects - 1) / 2; // *cntExperts; // = 0;
 		number = 0;
 	}
 
@@ -60,10 +60,12 @@ public:
 
 	void setCntProjects(size_t _cntProjects) {
 		cntProjects = _cntProjects;
+		size = cntProjects * (cntProjects - 1) / 2;
 	}
 
 	void setCntProjects() {
 		cntProjects = vcProjects.size();
+		size = cntProjects * (cntProjects - 1) / 2;
 	}
 
 	size_t getCntExperts() const {
@@ -95,7 +97,6 @@ public:
 		mpExperts.insert(make_pair(tmpName, tmpId));
 		setCntExperts();
 	}
-
 
 	void clear() {
 		size = 0;
@@ -176,9 +177,9 @@ public:
 	}
 
 	// Выбор номера для ранжа
-	void selectNumber(std::vector<std::string> vc) {
+	void selectNumber(std::vector<std::string> vc, std::string strAdd = "2") {
 		std::cout << "--------------------------------------------" << std::endl;
-		sendString(sock, "menu303");
+		sendString(sock, "menu"+strAdd);
 		sendString(sock, toString(vc, "Выберите номер ранжирования:"));
 		size_t ch = takeInt(sock);
 		if (ch == 0) return;
@@ -191,7 +192,7 @@ public:
 		std::cout << "Выбран номер: " << number << std::endl;
 	}
 
-	//Ввод оценок одним экспертом
+	//Редактирование оценок экспертом
 	void editRank(std::pair<std::string, size_t> expert, size_t flag = 0) {
 		MarkSock tmpMark(sock);
 		std::vector<Mark> mrk;
@@ -199,21 +200,25 @@ public:
 			std::cout << "--------------------------------------------" << std::endl;
 			std::cout << "Ввод оценок (для ранжирования) одним экспертом!" << std::endl;
 			printVcProjects();
-		}
-		for (auto& it : ranking[expert.second]) {
-			/// Редактирование существующих оценок (не забыть про вектор проектов)
+			printVcProjectsSock();
 		}
 
-		/*for (size_t j = 0; j < cntProjects; j++) {
-			for (size_t k = j + 1; k < cntProjects; k++) {
-				std::cout << "Эксперт " << expert.first << "(" << expert.second << ")" << " -- " << j + 1 <<
-					"(" << vcProjects[j].getProjectId() << ") : " << k + 1 << "(" << vcProjects[k].getProjectId() << "): ";
-				tmpMark.enterMark(number, expert, vcProjects[j].getProjectId(), vcProjects[k].getProjectId());
-				std::cout << tmpMark.getValue1() << " :: " << tmpMark.getValue2() << std::endl;
-				mrk.push_back(MarkSock::toMark(tmpMark));
+		size_t j = 0;
+		size_t k = 0;
+		size_t tp = ranking[expert.second][0].getProject1Id();
+		for (auto& it : ranking[expert.second]) {
+			/// Редактирование существующих оценок (не забыть про вектор проектов)
+			if (tp != it.getProject1Id()) {
+				j++;
+				k = 0;
 			}
+			else k++;
+			std::cout << "Эксперт " << expert.first << "(" << expert.second << ")" << " -- " << j + 1 <<
+				"(" << it.getProject1Id() << ") : " << k + 1 << "(" << it.getProject2Id() << "): ";
+			tmpMark.enterMark(number, expert, it.getProject1Id(), it.getProject2Id());
+			std::cout << tmpMark.getValue1() << " :: " << tmpMark.getValue2() << std::endl;
+			it = MarkSock::toMark(tmpMark);
 		}
-		ranking.insert(make_pair(expert.second, mrk));*/
 	}
 
 	//Ввод оценок одним экспертом
@@ -224,13 +229,17 @@ public:
 			std::cout << "--------------------------------------------" << std::endl;
 			std::cout << "Ввод оценок (для ранжирования) одним экспертом!" << std::endl;
 			printVcProjects();
+			printVcProjectsSock();
 		}
 		for (size_t j = 0; j < cntProjects; j++) {
 			for (size_t k = j + 1; k < cntProjects; k++) {
 				std::cout << "Эксперт " << expert.first << "(" << expert.second << ")" << " -- " << j + 1 <<
 					"(" << vcProjects[j].getProjectId() << ") : " << k + 1 << "(" << vcProjects[k].getProjectId() << "): ";
+
 				tmpMark.enterMark(number, expert, vcProjects[j].getProjectId(), vcProjects[k].getProjectId());
+
 				std::cout << tmpMark.getValue1() << " :: " << tmpMark.getValue2() << std::endl;
+
 				mrk.push_back(MarkSock::toMark(tmpMark));
 			}
 		}
@@ -240,22 +249,10 @@ public:
 	//Ввод оценок всеми экспертами
 	void enterRanks() {
 		MarkSock tmpMark(sock);
-		std::vector<Mark> mrk;
 		std::cout << "--------------------------------------------" << std::endl;
 		printVcProjects();
 		std::cout << "Ввод оценок (для ранжирования) от всех экспертов!" << std::endl;
 		for (auto& it : mpExperts) {
-			mrk.clear();
-			/*for (size_t j = 0; j < cntProjects; j++) {
-				for (size_t k = j + 1; k < cntProjects; k++) {
-					std::cout << "Эксперт " << it.first << "(" << it.second << ")" << " -- " << j + 1 <<
-						"(" << vcProjects[j].getProjectId() << ") : " << k + 1 << "(" << vcProjects[k].getProjectId() << "): ";
-					tmpMark.enterMark(number, it, vcProjects[j].getProjectId(), vcProjects[k].getProjectId());
-					std::cout << tmpMark.getValue1() << " :: " << tmpMark.getValue2() << std::endl;
-					mrk.push_back(MarkSock::toMark(tmpMark));
-				}
-			}
-			ranking.insert(make_pair(it.second, mrk));*/
 			enterRank(it);
 		}
 	}
@@ -361,7 +358,7 @@ public:
 	void printRatingTable(size_t flag = 0) {
 		printVcProjects();
 		std::cout << "+------------------------------+";
-		for (size_t i = 0; i < cntProjects; i++) {
+		for (size_t i = 0; i < size; i++) {
 			std::cout << "---------+";
 		}
 		std::cout << std::endl;
@@ -371,7 +368,7 @@ public:
 		}
 		std::cout << std::endl;
 		std::cout << "+------------------------------+";
-		for (size_t i = 0; i < cntProjects; i++) {
+		for (size_t i = 0; i < size; i++) {
 			std::cout << "----+----+";
 		}
 		std::cout << std::endl;
@@ -382,7 +379,7 @@ public:
 			}
 			std::cout << std::endl;
 			std::cout << "+------------------------------+";
-			for (size_t i = 0; i < cntProjects; i++) {
+			for (size_t i = 0; i < size; i++) {
 				std::cout << "----+----+";
 			}
 			std::cout << std::endl;
@@ -395,7 +392,7 @@ public:
 		}
 		std::cout << std::endl;
 		std::cout << "+------------------------------+";
-		for (size_t i = 0; i < cntProjects; i++) {
+		for (size_t i = 0; i < size; i++) {
 			std::cout << "----+----+";
 		}
 		std::cout << std::endl;
@@ -407,7 +404,7 @@ public:
 		sendString(sock, "output" + fout);
 		std::stringstream ss;
 		sendString(sock, "+------------------------------+");
-		for (size_t i = 0; i < cntProjects; i++) {
+		for (size_t i = 0; i < size; i++) {
 			sendString(sock, "---------+");
 		}
 		sendString(sock, "\n| Эксперт     \\ Пары проектов  |");
@@ -417,7 +414,7 @@ public:
 		sendString(sock, ss.str());
 		ss.str("");
 		sendString(sock, "\n+------------------------------+");
-		for (size_t i = 0; i < cntProjects; i++) {
+		for (size_t i = 0; i < size; i++) {
 			sendString(sock, "----+----+");
 		}
 		for (auto& it : ranking) {
@@ -429,7 +426,7 @@ public:
 			sendString(sock, ss.str());
 			ss.str("");
 			sendString(sock, "\n+------------------------------+");
-			for (size_t i = 0; i < cntProjects; i++) {
+			for (size_t i = 0; i < size; i++) {
 				sendString(sock, "----+----+");
 			}
 		}
@@ -440,7 +437,7 @@ public:
 		sendString(sock, ss.str());
 		ss.str("");
 		sendString(sock, "\n+------------------------------+");
-		for (size_t i = 0; i < cntProjects; i++) {
+		for (size_t i = 0; i < size; i++) {
 			sendString(sock, "----+----+");
 		}
 		sendString(sock, "\n");

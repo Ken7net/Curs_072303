@@ -88,7 +88,7 @@ public:
 
 	~DBWork() {
 		if (result != nullptr) delete result;
-		delete pstmt;
+		if (pstmt != nullptr) delete pstmt;
 		delete con;
 	}
 
@@ -537,7 +537,7 @@ public:
 			tmpMrk.push_back(tmp);
 		}
 		delete result;
-		tmpRn.insert(make_pair(lastUser, tmpMrk));
+		if (lastUser != -1) tmpRn.insert(make_pair(lastUser, tmpMrk));
 		return tmpRn;
 	}
 

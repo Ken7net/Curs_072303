@@ -167,7 +167,7 @@ public:
 						if (str.find("#") != std::string::npos) {
 							toFile = str.substr(11, str.size() - 11);
 						}
-						fout.open(toFile + ".txt", ios::app | ios_base::in);
+						fout.open(toFile + ".txt"); // , ios::app | ios_base::in);
 					}
 					catch (const ofstream::failure& e) {
 						cout << "Ошибка открытия файла (report.txt)!" << endl;

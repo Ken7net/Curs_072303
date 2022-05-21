@@ -104,6 +104,11 @@ public:
 		value2 = _mark2;
 	}
 
+	void setValues(std::pair<float, float> _mark) {
+		value1 = _mark.first;
+		value2 = _mark.second;
+	}
+
 	void clear() {
 		mark_id = 0;
 		number = 0;
@@ -342,6 +347,18 @@ public:
 		mrk.setProject2Id(tmp.getProject2Id());
 		mrk.setValue(tmp.getValue1());
 		return mrk;
+	}
+
+	friend std::ostream& operator<<(std::ostream& os, const MarkSock& mark) {
+		os << "- - - - - - - - -  - - - - - - -" << std::endl;
+		os << " mark_id: " << mark.getMarkId() << std::endl;
+		os << " number: " << mark.getNumber() << std::endl;
+		os << " user_id: " << mark.getUserId() << std::endl;
+		os << " project1_id: " << mark.getProject1Id() << std::endl;
+		os << " project2_id: " << mark.getProject2Id() << std::endl;
+		os << " value1: " << mark.getValue1() << std::endl;
+		os << " value2: " << mark.getValue2() << std::endl;
+		return os;
 	}
 };
 

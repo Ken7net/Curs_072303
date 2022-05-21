@@ -348,9 +348,9 @@ public:
 		//tmp.setUser(_name, _surname, _login, encryptChars(_pass), _role);
 	}
 
-	static void printUserSock(SOCKET _sock, User& us, std::string fout = "", bool one = false) {
+	static void printUserSock(SOCKET _sock, User& us, /*std::string fout = "",*/ bool one = false) {
 		std::stringstream ss;
-		sendString(_sock, "output" + fout);
+		//sendString(_sock, "output" + fout);
 		if (one) {
 			sendString(_sock, "+-------------------------------------+------------------------+-------------+----------------------+\n");
 			sendString(_sock, "| Фамилия Имя                         | Логин                  | Пароль      | Роль                 |\n");
@@ -363,7 +363,7 @@ public:
 		sendString(_sock, ss.str());
 		ss.str("");
 		sendString(_sock, "+-------------------------------------+------------------------+-------------+----------------------+\n");
-		sendString(_sock, "end");
+		//sendString(_sock, "end");
 	}
 
 	friend ostream& operator<<(ostream& out, UserSock& obj) {

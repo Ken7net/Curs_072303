@@ -9,6 +9,8 @@
 
 using namespace std;
 
+extern size_t cntClients;
+
 class A_menu {
 private:
 	SOCKET sock;
@@ -21,19 +23,19 @@ public:
 	//static vector<std::string> vcMainMenu = {"Логин", "Регистрация", "Выход"};
 
 	std::string strMenuMain = "-=-=-=-=  М е н ю  =-=-=-=-#Авторизация#Регистрация#Отключение#Выход";
-	std::string strMenuAdmin = "\tАдминистратор#Добавление#Редактировать#Удаление#Сохранение информации#Поиск#Просмотр инвестиционных проектов#Сортировка инвестиционных проектов#Ранжировать инвестиционные проекты#Выход";
+	std::string strMenuAdmin = "---= Администратор =---#Добавление#Редактировать#Удаление#Сохранение информации#Поиск#Просмотр инвестиционных проектов#Сортировка инвестиционных проектов#Ранжировать инвестиционные проекты#Выход";
 	std::string strMenuAdminAdd = "Вы хотите добавить: #Пользователя#Компанию#Проект#Назад";
 	std::string strMenuAdminEdit = "Вы хотите редактировать данные:#Пользователя#Компании#Проекта#Назад";
 	std::string strMenuAdminDel = "Вы хотите удалить: #Пользователя#Компанию#Проект#Назад";
 	std::string strMenuAdminSave = "Вы хотите сохранить информацию о:#Пользователях#Компаниях#Проектах#Назад";
 	std::string strMenuAdminSearch = "Вы хотите найти информацию о:#Пользователях#Компаниях#Проектах#Назад";
 	std::string strMenuAdminRanking = "Ранжировать инвестиционные проекты:#Осуществить попарное сравнение проектов#Найти оценки#Вычислить веса проектов#Вывести результат ранжирования ИП#Назад";
-	std::string strMenuCompany = "\tКомпания#Ввод данных#Редактировать данные#Сохранение информации в бд#Удаление данных#Выход";
+	std::string strMenuCompany = "-----= Компания =-----#Ввод данных#Редактировать данные#Сохранение информации#Удаление данных#Выход";
 	std::string strMenuCompanyAdd = "Вы хотите добавить данные:#Компании#Проектов#Назад";
 	std::string strMenuCompanyEdit = "Вы хотите редактировать данные:#Компании#Проектов#Назад";
 	std::string strMenuCompanySave = "Вы хотите сохранить информацию о:#Компании#Проектах#Назад";
 	std::string strMenuCompanyDel = "Вы хотите удалить информацию о:#Компании#Проекте#Назад";
-	std::string strMenuExpert = "\tЭксперт#Выставление оценок#Редактировать данные о себе#Просмотреть информацию об инвестиционных проектах#Выход";
+	std::string strMenuExpert = "-----= Эксперт =-----#Выставление оценок#Редактировать данные о себе#Просмотреть информацию об инвестиционных проектах#Выход";
 	std::string strMenuEditUserSelf = "-= Редактирование пользователя#Фамилия Имя#Логин#Пароль";
 
 	// Конструктор
@@ -51,55 +53,6 @@ public:
 
 	// Деструктор
 	~A_menu() = default;
-
-	static int changeMenu(const std::string& str, int cntMenu, const std::string& begMenu, int back) {
-		int choice = -1;
-		std::string endMenu = "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-";
-		cout << endl << begMenu << endl;
-		cout << str << endl;
-		if (back == 0) cout << " 0 - Выход" << endl;
-		else cout << " 0 - Назад" << endl;
-		cout << endMenu.substr(0, begMenu.size()) << endl;
-		cout << "Выберите: ";
-		do {
-			Checks::CheckInput(choice);
-			if ((choice > cntMenu) || (choice < 0)) {
-				cout << "Такого варианта нет в меню, попробуйте снова" << endl;
-			}
-		} while ((choice < 0) || (choice > cntMenu));
-		std::cin.clear();
-		return choice;
-	}
-
-	static size_t choiceMenu(size_t cntMenu, const std::string& strMenu) {
-		cout << " 0 - --= ОТМЕНА =-- " << endl;
-		cout << "Выберите " << strMenu << ": ";
-		size_t ch = -1;
-		do {
-			std::cin >> ch;
-			fflush(stdin);
-		} while ((ch < 0) || (ch > cntMenu));
-		return ch;
-	}
-
-	static bool Confirm(const std::string& msg) {
-		//        int ls;
-		//        cout << msg << " (Y/Д/[N/Н]): ";
-		//        do {
-		//            ls = cin.get();
-		//        } while (((ls != 'Y') && (ls != 'y') && (ls != 'N') && (ls != 'n') && (ls != 'Д') && (ls != 'д') &&
-		//                  (ls != 'Н') && (ls != '')) || (ls == 13));
-		//        if ((ls == 'Y') || (ls == 'y') || (ls == 'Д') || (ls == 'д')) return true;
-		//        else if ((ls == 'N') || (ls == 'n') || (ls == 'Н') || (ls == 'н') || (ls == 13)) return false;
-		//        else return false;
-		return true;
-	}
-
-	static int menuMain() {
-		std::string strMenu = " 1 - Логин\n 2 - Регистрация";
-		return changeMenu(strMenu, 6, "-=-=-=-=  М е н ю  =-=-=-=-", 0);
-		//        return vcChoice("-=-=-=-=  М е н ю  =-=-=-=-", vcMainMenu, 0)
-	}
 
 	//----- Ввод нового пользователя -----
 	void addUser(int flag = 2) {
@@ -193,20 +146,30 @@ public:
 
 	//----- Вывод пользователей -----
 	void printUsers(std::vector<User> users, std::string toFile = "") {
+		sendString(sock, "output" + toFile);
 		for (auto& it : users) {
 			it.printUser(it == users[0]);
 			//UserSock::printUserSock(sock, it, "", it == users[0]);
-			UserSock::printUserSock(sock, it, toFile, it == users[0]);
+			UserSock::printUserSock(sock, it, it == users[0]);
 		}
+		sendString(sock, "end");
 	}
 
+	//--------- Поиск пользователей ---------
 	void searchUsers(std::string toFile = "") {
 		sendString(sock, "data");
 		sendString(sock, "Введите Фамилию (или ее часть) для поиска: ");
 		std::string fndUser = takeString(sock);
 		std::cout << "Ищем пользователей, ФамилияИмя которых содержит - " << fndUser << std::endl;
 		sendString(sock, "end");
-		printUsers(db.getUsers(fndUser));
+		std::vector<User> tmp = db.getUsers(fndUser);
+		if (!tmp.empty()) printUsers(tmp);
+		else {
+			sendString(sock, "output");
+			sendString(sock, "Ничего не нашли! :(");
+			std::cout << "Ничего не нашли! :(" << std::endl;
+			sendString(sock, "end");
+		}
 	}
 
 	//--------- Ввод новой компании ---------
@@ -284,7 +247,14 @@ public:
 		std::string fndCompany = takeString(sock);
 		std::cout << "Ищем компании, Наименование которых содержит - " << fndCompany << std::endl;
 		sendString(sock, "end");
-		printCompanies(db.getCompanies(fndCompany));
+		std::vector<Company> tmp = db.getCompanies(fndCompany);
+		if (!tmp.empty()) printCompanies(tmp);
+		else {
+			sendString(sock, "output");
+			sendString(sock, "Ничего не нашли! :(");
+			std::cout << "Ничего не нашли! :(" << std::endl;
+			sendString(sock, "end");
+		}
 	}
 
 	//------------ Вывод проектов -----------
@@ -296,15 +266,22 @@ public:
 		}
 		sendString(sock, "end");
 	}
-	
+
 	//------------ Поиск проектов -----------
 	void searchProjects() {
 		sendString(sock, "data");
 		sendString(sock, "Введите Наименование (или его часть) для поиска: ");
 		std::string fndProjects = takeString(sock);
-		std::cout << "Ищем компании, Наименование которых содержит - " << fndProjects << std::endl;
+		std::cout << "Ищем проекты, Наименование которых содержит - " << fndProjects << std::endl;
 		sendString(sock, "end");
-		printProjects(db.getProjects(fndProjects));
+		std::vector<Project> tmp = db.getProjects(fndProjects);
+		if (!tmp.empty()) printProjects(tmp);
+		else {
+			sendString(sock, "output");
+			sendString(sock, "Ничего не нашли! :(");
+			std::cout << "Ничего не нашли! :(" << std::endl;
+			sendString(sock, "end");
+		}
 	}
 
 	//--------- Ввод нового проекта ---------
@@ -762,7 +739,7 @@ public:
 			case 1:
 				// Найти оценки
 
-				rating.setNumber(3);
+				rating.selectNumber(db.getNumbersMark(), "2");
 
 				// Загрузка оценок
 				rating.ranking = db.getMpMarks(rating.getNumber());
@@ -781,6 +758,8 @@ public:
 
 				// Расчет сумм по парным сравнениям
 				rating.rankingTotal = db.getVcTotalMarks(rating.getNumber());
+
+				reCreateVcRankTotal(rating);
 
 				// Вывод таблицы ранжирования
 				rating.printRatingTable();
@@ -1001,6 +980,66 @@ public:
 		}
 	}
 
+	void reCreateVcProjects(Rating& rt) {
+		if (!rt.vcProjects.empty()) rt.vcProjects.clear();
+		map <size_t, std::vector<Mark>> ::iterator itt = rt.ranking.begin();
+		size_t tmpPrId = (*itt).second[0].getProject1Id();
+		Project tmpPr = db.getProject("project_id", std::to_string(tmpPrId));
+		rt.vcProjects.push_back(tmpPr);
+		for (auto it : itt->second) {
+			if (tmpPrId == it.getProject1Id()) {
+				tmpPr = db.getProject("project_id", std::to_string(it.getProject2Id()));
+				rt.addProject(tmpPr);
+			}
+			else break;
+		}
+	}
+
+	std::pair<float, float> getORT(std::vector<Mark> mrk, size_t pr1Id, size_t pr2Id) {
+		for (auto it : mrk) {
+			if (pr1Id == it.getProject1Id() && pr2Id == it.getProject2Id())
+				return make_pair(it.getValue1(), it.getValue2());
+		}
+		return make_pair(0, 0);
+	}
+
+	void reCreateVcRankTotal(Rating& rt) {
+		std::vector<Mark> tmpMrks;
+		Mark tmpMrk;
+		map <size_t, std::vector<Mark>> ::iterator itt = rt.ranking.begin();
+		for (auto it : itt->second) {
+			tmpMrk.setValues(getORT(rt.rankingTotal, it.getProject1Id(), it.getProject2Id()));
+			tmpMrks.push_back(tmpMrk);
+		}
+		rt.rankingTotal = tmpMrks;
+	}
+
+	// Меню Эксперт. Выставление оценок
+	void menuExpertMarking() {
+		Rating rating(sock);
+		rating.clear();
+		rating.selectNumber(db.getNumbersMark(), "303");
+		if (rating.getNumber() == db.getNewNumber()) {
+			// Новый Ранж
+			rating.selectProjects(db.getProjectMp());
+			rating.addExpert(curUser.getName(), curUser.getUid());
+			rating.enterRank(make_pair(curUser.getName(), curUser.getUid()), 1);
+			db.addMarkVc(rating.ranking[curUser.getUid()]);
+		}
+		else {
+			rating.ranking.clear();
+			rating.ranking = db.getMpMarks(rating.getNumber());
+			reCreateVcProjects(rating);
+			rating.ranking = db.getMpMarks(rating.getNumber(), curUser.getUid());
+			if (rating.ranking.empty()) {
+				//rating.ranking.insert(make_pair(curUser.getUid(), db.getVcTotalMarks(rating.getNumber())));
+				rating.enterRank(make_pair(curUser.getName(), curUser.getUid()), 1);
+			}
+			else rating.editRank(make_pair(curUser.getName(), curUser.getUid()), 1);
+			db.addMarkVc(rating.ranking[curUser.getUid()]);
+		}
+	}
+
 	// Эксперт
 	void menuExpert() {
 		/*
@@ -1024,33 +1063,7 @@ public:
 			switch (i) {
 			case 1:
 				// Выставление оценок
-				rating.selectNumber(db.getNumbersMark());
-				if (rating.getNumber() == db.getNewNumber()) {
-					// Новый Ранж
-					rating.selectProjects(db.getProjectMp());
-					rating.addExpert(curUser.getName(), curUser.getUid());
-					rating.enterRank(make_pair(curUser.getName(), curUser.getUid()), 1);
-					db.addMarkVc(rating.ranking[curUser.getUid()]);
-				}
-				else {
-					if (db.getCountExpert(rating.number, curUser.getUid()) == 0) {
-						// Ранж есть, оценок нет
-						rating.vcProjects = db.getProjectVcMark(rating.getNumber());
-						rating.setCntProjects();
-						rating.addExpert(curUser.getName(), curUser.getUid());
-						rating.enterRank(make_pair(curUser.getName(), curUser.getUid()), 1);
-						db.addMarkVc(rating.ranking[curUser.getUid()]);
-					}
-					else {
-						// Ранж есть , оценка есть - редактирование ???
-						rating.vcProjects = db.getProjectVcMark(rating.getNumber());
-						rating.setCntProjects();
-						rating.addExpert(curUser.getName(), curUser.getUid());
-						rating.enterRank(make_pair(curUser.getName(), curUser.getUid()), 1);
-						db.deleteMark(rating.getNumber(), curUser.getUid());
-						db.addMarkVc(rating.ranking[curUser.getUid()]);
-					}
-				}
+				menuExpertMarking();
 				break;
 			case 2:
 				// Редактировать информацию о себе
@@ -1064,12 +1077,32 @@ public:
 				//printProjectsSock("file");
 				break;
 			case 4:
-				//sendString(sock, "menu");
-				//sendString(sock, strMenuMain);
 				return;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuExpert);
+		}
+	}
+
+	void loginUser() {
+		User oldUser;
+		tUser userC;
+		sendString(sock, "data");
+		sendString(sock, "Логин: ");
+		userC.login = takeString(sock);
+		// ищем пользователя в базе
+		oldUser = db.getUser("login", userC.login);
+		// если находим
+		if (!oldUser.isEmptyId()) {
+			sendString(sock, "Пароль: ");
+			userC.pass = takeString(sock);
+			sendString(sock, "end");
+			if (userC.pass == encryptChars(oldUser.getPass())) {
+				//if (userC.pass == oldUser.getPass()) {
+				userC.Role = oldUser.getRole();
+				curUser.setUser(oldUser);
+				std::cout << "login: " << curUser.getLogin() << " - " << curUser.getPass() << " - " << curUser.getRole() << endl;
+			}
 		}
 	}
 
@@ -1083,8 +1116,6 @@ public:
 		std::cout << "Соединение установлено." << std::endl;
 		char* message = new char[100];
 		strcat(p, "Server connected...\n");
-		//send((SOCKET)newS, p, sizeof(p), 0);//посылаем приветствие при соединении
-		//std::string strMenu = "-=-=-=-=  М е н ю  =-=-=-=-#Логин#Регистрация#Логаут#Выход";
 		Date tmpDate{};
 		tmpDate.setDateStr(Date::currentDate());
 		sendString(sock, "Server connected...\n" + tmpDate.getDateStr() + "\n");
@@ -1095,154 +1126,42 @@ public:
 		std::string command;
 		while (c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
 			command = p;
-			//std::cout << "<- " << com << std::endl;
 			int i = atoi(command.c_str());
-			User oldUser;
-			tUser userC;
-			vector<std::string> users;
-			std::map<std::string, size_t> userS;
 			size_t ch;
 			curUser.setSock(sock);
-			UserSock user(sock, db.getGuide("user_role", 1));
-			CompanySock cmp(sock);
-			ProjectSock project(sock, db.getGuide("company", 2));
-			Rating rating(sock);
 			switch (i) {
 			case 1:
 				//Подключение пользователя
-
-				sendString(sock, "data");
-				sendString(sock, "Логин: ");
-				userC.login = takeString(sock);
-				// ищем пользователя в базе
-				oldUser = db.getUser("login", userC.login);
-				// если находим
-				sendString(sock, "Пароль: ");
-				userC.pass = takeString(sock);
-				sendString(sock, "end");
-				if (userC.pass == encryptChars(oldUser.getPass())) {
-					//if (userC.pass == oldUser.getPass()) {
-					userC.Role = oldUser.getRole();
-					curUser.setUser(oldUser);
-					std::cout << "login: " << curUser.getLogin() << " - " << curUser.getPass() << " - " << curUser.getRole() << endl;
+				loginUser();
+				if (!curUser.isEmptyId()) {
+					if (curUser.getRole() == "Администратор") menuAdmin();
+					else if (curUser.getRole() == "Консультант банка") menuCompany();
+					else menuExpert();
 				}
-
-				//	if (oldUser.getRole() == "Администратор") menuAdmin();
-				//	else if (oldUser.getRole() == "Эксперт") menuExpert();
-				//	else menuCompany();
-				//}
-				//else {
-				//	sendString(sock, "menu" + std::to_string(1));
-				//	sendString(sock, strMenu);
-				//}
-				//                std::cout << "login: " << user.login << " - " << user.pass << endl;
-				//if user = Admin
-
-				//editUserSelf();
-
 				//menuAdmin();
 				//menuCompany();
+				//menuExpert();
 				break;
 			case 2:
 				//подключение пользователя
-//                tUser user{};
-//                sendString(sock, "data");
-//                sendString(sock, "Введите логин: ");
-//                user.login = takeString(sock);
-//                // ищем пользователя в базе
-//                // если находим
-//                sendString(sock, "Введите пароль: ");
-//                user.pass = takeString(sock);
-//                sendString(sock, "end");
-//                std::cout << "register: " << user.login << " - " << user.pass << endl;
-//
-//                menuExpert();
-				//
-
-
-
-				//ch = listProject(userS, 2); //, 2
-				//std::cout << ch;
-
-				//deleteMark();
-
-				//// Выбор экспертов
-				//rating.selectExperts(db.getGuideMap("user", 2, 1));
-				//// Выбор проектов
-				//rating.selectProjects(db.getProjectMp());
-				//// Ввод оценок
-				//rating.setNumber(3);
-				//rating.enterRanks(db.getNewNumber());
-				//for (auto& it : rating.ranking) {
-				//	for (auto& iit : it.second) {
-				//		db.addMark(iit);
-				//	}
-				//}
-
-
-
-				//rating.setNumber(listNumberMark());
-				//rating.selectNumber(db.getNumbersMark());
-
-				//// Загрузка оценок
-				//rating.ranking = db.getMpMarks(rating.getNumber());
-
-				//// Загрузка экспертов в ранже
-				//rating.mpExperts = db.getExpertMapMark(rating.getNumber());
-				//rating.setCntExperts();
-
-				//// Загрузка проектов в ранже
-				//rating.vcProjects = db.getProjectVcMark(rating.getNumber());
-				//rating.setCntProjects();
-
-				////// Вывод проектов ранжа
-				////rating.printVcProjects();
-				////rating.printVcProjectsSock();
-				////rating.printVcProjectsSock("file");
-
-				//// Расчет весов и сумм по парным сравнениям
-				//rating.vcProjects = db.getWeightVcMark(rating.getNumber());
-				//rating.rankingTotal = db.getVcTotalMarks(rating.getNumber());
-
-				//// Вывод таблицы ранжирования
-				//rating.printRatingTable();
-				//rating.printRatingTableSock();
-				//rating.printRatingTableSock("file");
-
-				//// Вывод результата ранжирования
-				//rating.printRating();
-				//rating.printRatingSock();
-				//rating.printRatingSock("file");
-
-				// вывод пользователей в консоль сервера
-				//printUsers("file");
-
-				//// вывод проектов в консоль сервера
-				//printProjects();
-				//printProjectsSock();
-				//printProjectsSock("file#projects");
-
-				//// вывод проектов в консоль сервера
-				//printCompanies();
-				//printCompaniesSock();
-				//printCompaniesSock("file#companies");
-
-				//editUserSelf();
-
-				//menuExpert();
 
 				menuAdmin();
 				//menuCompany();
+				//menuExpert();
 				break;
 			case 3:
 				//отключение пользователя
 				//cout << "User " << curU << " logout" << endl;
+				cntClients--;
+				std::cout << "Клиент " << curUser.getLogin() << "отключен.\nТекущее количество подключений: " << cntClients << std::endl;
 				sendString(sock, "exit");
 				closesocket(sock);//закрываем сокет
 				return;
 				//break;
 			case 4:
 				//выход
+				cntClients--;
+				std::cout << "Клиент отключен. Текущее количество подключений: " << cntClients << std::endl;
 				sendString(sock, "exit");
 				closesocket(sock);//закрываем сокет
 				exit(EXIT_SUCCESS);

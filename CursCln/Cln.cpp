@@ -13,7 +13,7 @@
 int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-
+    system("color F0");
     //Client cln;
     //setlocale(LC_ALL, "1251");
     //system("mode con: cols=70 lines=20");

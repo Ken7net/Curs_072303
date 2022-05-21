@@ -12,6 +12,8 @@
 
 using namespace std;
 
+static size_t cntClients = 0;
+
 void Work(void* newS) {//поток обслуживания
 	A_menu menu((SOCKET)newS);
 	menu.start();
@@ -20,6 +22,7 @@ void Work(void* newS) {//поток обслуживания
 int main() {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
+	system("color F0");
 	//setlocale(LC_ALL, "1251");// utf - 8");//это на всякий случай
 	WSADATA wsaData;
 	WORD wVersionRequested = MAKEWORD(2, 2);//первая цифра версии находится в младшем байте, вторая - в старшем.
@@ -37,6 +40,8 @@ int main() {
 		sockaddr_in remote;//адрес клиента(заполняется системой)
 		int j = sizeof(remote);//адрес клиента(заполняется системой)
 		SOCKET newS = accept(s, (struct sockaddr*)&remote, &j);//подключение
+		cntClients++;
+		std::cout << "Клиент подключен. Текущее количество подключений: " << cntClients << std::endl;
 		std::cout << remoteIP(remote) << std::endl;
 		_beginthread(Work, 0, (void*)newS);//запускаем поток для обслуживания клиента
 	}
