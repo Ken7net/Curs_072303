@@ -20,14 +20,15 @@ private:
 public:
 	//static vector<std::string> vcMainMenu = {"Логин", "Регистрация", "Выход"};
 
-	std::string strMenuMain = "-=-=-=-=  М е н ю  =-=-=-=-#Логин#Регистрация#Логаут#Выход";
-	std::string strMenuAdmin = "\tАдминистратор#Добавление#Редактировать#Удаление#Сохранение информации в бд#Поиск#Просмотр инвестиционных проектов#Сортировка инвестиционных проектов#Ранжировать инвестиционные проекты#Выход";
-	std::string strMenuAdminAdd = "Вы хотите добавить: #Новых пользователей#Новые компании#Новые проекты#Назад";
-	std::string strMenuAdminEdit = "Вы хотите редактировать данные:#Пользователей#Компании#Проектов#Назад";
+	std::string strMenuMain = "-=-=-=-=  М е н ю  =-=-=-=-#Авторизация#Регистрация#Отключение#Выход";
+	std::string strMenuAdmin = "\tАдминистратор#Добавление#Редактировать#Удаление#Сохранение информации#Поиск#Просмотр инвестиционных проектов#Сортировка инвестиционных проектов#Ранжировать инвестиционные проекты#Выход";
+	std::string strMenuAdminAdd = "Вы хотите добавить: #Пользователя#Компанию#Проект#Назад";
+	std::string strMenuAdminEdit = "Вы хотите редактировать данные:#Пользователя#Компании#Проекта#Назад";
 	std::string strMenuAdminDel = "Вы хотите удалить: #Пользователя#Компанию#Проект#Назад";
 	std::string strMenuAdminSave = "Вы хотите сохранить информацию о:#Пользователях#Компаниях#Проектах#Назад";
-	std::string strMenuAdminRanking = "Ранжировать инвестиционные проекты:#Осуществить попарное сравнение проектов#Найти оценки#Вычислить веса проектов#Составить порядок предпочтений#Вывести результат ранжирования ИП#Назад";
-	std::string strMenuCompany = "\tКомпания#Ввод данных#Редактировать данные#Сохранение информации в бд#Удаление данныхВыход";
+	std::string strMenuAdminSearch = "Вы хотите найти информацию о:#Пользователях#Компаниях#Проектах#Назад";
+	std::string strMenuAdminRanking = "Ранжировать инвестиционные проекты:#Осуществить попарное сравнение проектов#Найти оценки#Вычислить веса проектов#Вывести результат ранжирования ИП#Назад";
+	std::string strMenuCompany = "\tКомпания#Ввод данных#Редактировать данные#Сохранение информации в бд#Удаление данных#Выход";
 	std::string strMenuCompanyAdd = "Вы хотите добавить данные:#Компании#Проектов#Назад";
 	std::string strMenuCompanyEdit = "Вы хотите редактировать данные:#Компании#Проектов#Назад";
 	std::string strMenuCompanySave = "Вы хотите сохранить информацию о:#Компании#Проектах#Назад";
@@ -191,14 +192,21 @@ public:
 	}
 
 	//----- Вывод пользователей -----
-	void printUsers(std::string toFile = "") {
-		std::vector<User> users = db.getUsers();
-
+	void printUsers(std::vector<User> users, std::string toFile = "") {
 		for (auto& it : users) {
 			it.printUser(it == users[0]);
-			UserSock::printUserSock(sock, it, "", it == users[0]);
+			//UserSock::printUserSock(sock, it, "", it == users[0]);
 			UserSock::printUserSock(sock, it, toFile, it == users[0]);
 		}
+	}
+
+	void searchUsers(std::string toFile = "") {
+		sendString(sock, "data");
+		sendString(sock, "Введите Фамилию (или ее часть) для поиска: ");
+		std::string fndUser = takeString(sock);
+		std::cout << "Ищем пользователей, ФамилияИмя которых содержит - " << fndUser << std::endl;
+		sendString(sock, "end");
+		printUsers(db.getUsers(fndUser));
 	}
 
 	//--------- Ввод новой компании ---------
@@ -260,40 +268,43 @@ public:
 	}
 
 	//------------ Вывод компаний -----------
-	void printCompanies() {
-	std:vector<Company> vcCmps = db.getCompanies();
+	void printCompanies(std::vector<Company> vcCmps, std::string fout = "") {
+		sendString(sock, "output" + fout);
 		for (auto& it : vcCmps) {
 			it.printCompany(it == vcCmps[0]);
-		}
-	}
-
-	//------- Вывод компаний в сокет --------
-	void printCompaniesSock(std::string fout = "") {
-		sendString(sock, "output" + fout);
-	std:vector<Company> vcCmps = db.getCompanies();
-		for (auto& it : vcCmps) {
-			//it.printCompanySock(sock, db.getCompany("company_id", std::to_string(it.getCompanyId())).getName(), it == vcPrs[0]);
 			it.printCompanySock(sock, it == vcCmps[0]);
 		}
 		sendString(sock, "end");
 	}
 
-	//------------ Вывод проектов -----------
-	void printProjects() {
-	std:vector<Project> vcPrs = db.getProjectVc();
-		for (auto& it : vcPrs) {
-			it.printProject(db.getCompany("company_id", std::to_string(it.getCompanyId())).getName(), it == vcPrs[0]);
-		}
+	//------------ Поиск компаний -----------
+	void searchCompanies() {
+		sendString(sock, "data");
+		sendString(sock, "Введите Наименование (или его часть) для поиска: ");
+		std::string fndCompany = takeString(sock);
+		std::cout << "Ищем компании, Наименование которых содержит - " << fndCompany << std::endl;
+		sendString(sock, "end");
+		printCompanies(db.getCompanies(fndCompany));
 	}
 
-	//------- Вывод проектов в сокет --------
-	void printProjectsSock(std::string fout = "") {
+	//------------ Вывод проектов -----------
+	void printProjects(std::vector<Project> vcPrs, std::string fout = "") {
 		sendString(sock, "output" + fout);
-	std:vector<Project> vcPrs = db.getProjectVc();
 		for (auto& it : vcPrs) {
+			it.printProject(db.getCompany("company_id", std::to_string(it.getCompanyId())).getName(), it == vcPrs[0]);
 			it.printProjectSock(sock, db.getCompany("company_id", std::to_string(it.getCompanyId())).getName(), it == vcPrs[0]);
 		}
 		sendString(sock, "end");
+	}
+	
+	//------------ Поиск проектов -----------
+	void searchProjects() {
+		sendString(sock, "data");
+		sendString(sock, "Введите Наименование (или его часть) для поиска: ");
+		std::string fndProjects = takeString(sock);
+		std::cout << "Ищем компании, Наименование которых содержит - " << fndProjects << std::endl;
+		sendString(sock, "end");
+		printProjects(db.getProjects(fndProjects));
 	}
 
 	//--------- Ввод нового проекта ---------
@@ -508,9 +519,14 @@ public:
 				break;
 			case 5:
 				// Поиск
+				menuAdminSearch();
 				break;
 			case 6:
 				// Просмотр Инвестиционных проектов
+				//// вывод проектов в консоль сервера
+				printProjects(db.getProjects());
+				//printProjectsSock();
+				//printProjectsSock("file");
 				break;
 			case 7:
 				// Сортировка Инвестиционных проектов
@@ -661,10 +677,16 @@ public:
 			std::cout << "<- " << split(strMenuAdminSave)[i] << endl;
 			switch (i) {
 			case 1:
+				// вывод пользователей в консоль сервера и в файл на клиенте
+				printUsers(db.getUsers(), "file#users");
 				break;
 			case 2:
+				// вывод компаний в консоль сервера и в файл на клиенте
+				printCompanies(db.getCompanies(), "file#companies");
 				break;
 			case 3:
+				// вывод проектов в консоль сервера и в файл на клиенте
+				printProjects(db.getProjects(), "file#projects");
 				break;
 			case 4:
 				//sendString(sock, "menu");
@@ -676,15 +698,56 @@ public:
 		}
 	}
 
+	// Меню Администратора. Поиск
+	void menuAdminSearch() {
+		/*
+		* 1. Пользователях#
+		* 2. Компаниях#
+		* 3. Проектах#
+		* 4. Назад
+		*/
+		sendString(sock, "menu");
+		sendString(sock, strMenuAdminSearch);
+		char p[200];
+		strcpy(p, "");
+		p[0] = '\0';
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
+			int i = atoi(p);
+			std::cout << "<- " << split(strMenuAdminSearch)[i] << endl;
+			switch (i) {
+			case 1:
+				// поиск и вывод пользователей в консоль сервера и в файл на клиенте
+				//printUsers(db.getUsers("ил"), "file#users");
+				searchUsers();
+				break;
+			case 2:
+				// поиск и вывод компаний в консоль сервера и в файл на клиенте
+				//printCompanies(db.getUsers("ил"), "file#companies");
+				searchCompanies();
+				break;
+			case 3:
+				// вывод проектов в консоль сервера и в файл на клиенте
+				//printProjects(db.getProjects(), "file#projects");
+				searchProjects();
+				break;
+			case 4:
+				//sendString(sock, "menu");
+				//sendString(sock, strMenuAdmin);
+				return;
+			}
+			sendString(sock, "menu");
+			sendString(sock, strMenuAdminSearch);
+		}
+	}
+
 	// Ранжировать инвестиционные проекты
 	void menuAdminRanking() {
 		/*
 		* 1. Найти оценки#
 		* 2. Осуществить попарное сравнение проектов#
 		* 3. Вычислить веса проектов#
-		* 4. Составить порядок предпочтений#
-		* 5. Вывести результат ранжирования ИП#
-		* 6. Назад
+		* 4. Вывести результат ранжирования ИП#
+		* 5. Назад
 		*/
 		sendString(sock, "menu");
 		sendString(sock, strMenuAdminRanking);
@@ -732,14 +795,6 @@ public:
 
 				break;
 			case 4:
-				// Составить порядок предпочтений
-
-				// Вывод результата ранжирования
-				rating.printRating();
-				rating.printRatingSock();
-				rating.printRatingSock("file");
-				break;
-			case 5:
 				// Вывести результат ранжирования ИП
 
 				// Вывод таблицы ранжирования
@@ -751,7 +806,7 @@ public:
 				rating.printRatingSock();
 				rating.printRatingSock("file");
 				break;
-			case 6:
+			case 5:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuAdmin);
 				return;
@@ -891,8 +946,16 @@ public:
 			std::cout << "<- " << split(strMenuCompanySave)[i] << endl;
 			switch (i) {
 			case 1:
+				// вывод компаний в консоль сервера и в файл на клиенте
+				printCompanies(db.getCompanies(), "file#companies");
+				//printCompaniesSock();
+				//printCompaniesSock("file#companies");
 				break;
 			case 2:
+				// вывод проектов в консоль сервера и в файл на клиенте
+				printProjects(db.getProjects(), "file#projects");
+				//printProjectsSock();
+				//printProjectsSock("file#projects");
 				break;
 			case 3:
 				//sendString(sock, "menu");
@@ -996,8 +1059,8 @@ public:
 			case 3:
 				// Информация о инвестиционных проектах
 				//// вывод проектов в консоль сервера
-				printProjects();
-				printProjectsSock();
+				printProjects(db.getProjects());
+				//printProjectsSock();
 				//printProjectsSock("file");
 				break;
 			case 4:
@@ -1021,12 +1084,12 @@ public:
 		char* message = new char[100];
 		strcat(p, "Server connected...\n");
 		//send((SOCKET)newS, p, sizeof(p), 0);//посылаем приветствие при соединении
-		std::string strMenu = "-=-=-=-=  М е н ю  =-=-=-=-#Логин#Регистрация#Логаут#Выход";
+		//std::string strMenu = "-=-=-=-=  М е н ю  =-=-=-=-#Логин#Регистрация#Логаут#Выход";
 		Date tmpDate{};
 		tmpDate.setDateStr(Date::currentDate());
 		sendString(sock, "Server connected...\n" + tmpDate.getDateStr() + "\n");
 		sendString(sock, "menu" + std::to_string(1));
-		sendString(sock, strMenu);
+		sendString(sock, strMenuMain);
 		strcpy(p, "");
 		p[0] = '\0';
 		std::string command;
@@ -1155,7 +1218,7 @@ public:
 				//printUsers("file");
 
 				//// вывод проектов в консоль сервера
-				printProjects();
+				//printProjects();
 				//printProjectsSock();
 				//printProjectsSock("file#projects");
 
@@ -1166,9 +1229,10 @@ public:
 
 				//editUserSelf();
 
-				menuExpert();
+				//menuExpert();
 
-				//menuAdmin();
+				menuAdmin();
+				//menuCompany();
 				break;
 			case 3:
 				//отключение пользователя

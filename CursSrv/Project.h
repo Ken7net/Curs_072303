@@ -367,7 +367,7 @@ public:
 				sendString(sock, "Некорректный ввод. Повторите попытку.\nНаименование: ");
 		} while (true);
 
-		sendString(sock, "Сумму кредита: ");
+		sendString(sock, "Сумма кредита: ");
 		do {
 			_sumCreditStr = takeString(sock);
 			if (Checks::checkNoLetters(_sumCreditStr)) {
@@ -375,7 +375,7 @@ public:
 				break;
 			}
 			else
-				sendString(sock, "Некорректный ввод. Повторите попытку.\nСумму кредита: ");
+				sendString(sock, "Некорректный ввод. Повторите попытку.\nСумма кредита: ");
 		} while (true);
 
 		sendString(sock, "Срок кредитования: ");

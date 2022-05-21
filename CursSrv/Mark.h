@@ -184,6 +184,10 @@ public:
 			cin >> _valueStr;
 			if (Checks::checkNoLetters(_valueStr)) {
 				_value = std::stof(_valueStr);
+				if (_value < 0 || _value>1) {
+					cout << "Некорректный ввод. Повторите попытку.\n";
+					continue;
+				}
 				break;
 			}
 			else
@@ -210,16 +214,29 @@ public:
 		// expert_Id из БД (текущий пользователь)
 		// project1_id и project2_id выбор из БД
 		// ----- Выбор эксперта -----
+		std::string str = "Оценкa(" + to_string(project1Id);
+		str += " <-> " + to_string(project2Id);
+		str += "): ";
 		sendString(sock, "data");
-		sendString(sock, "Оценку ( " + std::to_string(project1Id) + " <-> " + std::to_string(project2Id) + " ): ");
+		sendString(sock, str);
 		do {
 			_valueStr = takeString(sock);
 			if (Checks::checkNoLetters(_valueStr)) {
 				_value = std::stof(_valueStr);
+				if (_value < 0 || _value>1) {
+					/*sendString(sock, "end");
+					sendString(sock, "output");
+					sendString(sock, "Некорректный ввод. Повторите попытку.\nОценка должна быть от 0 до 1.\n");
+					sendString(sock, "data");
+					sendString(sock, str);*/
+
+					sendString(sock, "Некорректный ввод. Повторите попытку.\nОценка должна быть от 0 до 1.\n" + str);
+					continue;
+				}
 				break;
 			}
 			else
-				cout << "Некорректный ввод. Повторите попытку.\nОценку: ";
+				sendString(sock, "Некорректный ввод. Повторите попытку.\nОценкуа ");
 		} while (true);
 		sendString(sock, "end");
 		setMark(0, _number, userId, project1Id, project2Id, _value);
@@ -255,7 +272,8 @@ public:
 		if (ch > 0) project2Id = mpProjects[vc[ch - 1]];
 		else return;
 
-		sendString(sock, "data");
+		sendString(sock, "end");
+		/*sendString(sock, "data");
 		sendString(sock, "Номер ранжа: ");
 		do {
 			numberStr = takeString(sock);
@@ -274,10 +292,12 @@ public:
 				break;
 			}
 			else
-				cout << "Некорректный ввод. Повторите попытку.\nОценку: ";
+				cout << "Некорректный ввод. Повторите попытку.\nОценка: ";
 		} while (true);
-		sendString(sock, "end");
-		setMark(0, _number, userId, project1Id, project2Id, _value);
+		sendString(sock, "end");*/
+
+		enterMark(_number, userId, project1Id, project2Id);
+		//setMark(0, _number, userId, project1Id, project2Id, _value);
 	}
 
 	void enterMark(size_t _number, std::pair<std::string, size_t> userId, size_t project1Id, size_t project2Id) {
@@ -294,10 +314,20 @@ public:
 			_valueStr = takeString(sock);
 			if (Checks::checkNoLetters(_valueStr)) {
 				_value = std::stof(_valueStr);
+				if (_value < 0 || _value>1) {
+					/*sendString(sock, "end");
+					sendString(sock, "output");
+					sendString(sock, "Некорректный ввод. Повторите попытку.\nОценка должна быть от 0 до 1.\n");
+					sendString(sock, "data");
+					sendString(sock, str);*/
+
+					sendString(sock, "Некорректный ввод. Повторите попытку.\nОценка должна быть от 0 до 1.\n" + str);
+					continue;
+				}
 				break;
 			}
 			else
-				cout << "Некорректный ввод. Повторите попытку.\nОценка: ";
+				sendString(sock, "Некорректный ввод. Повторите попытку.\n" + str);
 		} while (true);
 		sendString(sock, "end");
 		setMark(0, _number, userId.second, project1Id, project2Id, _value);

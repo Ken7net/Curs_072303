@@ -194,10 +194,14 @@ public:
 	}
 
 	// Получить всех пользователей
-	std::vector<User> getUsers() {
+	std::vector<User> getUsers(std::string findUser = "") {
 		User tmp;
 		std::vector<User> tmpU;
-		pstmt = con->prepareStatement("SELECT * FROM user;");
+		std::string strSearch;
+		if (findUser != "") {
+			strSearch = " WHERE user_name LIKE '%" + findUser + "%'";
+		}
+		pstmt = con->prepareStatement("SELECT * FROM user"+strSearch+";");
 		result = pstmt->executeQuery();
 		while (result->next()) {
 			tmp.setUid(result->getInt(1));
@@ -284,10 +288,14 @@ public:
 	}
 
 	// Получить компании
-	std::vector<Company> getCompanies() {
+	std::vector<Company> getCompanies(std::string findCompany = "") {
 		std::vector<Company> tmpVc;
 		Company tmp;
-		pstmt = con->prepareStatement("SELECT * FROM company;");
+		std::string strSearch;
+		if (findCompany != "") {
+			strSearch = " WHERE company_name LIKE '%" + findCompany + "%'";
+		}
+		pstmt = con->prepareStatement("SELECT * FROM company" + strSearch + ";");
 		result = pstmt->executeQuery();
 		while (result->next()) {
 			tmp.setId(result->getInt(1));
@@ -395,10 +403,14 @@ public:
 	}
 
 	// Получение vector проектов
-	std::vector<Project> getProjectVc(/*const std::string& field_name, const std::string& p_name*/) {
+	std::vector<Project> getProjects(std::string findProject = ""/*const std::string& field_name, const std::string& p_name*/) {
 		Project tmp;
 		std::vector<Project> tmpVc;
-		pstmt = con->prepareStatement("SELECT * FROM project;");
+		std::string strSearch;
+		if (findProject != "") {
+			strSearch = " WHERE project_name LIKE '%" + findProject + "%'";
+		}
+		pstmt = con->prepareStatement("SELECT * FROM project" + strSearch + ";");
 		//pstmt->setString(1, p_name);
 		result = pstmt->executeQuery();
 		while (result->next()) {
