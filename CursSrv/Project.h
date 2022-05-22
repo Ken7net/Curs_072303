@@ -101,11 +101,9 @@ public:
 		sum_credit = _sumCredit;
 	}
 
-
 	void setCreditTime(size_t _creditTime) {
 		credit_time = _creditTime;
 	}
-
 
 	void setSudReestr(const std::string& _sudReestr) {
 		sud_reestr = _sudReestr;
@@ -308,6 +306,11 @@ public:
 // Сравнение по весу
 bool compareWeight(Project obj1, Project obj2) {
 	return (obj1.getWeight() < obj2.getWeight());
+}
+
+// Сравнение по project_id
+bool compareProjectId(Project obj1, Project obj2) {
+	return (obj1.getProjectId() > obj2.getProjectId());
 }
 
 class ProjectSock : public Project {

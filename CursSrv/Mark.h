@@ -175,7 +175,7 @@ public:
 	}
 
 	static void enterMark(Mark& tmp) {
-		size_t markId, _number, userId, project1Id, project2Id;
+		size_t markId, _number = 0, userId = 0, project1Id = 0, project2Id = 0;
 		std::string numberStr, userIdStr, project1IdStr, project2IdStr, _valueStr;
 		if (tmp.getMarkId() != 0) markId = tmp.getMarkId();
 		else markId = 0;
@@ -198,7 +198,7 @@ public:
 			else
 				cout << "Некорректный ввод. Повторите попытку.\n";
 		} while (true);
-		tmp.setMark(markId, _number, userId, project1Id, project2Id, _value);
+		tmp.setMark(markId, tmp.getNumber(), tmp.getUserId(), tmp.getProject1Id(), tmp.getProject2Id(), _value);
 	}
 };
 
@@ -248,9 +248,9 @@ public:
 	}
 
 	void enterMarkAll(std::map<std::string, size_t> mpUsers, std::map<string, size_t> mpProjects) {
-		size_t _number, userId, project1Id, project2Id;
-		std::string numberStr, userIdStr, project1IdStr, project2IdStr, _valueStr;
-		float _value;
+		size_t userId, project1Id, project2Id;
+		std::string userIdStr, project1IdStr, project2IdStr, _valueStr;
+		float _value = 0;
 
 		// ----- Выбор эксперта -----
 		vector<string> vc = toVector(mpUsers);
@@ -301,12 +301,12 @@ public:
 		} while (true);
 		sendString(sock, "end");*/
 
-		enterMark(_number, userId, project1Id, project2Id);
+		enterMark(getNumber(), userId, project1Id, project2Id);
 		//setMark(0, _number, userId, project1Id, project2Id, _value);
 	}
 
 	void enterMark(size_t _number, std::pair<std::string, size_t> userId, size_t project1Id, size_t project2Id) {
-		std::string numberStr, userIdStr, project1IdStr, project2IdStr, _valueStr;
+		std::string userIdStr, project1IdStr, project2IdStr, _valueStr;
 		float _value;
 		sendString(sock, "data");
 

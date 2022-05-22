@@ -13,7 +13,7 @@ private:
 	size_t uid;				// Id
 	std::string name;		// Фамилия Имя
 	std::string login;      // Логин
-	std::string pass;       // Телефон
+	std::string pass;       // Пароль
 	std::string role;       // Роль
 public:
 	vector<string> Roles;// = { "Администратор", "Представитель компании", "Эксперт" };
@@ -110,6 +110,15 @@ public:
 		return (uid == 0);
 	}
 
+	// Очистка
+	void clear() {
+		uid = 0;;
+		name = "";
+		login = "";
+		pass = "";
+		role = "";
+	}
+
 	// Функция для просмотра сотрудника администратором
 	void printUser(bool one = false, ostream& fout = std::cout) {
 		if (one) {
@@ -125,7 +134,17 @@ public:
 			<< endl;
 	}
 
-	virtual void enterUser() {
+	// Проверка существования логина
+	bool checkExistLogin(const std::vector<std::string>& vc, std::string str) {
+		for (auto it : vc) {
+			if (it == str) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	virtual void enterUser(const std::vector<std::string>& existLogins) {
 		//User tmp;
 		string _name, _login, _pass, _role;
 		//ФИО
@@ -147,6 +166,7 @@ public:
 			}
 			else
 				cout << "Некорректный ввод. Повторите попытку.\n";
+			//std::cout << "Логин " << str << "существует! Попробуйте другой." << std::endl;
 		} while (true);
 		//Номер телефона
 		do {
@@ -250,10 +270,17 @@ public:
 	}
 
 	//- Редактирование Логина -
-	void editLogin(std::string oldStr) {
+	void editLogin(const std::vector<std::string>& vc, std::string oldStr) {
 		std::string _login;
 		sendString(sock, "Логин (" + oldStr + "): ");
 		_login = takeString(sock);
+		sendString(sock, "Логин: ");
+		do {
+			_login = takeString(sock);
+			if (checkExistLogin(vc, _login)) {
+				sendString(sock, "Логин - " + _login + " существует! Попробуйте еще раз!\nЛогин: ");
+			}
+		} while (true);
 		setLogin(_login);
 	}
 
@@ -280,7 +307,7 @@ public:
 	}
 
 	//- Редактирование пользователя -
-	void editUserSock(size_t mode = 4) {
+	void editUserSock(const std::vector<std::string>& existLogins, size_t mode = 4) {
 		sendString(sock, "data");
 		switch (mode)
 		{
@@ -288,14 +315,14 @@ public:
 			editName(getName());
 			break;
 		case 2:
-			editLogin(getLogin());
+			editLogin(existLogins, getLogin());
 			break;
 		case 3:
 			editPass(encryptChars(getPass()));
 			break;
 		case 4:
 			editName(getName());
-			editLogin(getLogin());
+			editLogin(existLogins, getLogin());
 			editPass(getPass());
 			break;
 		default:
@@ -304,8 +331,8 @@ public:
 		sendString(sock, "end");
 	}
 
-	//- Ввод нового пользователя --------
-	void enterUser() override {
+	//- Ввод нового пользователя ----
+	void enterUser(const std::vector<std::string>& existLogins) override {
 		//UserSock tmp;
 		string _name, _login, _pass, _role;
 		sendString(sock, "data");
@@ -332,7 +359,13 @@ public:
 		_name += " " + _name2;
 		//-----------------------------------
 		sendString(sock, "Логин: ");
-		_login = takeString(sock);
+		do {
+			_login = takeString(sock);
+			if (checkExistLogin(existLogins, _login)) {
+				sendString(sock, "Логин - " + _login + " существует! Попробуйте еще раз!\nЛогин: ");
+			}
+		} while (true);
+
 		//-----------------------------------
 		sendString(sock, "Пароль: ");
 		_pass = takeString(sock);
@@ -348,6 +381,7 @@ public:
 		//tmp.setUser(_name, _surname, _login, encryptChars(_pass), _role);
 	}
 
+	//- Вывод пользователя в сокет --
 	static void printUserSock(SOCKET _sock, User& us, /*std::string fout = "",*/ bool one = false) {
 		std::stringstream ss;
 		//sendString(_sock, "output" + fout);

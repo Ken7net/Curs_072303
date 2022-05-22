@@ -154,7 +154,17 @@ public:
 			sendString(sock, "menu2");
 			sendString(sock, toString(vc));
 			size_t ch = takeInt(sock);
-			if (ch == 0) break;
+			if (ch == 0) { 
+				if (vc.size() > 2) break;
+				else {
+					// сообщение о ошибке
+					sendString(sock, "output");
+					sendString(sock, "Количество проектов в ранжировании должно быть больше 2!!! Добавть еще проектов!\n");
+					sendString(sock, "end");
+					continue;
+
+				}
+			}
 			else if (ch != vc.size() + 1) {
 				std::cout << "Добавить проект: " << vc[ch - 1] << ", id: " << mpPro[vc[ch - 1]].getProjectId() << std::endl;
 				vcProjects.push_back(mpPro[vc[ch - 1]]);
@@ -172,8 +182,10 @@ public:
 				break;
 			}
 		} while (true);
+
 		cntProjects = vcProjects.size();
 		std::cout << "В список добавлено " << cntProjects << " проекта(ов)." << std::endl;
+		sort(vcProjects.begin(), vcProjects.end(), compareProjectId); //Сортируем по project_id, после рассчитанных весов сортировка будет по weight
 	}
 
 	// Выбор номера для ранжа
@@ -264,10 +276,10 @@ public:
 		Mark tmp{};
 		size_t cntTotal = 0;
 		total = 0;
-		for (auto& it : ranking) {
+		for (const auto& it : ranking) {
 			tmp.clear();
 			rankingTotal.push_back(tmp);
-			for (auto iit : it.second) {
+			for (const auto& iit : it.second) {
 				rankingTotal[cntTotal] += iit;
 				total = total + iit.getValue1() + iit.getValue2();
 			}
@@ -349,9 +361,10 @@ public:
 
 	// Поиск эксперта по id
 	std::string findExpert(size_t id) {
-		for (auto& it : mpExperts) {
+		for (const auto& it : mpExperts) {
 			if (it.second == id) return it.first;
 		}
+		return "";
 	}
 
 	// Вывод парных сравнений проектов в ранже (в серверную консоль)

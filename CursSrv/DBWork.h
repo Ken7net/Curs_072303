@@ -97,13 +97,24 @@ public:
 	// _numField : номер поля
 	// exp :   = 1 - для отбора экспертов (по умолчанию 0)
 	//			 2 - для не Администратора
-	vector<string> getGuide(const std::string& _table, size_t _numField, size_t exp = 0) {
+	std::vector<std::string> getGuide(const std::string& _table, size_t _numField, size_t exp = 0) {
 		vector<string> tmp;
-		std::string str = "";
-		if (exp == 1) str = " WHERE role = 'Эксперт'";
-		if (exp == 2) str = " WHERE NOT role = 'Администратор'";
-		pstmt = con->prepareStatement("SELECT * FROM " + _table + str + ";");
-		result = pstmt->executeQuery();
+		std::string str; // = "SELECT * FROM " + _table;
+		//std::string
+		if (exp == 1) str = " WHERE name = 'Эксперт';";
+		if (exp == 2) {
+			str = " WHERE NOT name = 'Менеджер';";
+		}
+
+		try {
+			pstmt = con->prepareStatement("SELECT * FROM " + _table + str + ";");
+			result = pstmt->executeQuery();
+		}
+		catch (sql::SQLException e) {
+			cout << "Error {Select user_role} message: " << e.what() << endl;
+			system("pause");
+			//exit(1);
+		}
 		while (result->next()) {
 			//printf("%s\n", result->getString(_numField).c_str());
 			tmp.push_back(result->getString(_numField).c_str());
@@ -177,6 +188,7 @@ public:
 			//exit(1);
 		}
 	}
+
 	// Получить пользователя
 	// field_name - поле для отбора
 	// u_name - значение поля
@@ -201,7 +213,7 @@ public:
 		if (findUser != "") {
 			strSearch = " WHERE user_name LIKE '%" + findUser + "%'";
 		}
-		pstmt = con->prepareStatement("SELECT * FROM user"+strSearch+";");
+		pstmt = con->prepareStatement("SELECT * FROM user" + strSearch + ";");
 		result = pstmt->executeQuery();
 		while (result->next()) {
 			tmp.setUid(result->getInt(1));
@@ -403,14 +415,17 @@ public:
 	}
 
 	// Получение vector проектов
-	std::vector<Project> getProjects(std::string findProject = ""/*const std::string& field_name, const std::string& p_name*/) {
+	std::vector<Project> getProjects(std::string findProject = "", std::string orderField = "" /*const std::string& field_name, const std::string& p_name*/) {
 		Project tmp;
 		std::vector<Project> tmpVc;
-		std::string strSearch;
+		std::string strSearch, strOrder;
 		if (findProject != "") {
 			strSearch = " WHERE project_name LIKE '%" + findProject + "%'";
 		}
-		pstmt = con->prepareStatement("SELECT * FROM project" + strSearch + ";");
+		if (orderField != "") {
+			strOrder = " ORDER BY " + orderField;
+		}
+		pstmt = con->prepareStatement("SELECT * FROM project" + strSearch + strOrder + ";");
 		//pstmt->setString(1, p_name);
 		result = pstmt->executeQuery();
 		while (result->next()) {
@@ -512,7 +527,7 @@ public:
 	}
 
 	// Получить map оценок для набора и пользователя
-	std::map<size_t, std::vector<Mark>> getMpMarks(size_t _number, size_t _userId =0) {
+	std::map<size_t, std::vector<Mark>> getMpMarks(size_t _number, size_t _userId = 0) {
 		Mark tmp;
 		std::map<size_t, std::vector<Mark>> tmpRn;
 		std::vector<Mark> tmpMrk;

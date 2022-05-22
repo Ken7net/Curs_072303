@@ -16,21 +16,20 @@ private:
 	SOCKET sock;
 	DBWork db;
 	UserSock curUser;
-	//vector<size_t> vcProjectOp;	//Вектор проектов для оценивания
-	//vector<double> vcMarksOp;	//Вектор оценок проектов
 
 public:
 	//static vector<std::string> vcMainMenu = {"Логин", "Регистрация", "Выход"};
 
 	std::string strMenuMain = "-=-=-=-=  М е н ю  =-=-=-=-#Авторизация#Регистрация#Отключение#Выход";
-	std::string strMenuAdmin = "---= Администратор =---#Добавление#Редактировать#Удаление#Сохранение информации#Поиск#Просмотр инвестиционных проектов#Сортировка инвестиционных проектов#Ранжировать инвестиционные проекты#Выход";
-	std::string strMenuAdminAdd = "Вы хотите добавить: #Пользователя#Компанию#Проект#Назад";
-	std::string strMenuAdminEdit = "Вы хотите редактировать данные:#Пользователя#Компании#Проекта#Назад";
-	std::string strMenuAdminDel = "Вы хотите удалить: #Пользователя#Компанию#Проект#Назад";
-	std::string strMenuAdminSave = "Вы хотите сохранить информацию о:#Пользователях#Компаниях#Проектах#Назад";
-	std::string strMenuAdminSearch = "Вы хотите найти информацию о:#Пользователях#Компаниях#Проектах#Назад";
-	std::string strMenuAdminRanking = "Ранжировать инвестиционные проекты:#Осуществить попарное сравнение проектов#Найти оценки#Вычислить веса проектов#Вывести результат ранжирования ИП#Назад";
-	std::string strMenuCompany = "-----= Компания =-----#Ввод данных#Редактировать данные#Сохранение информации#Удаление данных#Выход";
+	std::string strMenuManager = "---= Менеджер =---#Добавление#Редактировать#Удаление#Сохранение информации#Поиск#Просмотр инвестиционных проектов#Сортировка инвестиционных проектов#Ранжировать инвестиционные проекты#Выход";
+	std::string strMenuManagerAdd = "Вы хотите добавить: #Пользователя#Компанию#Проект#Ранжирование#Назад";
+	std::string strMenuManagerEdit = "Вы хотите редактировать данные:#Пользователя#Компании#Проекта#Назад";
+	std::string strMenuManagerDel = "Вы хотите удалить: #Пользователя#Компанию#Проект#Назад";
+	std::string strMenuManagerSave = "Вы хотите сохранить информацию о:#Пользователях#Компаниях#Проектах#Назад";
+	std::string strMenuManagerSearch = "Вы хотите найти информацию о:#Пользователях#Компаниях#Проектах#Назад";
+	std::string strMenuManagerSort = "Вы хотите сортировать инвестиционные проекты по:#Id#Наименованию#Сумме кредита#Сроку#Назад";
+	std::string strMenuManagerRanking = "Ранжировать инвестиционные проекты:#Осуществить попарное сравнение проектов#Найти оценки#Вычислить веса проектов#Вывести результат ранжирования ИП#Назад";
+	std::string strMenuCompany = "-----= Консультант =-----#Ввод данных#Редактировать данные#Сохранение информации#Удаление данных#Выход";
 	std::string strMenuCompanyAdd = "Вы хотите добавить данные:#Компании#Проектов#Назад";
 	std::string strMenuCompanyEdit = "Вы хотите редактировать данные:#Компании#Проектов#Назад";
 	std::string strMenuCompanySave = "Вы хотите сохранить информацию о:#Компании#Проектах#Назад";
@@ -55,22 +54,25 @@ public:
 	~A_menu() = default;
 
 	//----- Ввод нового пользователя -----
-	void addUser(int flag = 2) {
+	void addUser(int flag = 2, bool cUser = false) {
 		//UserSock user(sock, db.getRoles());
 		UserSock user(sock, db.getGuide("user_role", 1, flag)); //, 2); // для вывода кроме админа (регистрация)
-		user.enterUser();
+		user.enterUser(db.getGuide("user", 3));
 		std::cout << user;
 		db.addUser(user);
 		std::cout << "---- Добавление пользователя ----" << std::endl;
 		std::cout << user;
-		db.deleteUser(user.getUid());
+		//db.deleteUser(user.getUid());
 		std::cout << "---------------------------------" << std::endl;
+		if (cUser) { 
+			curUser.setUser(db.getUser("login", user.getLogin()));
+		}
 	}
 
 	//-------- Список пользователей ---------
 	int listUsers(vector<std::string>& vc, int flag = 0) {	// 0 - Все
 		int ch = 0;											// 1 - Эксперты
-		if (!vc.empty()) vc.clear();						// 2 - Не Администраторы
+		if (!vc.empty()) vc.clear();						// 2 - Не Менеджеры
 		vc = db.getGuide("user", 2, flag);
 		sendString(sock, "menu0");
 		sendString(sock, toString(vc, "Выберите пользователя: "));
@@ -89,7 +91,7 @@ public:
 			return;
 		}
 		UserSock user(sock, db.getGuide("user_role", 1));
-		user.enterUser();
+		user.enterUser(db.getGuide("user", 3));
 		user.setUid(oldUser.getUid());
 		db.editUser(user, oldUser.getUid());
 		std::cout << "-- Редактирование пользователя --" << std::endl;
@@ -114,7 +116,7 @@ public:
 			//UserSock user(sock, db.getGuide("user_role", 1));
 			//user.enterUser();
 			//user.setUid(oldUser.getUid());
-			curUser.editUserSock(ch);
+			curUser.editUserSock(db.getGuide("user", 3), ch);
 			db.editUser(curUser, oldUser.getUid());
 			std::cout << "-- Редактирование пользователя --" << std::endl;
 			std::cout << oldUser;
@@ -454,8 +456,8 @@ public:
 		db.deleteMark(oldMark.getMarkId());
 	}
 
-	// Меню Администратора
-	void menuAdmin() {
+	// Меню Менеджера
+	void menuManager() {
 		/*
 		* 1. Добавление
 		* 2. Редактировать
@@ -468,35 +470,35 @@ public:
 		* 9. Выход"
 		*/
 		sendString(sock, "menu");
-		sendString(sock, strMenuAdmin);
-		//sendMenu(sock, split(strMenuAdmin));
+		sendString(sock, strMenuManager);
+		//sendMenu(sock, split(strMenuManager));
 		char p[200];
 		strcpy(p, "");
 		p[0] = '\0';
 		std::string command;
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
 			size_t i = atoi(p);
-			std::cout << "<- " << split(strMenuAdmin)[i] << endl;
+			std::cout << "<- " << split(strMenuManager)[i] << endl;
 			switch (i) {
 			case 1:
 				// Добавление
-				menuAdminAdd();
+				menuManagerAdd();
 				break;
 			case 2:
 				// Редактировать
-				menuAdminEdit();
+				menuManagerEdit();
 				break;
 			case 3:
 				// Удаление
-				menuAdminDel();
+				menuManagerDel();
 				break;
 			case 4:
 				// Сохранение
-				menuAdminSave();
+				menuManagerSave();
 				break;
 			case 5:
 				// Поиск
-				menuAdminSearch();
+				menuManagerSearch();
 				break;
 			case 6:
 				// Просмотр Инвестиционных проектов
@@ -507,10 +509,11 @@ public:
 				break;
 			case 7:
 				// Сортировка Инвестиционных проектов
+				menuManagerSort();
 				break;
 			case 8:
 				// Ранжировать Инвестиционные проекты
-				menuAdminRanking();
+				menuManagerRanking();
 				break;
 			case 9:
 				//sendString(sock, "menu");
@@ -518,12 +521,29 @@ public:
 				return;
 			}
 			sendString(sock, "menu");
-			sendString(sock, strMenuAdmin);
+			sendString(sock, strMenuManager);
 		}
 	}
 
-	// Меню Администратора. Добавление
-	void menuAdminAdd() {
+	// Создать новое ранжирование
+	void addRanking() {
+		Rating rt(sock);
+		// Выбор экспертов
+		rt.selectExperts(db.getGuideMap("user", 2, 1));
+		// Выбор проектов
+		rt.selectProjects(db.getProjectMp());
+		// Ввод оценок
+		rt.setNumber(db.getNewNumber());
+		rt.enterRanks();
+		for (auto& it : rt.ranking) {
+			for (auto& iit : it.second) {
+				db.addMark(iit);
+			}
+		}
+	}
+
+	// Меню Менеджера. Добавление
+	void menuManagerAdd() {
 		/*
 		* 1. Новых пользователей
 		* 2. Новые компании
@@ -531,13 +551,13 @@ public:
 		* 4. Назад
 		*/
 		sendString(sock, "menu");
-		sendString(sock, strMenuAdminAdd);
+		sendString(sock, strMenuManagerAdd);
 		char p[200];
 		strcpy(p, "");
 		p[0] = '\0';
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
 			int i = atoi(p);
-			std::cout << "<- " << split(strMenuAdminAdd)[i] << endl;
+			std::cout << "<- " << split(strMenuManagerAdd)[i] << endl;
 			switch (i) {
 			case 1:
 				// Новые пользователи
@@ -552,17 +572,21 @@ public:
 				addProject();
 				break;
 			case 4:
+				// Новое ранжирование
+				addRanking();
+				break;
+			case 5:
 				//sendString(sock, "menu");
-				//sendString(sock, strMenuAdmin);
+				//sendString(sock, strMenuManager);
 				return;
 			}
 			sendString(sock, "menu");
-			sendString(sock, strMenuAdminAdd);
+			sendString(sock, strMenuManagerAdd);
 		}
 	}
 
-	// Меню Администратора. Редактирование
-	void menuAdminEdit() {
+	// Меню Менеджера. Редактирование
+	void menuManagerEdit() {
 		/*
 		* 1. Пользователей
 		* 2. Компанию
@@ -570,13 +594,13 @@ public:
 		* 4. Назад
 		*/
 		sendString(sock, "menu");
-		sendString(sock, strMenuAdminEdit);
+		sendString(sock, strMenuManagerEdit);
 		char p[200];
 		strcpy(p, "");
 		p[0] = '\0';
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
 			int i = atoi(p);
-			std::cout << "<- " << split(strMenuAdminEdit)[i] << endl;
+			std::cout << "<- " << split(strMenuManagerEdit)[i] << endl;
 			switch (i) {
 			case 1:
 				// 
@@ -592,16 +616,16 @@ public:
 				break;
 			case 4:
 				//sendString(sock, "menu");
-				//sendString(sock, strMenuAdmin);
+				//sendString(sock, strMenuManager);
 				return;
 			}
 			sendString(sock, "menu");
-			sendString(sock, strMenuAdminEdit);
+			sendString(sock, strMenuManagerEdit);
 		}
 	}
 
-	// Меню Администратора. Удаление
-	void menuAdminDel() {
+	// Меню Менеджера. Удаление
+	void menuManagerDel() {
 		/*
 		* 1. Пользователей
 		* 2. Компанию
@@ -609,13 +633,13 @@ public:
 		* 4. Назад
 		*/
 		sendString(sock, "menu");
-		sendString(sock, strMenuAdminDel);
+		sendString(sock, strMenuManagerDel);
 		char p[200];
 		strcpy(p, "");
 		p[0] = '\0';
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
 			int i = atoi(p);
-			std::cout << "<- " << split(strMenuAdminDel)[i] << endl;
+			std::cout << "<- " << split(strMenuManagerDel)[i] << endl;
 			switch (i) {
 			case 1:
 				deleteUser();
@@ -628,16 +652,16 @@ public:
 				break;
 			case 4:
 				//sendString(sock, "menu");
-				//sendString(sock, strMenuAdmin);
+				//sendString(sock, strMenuManager);
 				return;
 			}
 			sendString(sock, "menu");
-			sendString(sock, strMenuAdminDel);
+			sendString(sock, strMenuManagerDel);
 		}
 	}
 
-	// Меню Администратора. Сохранение
-	void menuAdminSave() {
+	// Меню Менеджера. Сохранение
+	void menuManagerSave() {
 		/*
 		* 1. Пользователях#
 		* 2. Компаниях#
@@ -645,13 +669,13 @@ public:
 		* 4. Назад
 		*/
 		sendString(sock, "menu");
-		sendString(sock, strMenuAdminSave);
+		sendString(sock, strMenuManagerSave);
 		char p[200];
 		strcpy(p, "");
 		p[0] = '\0';
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
 			int i = atoi(p);
-			std::cout << "<- " << split(strMenuAdminSave)[i] << endl;
+			std::cout << "<- " << split(strMenuManagerSave)[i] << endl;
 			switch (i) {
 			case 1:
 				// вывод пользователей в консоль сервера и в файл на клиенте
@@ -667,16 +691,59 @@ public:
 				break;
 			case 4:
 				//sendString(sock, "menu");
-				//sendString(sock, strMenuAdmin);
+				//sendString(sock, strMenuManager);
 				return;
 			}
 			sendString(sock, "menu");
-			sendString(sock, strMenuAdminSave);
+			sendString(sock, strMenuManagerSave);
 		}
 	}
 
-	// Меню Администратора. Поиск
-	void menuAdminSearch() {
+	// Меню Менеджера. Сохранение
+	void menuManagerSort() {
+		/*
+		* 1. Id
+		* 2. Наименование
+		* 3. Сумма кредита
+		* 4. Срок
+		* 5. Назад
+		*/
+		sendString(sock, "menu");
+		sendString(sock, strMenuManagerSort);
+		char p[200];
+		strcpy(p, "");
+		p[0] = '\0';
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
+			int i = atoi(p);
+			std::cout << "<- " << split(strMenuManagerSort)[i] << endl;
+			std::string strOrder;
+			switch (i) {
+			case 1:
+				// сортирова 
+				strOrder = "project_id";
+				break;
+			case 2:
+				// вывод компаний в консоль сервера и в файл на клиенте
+				strOrder = "project_name";
+				break;
+			case 3:
+				// вывод проектов в консоль сервера и в файл на клиенте
+				strOrder = "sum_credit";
+				break;
+			case 4:
+				strOrder = "credit_time";
+				break;
+			case 5:
+				return;
+			}
+			printProjects(db.getProjects("", strOrder));
+			sendString(sock, "menu");
+			sendString(sock, strMenuManagerSort);
+		}
+	}
+
+	// Меню Менеджера. Поиск
+	void menuManagerSearch() {
 		/*
 		* 1. Пользователях#
 		* 2. Компаниях#
@@ -684,13 +751,13 @@ public:
 		* 4. Назад
 		*/
 		sendString(sock, "menu");
-		sendString(sock, strMenuAdminSearch);
+		sendString(sock, strMenuManagerSearch);
 		char p[200];
 		strcpy(p, "");
 		p[0] = '\0';
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
 			int i = atoi(p);
-			std::cout << "<- " << split(strMenuAdminSearch)[i] << endl;
+			std::cout << "<- " << split(strMenuManagerSearch)[i] << endl;
 			switch (i) {
 			case 1:
 				// поиск и вывод пользователей в консоль сервера и в файл на клиенте
@@ -709,16 +776,16 @@ public:
 				break;
 			case 4:
 				//sendString(sock, "menu");
-				//sendString(sock, strMenuAdmin);
+				//sendString(sock, strMenuManager);
 				return;
 			}
 			sendString(sock, "menu");
-			sendString(sock, strMenuAdminSearch);
+			sendString(sock, strMenuManagerSearch);
 		}
 	}
 
 	// Ранжировать инвестиционные проекты
-	void menuAdminRanking() {
+	void menuManagerRanking() {
 		/*
 		* 1. Найти оценки#
 		* 2. Осуществить попарное сравнение проектов#
@@ -727,14 +794,14 @@ public:
 		* 5. Назад
 		*/
 		sendString(sock, "menu");
-		sendString(sock, strMenuAdminRanking);
+		sendString(sock, strMenuManagerRanking);
 		char p[200];
 		strcpy(p, "");
 		p[0] = '\0';
 		Rating rating(sock);
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
 			int i = atoi(p);
-			std::cout << "<- " << split(strMenuAdminRanking)[i] << endl;
+			std::cout << "<- " << split(strMenuManagerRanking)[i] << endl;
 			switch (i) {
 			case 1:
 				// Найти оценки
@@ -787,11 +854,11 @@ public:
 				break;
 			case 5:
 				//sendString(sock, "menu");
-				//sendString(sock, strMenuAdmin);
+				//sendString(sock, strMenuManager);
 				return;
 			}
 			sendString(sock, "menu");
-			sendString(sock, strMenuAdminRanking);
+			sendString(sock, strMenuManagerRanking);
 		}
 	}
 
@@ -806,7 +873,7 @@ public:
 		*/
 		sendString(sock, "menu");
 		sendString(sock, strMenuCompany);
-		//sendMenu(sock, split(strMenuAdmin));
+		//sendMenu(sock, split(strMenuManager));
 		char p[200];
 		strcpy(p, "");
 		p[0] = '\0';
@@ -986,7 +1053,7 @@ public:
 		size_t tmpPrId = (*itt).second[0].getProject1Id();
 		Project tmpPr = db.getProject("project_id", std::to_string(tmpPrId));
 		rt.vcProjects.push_back(tmpPr);
-		for (auto it : itt->second) {
+		for (const auto& it : itt->second) {
 			if (tmpPrId == it.getProject1Id()) {
 				tmpPr = db.getProject("project_id", std::to_string(it.getProject2Id()));
 				rt.addProject(tmpPr);
@@ -996,18 +1063,18 @@ public:
 	}
 
 	std::pair<float, float> getORT(std::vector<Mark> mrk, size_t pr1Id, size_t pr2Id) {
-		for (auto it : mrk) {
+		for (const Mark& it : mrk) {
 			if (pr1Id == it.getProject1Id() && pr2Id == it.getProject2Id())
 				return make_pair(it.getValue1(), it.getValue2());
 		}
-		return make_pair(0, 0);
+		return make_pair((float)0, (float)0);
 	}
 
 	void reCreateVcRankTotal(Rating& rt) {
 		std::vector<Mark> tmpMrks;
 		Mark tmpMrk;
 		map <size_t, std::vector<Mark>> ::iterator itt = rt.ranking.begin();
-		for (auto it : itt->second) {
+		for (const auto& it : itt->second) {
 			tmpMrk.setValues(getORT(rt.rankingTotal, it.getProject1Id(), it.getProject2Id()));
 			tmpMrks.push_back(tmpMrk);
 		}
@@ -1106,6 +1173,14 @@ public:
 		}
 	}
 
+	void userStart() {
+		if (!curUser.isEmptyId()) {
+			if (curUser.getRole() == "Менеджер") menuManager();
+			else if (curUser.getRole() == "Консультант банка") menuCompany();
+			else menuExpert();
+		}
+	}
+
 	void start() {
 		int c;
 		char p[200], com[200];//основной буфер и команда
@@ -1121,6 +1196,7 @@ public:
 		sendString(sock, "Server connected...\n" + tmpDate.getDateStr() + "\n");
 		sendString(sock, "menu" + std::to_string(1));
 		sendString(sock, strMenuMain);
+		curUser.setSock(sock);
 		strcpy(p, "");
 		p[0] = '\0';
 		std::string command;
@@ -1128,35 +1204,42 @@ public:
 			command = p;
 			int i = atoi(command.c_str());
 			size_t ch;
-			curUser.setSock(sock);
+			curUser.clear();
 			switch (i) {
 			case 1:
 				//Подключение пользователя
 				loginUser();
-				if (!curUser.isEmptyId()) {
-					if (curUser.getRole() == "Администратор") menuAdmin();
-					else if (curUser.getRole() == "Консультант банка") menuCompany();
-					else menuExpert();
-				}
-				//menuAdmin();
+				userStart();
+
+				//menuManager();
 				//menuCompany();
 				//menuExpert();
 				break;
 			case 2:
 				//подключение пользователя
+				curUser.clear();
+				addUser(2, true);
+				userStart();
 
-				menuAdmin();
+				//menuManager();
 				//menuCompany();
 				//menuExpert();
 				break;
 			case 3:
 				//отключение пользователя
 				//cout << "User " << curU << " logout" << endl;
-				cntClients--;
-				std::cout << "Клиент " << curUser.getLogin() << "отключен.\nТекущее количество подключений: " << cntClients << std::endl;
-				sendString(sock, "exit");
-				closesocket(sock);//закрываем сокет
-				return;
+
+				menuManager();
+				//menuCompany();
+				//menuExpert();
+
+				//cntClients--;
+				//std::cout << "Клиент " << curUser.getLogin() << "отключен.\nТекущее количество подключений: " << cntClients << std::endl;
+				//sendString(sock, "exit");
+				//closesocket(sock);//закрываем сокет
+				//return;
+
+
 				//break;
 			case 4:
 				//выход
