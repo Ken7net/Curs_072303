@@ -33,7 +33,7 @@ public:
 		weight = 0;
 	}
 
-	Project(vector<string> vc) {
+	explicit Project(vector<string> vc) {
 		Companies = std::move(vc);
 		project_id = 0;
 		sum_credit = 0;
@@ -150,7 +150,7 @@ public:
 	}
 
 	void setProject(size_t _projectId, std::string _projectName, size_t _sumCredit, size_t _creditTime,
-		std::string _sudReestr, std::string _applicationDate, size_t _companyId) {
+		std::string _sudReestr, const std::string& _applicationDate, size_t _companyId) {
 		project_id = _projectId;
 		project_name = std::move(_projectName);
 		sum_credit = _sumCredit;
@@ -233,7 +233,7 @@ public:
 	}
 
 	// Вывод проекта c весами
-	void printProject(std::string companyStr, bool head = false) {
+	void printProject(const std::string& companyStr, bool head = false) {
 		if (head) {
 			// заголовок
 			std::cout << "+----+----------------------------------------+-----------+-------+---+----------+-------------------+" << std::endl;
@@ -262,7 +262,7 @@ public:
 	}
 
 	// Вывод проекта в сокет
-	void printProjectSock(SOCKET sc, std::string companyStr, bool head = false) {
+	void printProjectSock(SOCKET sc, const std::string& companyStr, bool head = false) {
 			if (head) {
 				// заголовок
 				sendString(sc, "+----+----------------------------------------+-----------+-------+---+----------+-------------------+\n");
@@ -304,12 +304,12 @@ public:
 };
 
 // Сравнение по весу
-bool compareWeight(Project obj1, Project obj2) {
+bool compareWeight(const Project& obj1, const Project& obj2) {
 	return (obj1.getWeight() < obj2.getWeight());
 }
 
 // Сравнение по project_id
-bool compareProjectId(Project obj1, Project obj2) {
+bool compareProjectId(const Project& obj1, const Project& obj2) {
 	return (obj1.getProjectId() > obj2.getProjectId());
 }
 
@@ -423,7 +423,7 @@ public:
 		else return;
 		//sendString(sock, "Дата подачи заявки: ");
 		//_applicationDate.inputDate();
-		_applicationDate.setDateStr(_applicationDate.currentDate()); //std::string
+		_applicationDate.setDateStr(Date::currentDate()); //std::string
 
 		/*sendString(sock, "Наименование компании: ");
 		do {

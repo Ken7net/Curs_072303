@@ -103,16 +103,16 @@ public:
 	}
 
 	bool isEmpty() {
-		return (login == "");
+		return (login.empty());
 	}
 
-	bool isEmptyId() {
+	bool isEmptyId() const {
 		return (uid == 0);
 	}
 
 	// Очистка
 	void clear() {
-		uid = 0;;
+		uid = 0;
 		name = "";
 		login = "";
 		pass = "";
@@ -135,13 +135,14 @@ public:
 	}
 
 	// Проверка существования логина
-	bool checkExistLogin(const std::vector<std::string>& vc, std::string str) {
-		for (auto it : vc) {
+	static bool checkExistLogin(const std::vector<std::string>& vc, const std::string& str) {
+		for (const auto& it : vc) {
 			if (it == str) {
 				return true;
 			}
 		}
 		return false;
+//        return std::ranges::any_of(vc.cbegin(), vc.cend(), str);
 	}
 
 	virtual void enterUser(const std::vector<std::string>& existLogins) {
@@ -244,7 +245,7 @@ public:
 	//
 
 	//- Редактирование Фамилии Имени -
-	void editName(std::string oldStr) {
+	void editName(const std::string& oldStr) {
 		std::string _name, _name2;
 		//-----------------------------------
 		sendString(sock, "Старое значение: " + oldStr + "\nФамилия: ");
@@ -270,22 +271,22 @@ public:
 	}
 
 	//- Редактирование Логина -
-	void editLogin(const std::vector<std::string>& vc, std::string oldStr) {
+	void editLogin(const std::vector<std::string>& vc, const std::string& oldStr) {
 		std::string _login;
 		sendString(sock, "Логин (" + oldStr + "): ");
-		_login = takeString(sock);
-		sendString(sock, "Логин: ");
 		do {
 			_login = takeString(sock);
 			if (checkExistLogin(vc, _login)) {
 				sendString(sock, "Логин - " + _login + " существует! Попробуйте еще раз!\nЛогин: ");
-			}
+			} else {
+                break;
+            }
 		} while (true);
 		setLogin(_login);
 	}
 
 	//- Редактирование пароля -
-	void editPass(std::string oldStr) {
+	void editPass(const std::string& oldStr) {
 		std::string _pass;
 		sendString(sock, "Пароль (" + oldStr + "): ");
 		_pass = takeString(sock);
@@ -293,7 +294,7 @@ public:
 	}
 
 	//- Редактирование роли -
-	void editRole(std::string oldStr) {
+	void editRole(const std::string& oldStr) {
 		std::string _role;
 		size_t ch;
 		sendString(sock, "Старое значение: " + oldStr);
@@ -363,7 +364,9 @@ public:
 			_login = takeString(sock);
 			if (checkExistLogin(existLogins, _login)) {
 				sendString(sock, "Логин - " + _login + " существует! Попробуйте еще раз!\nЛогин: ");
-			}
+			} else {
+                break;
+            }
 		} while (true);
 
 		//-----------------------------------

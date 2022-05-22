@@ -38,10 +38,9 @@ public:
 		return finance;
 	}
 
-	size_t getId() {
+	size_t getId() const {
 		return id;
 	}
-
 
 	void setId(size_t _id) {
 		Company::id = _id;

@@ -88,7 +88,7 @@ public:
 		return str;
 	}
 
-	void setDateStr(std::string str) {
+	void setDateStr(const std::string& str) {
 		char r = '/';
 		if (str.find('/') != std::string::npos) r = '/';
 		else if (str.find('-') != std::string::npos) r = '-';

@@ -175,8 +175,8 @@ public:
 	}
 
 	static void enterMark(Mark& tmp) {
-		size_t markId, _number = 0, userId = 0, project1Id = 0, project2Id = 0;
-		std::string numberStr, userIdStr, project1IdStr, project2IdStr, _valueStr;
+		size_t markId;
+		std::string _valueStr;
 		if (tmp.getMarkId() != 0) markId = tmp.getMarkId();
 		else markId = 0;
 		float _value;
@@ -250,7 +250,7 @@ public:
 	void enterMarkAll(std::map<std::string, size_t> mpUsers, std::map<string, size_t> mpProjects) {
 		size_t userId, project1Id, project2Id;
 		std::string userIdStr, project1IdStr, project2IdStr, _valueStr;
-		float _value = 0;
+		//float _value = 0;
 
 		// ----- Выбор эксперта -----
 		vector<string> vc = toVector(mpUsers);
@@ -305,7 +305,7 @@ public:
 		//setMark(0, _number, userId, project1Id, project2Id, _value);
 	}
 
-	void enterMark(size_t _number, std::pair<std::string, size_t> userId, size_t project1Id, size_t project2Id) {
+	void enterMark(size_t _number, const std::pair<std::string, size_t>& userId, size_t project1Id, size_t project2Id) {
 		std::string userIdStr, project1IdStr, project2IdStr, _valueStr;
 		float _value;
 		sendString(sock, "data");

@@ -27,10 +27,10 @@ private:
 	std::string password;
 	std::string database;
 protected:
-	sql::Driver* driver;
-	sql::Connection* con;
-	sql::PreparedStatement* pstmt;
-	sql::ResultSet* result;
+	sql::Driver* driver{};
+	sql::Connection* con{};
+	sql::PreparedStatement* pstmt{};
+	sql::ResultSet* result{};
 public:
 
 	DBWork() {}
@@ -87,8 +87,8 @@ public:
 	}
 
 	~DBWork() {
-		if (result != nullptr) delete result;
-		if (pstmt != nullptr) delete pstmt;
+		delete result;
+		delete pstmt;
 		delete con;
 	}
 
@@ -116,8 +116,8 @@ public:
 			//exit(1);
 		}
 		while (result->next()) {
-			//printf("%s\n", result->getString(_numField).c_str());
-			tmp.push_back(result->getString(_numField).c_str());
+			//tmp.push_back(result->getString(_numField).c_str());
+            tmp.emplace_back(result->getString(_numField).c_str());
 		}
 		delete result;
 		return tmp;
@@ -125,7 +125,7 @@ public:
 
 	std::map<string, size_t> getGuideMap(const std::string& _table, size_t _numField, size_t exp = 0) {
 		std::map<std::string, size_t> tmp;
-		std::string str = "";
+		std::string str;
 		if (exp == 1) str = " WHERE role = 'Эксперт'";
 		if (exp == 2) str = " WHERE NOT role = 'Администратор'";
 		pstmt = con->prepareStatement("SELECT * FROM " + _table + str + ";");
@@ -147,7 +147,8 @@ public:
 		result = pstmt->executeQuery();
 		while (result->next()) {
 			printf("%s\n", result->getString(1).c_str());
-			tmp.push_back(result->getString(1).c_str());
+			//tmp.push_back(result->getString(1).c_str());
+            tmp.emplace_back(result->getString(1).c_str());
 		}
 		delete result;
 		//setlocale(LC_ALL, ".1251");
@@ -206,11 +207,11 @@ public:
 	}
 
 	// Получить всех пользователей
-	std::vector<User> getUsers(std::string findUser = "") {
+	std::vector<User> getUsers(const std::string& findUser = "") {
 		User tmp;
 		std::vector<User> tmpU;
 		std::string strSearch;
-		if (findUser != "") {
+		if (!findUser.empty()) {
 			strSearch = " WHERE user_name LIKE '%" + findUser + "%'";
 		}
 		pstmt = con->prepareStatement("SELECT * FROM user" + strSearch + ";");
@@ -300,11 +301,11 @@ public:
 	}
 
 	// Получить компании
-	std::vector<Company> getCompanies(std::string findCompany = "") {
+	std::vector<Company> getCompanies(const std::string& findCompany = "") {
 		std::vector<Company> tmpVc;
 		Company tmp;
 		std::string strSearch;
-		if (findCompany != "") {
+		if (!findCompany.empty()) {
 			strSearch = " WHERE company_name LIKE '%" + findCompany + "%'";
 		}
 		pstmt = con->prepareStatement("SELECT * FROM company" + strSearch + ";");
@@ -415,14 +416,14 @@ public:
 	}
 
 	// Получение vector проектов
-	std::vector<Project> getProjects(std::string findProject = "", std::string orderField = "" /*const std::string& field_name, const std::string& p_name*/) {
+	std::vector<Project> getProjects(const std::string& findProject = "", std::string orderField = "" /*const std::string& field_name, const std::string& p_name*/) {
 		Project tmp;
 		std::vector<Project> tmpVc;
 		std::string strSearch, strOrder;
-		if (findProject != "") {
+		if (!findProject.empty()) {
 			strSearch = " WHERE project_name LIKE '%" + findProject + "%'";
 		}
-		if (orderField != "") {
+		if (!orderField.empty()) {
 			strOrder = " ORDER BY " + orderField;
 		}
 		pstmt = con->prepareStatement("SELECT * FROM project" + strSearch + strOrder + ";");
@@ -486,7 +487,7 @@ public:
 		}
 	}
 
-	void addMarkVc(std::vector<Mark> _mark) {
+	void addMarkVc(const std::vector<Mark>& _mark) {
 		for (auto&& it : _mark) {
 			addMark(it);
 		}
@@ -674,11 +675,12 @@ public:
 	// Получение номеров ранжей
 	std::vector<std::string> getNumbersMark() {
 		vector<string> tmp;
-		std::string str = "";
+		std::string str;
 		pstmt = con->prepareStatement("SELECT number, COUNT(number) * 2 AS count FROM mark GROUP BY number;");
 		result = pstmt->executeQuery();
 		while (result->next()) {
-			tmp.push_back(result->getString(1).c_str());
+			//tmp.push_back(result->getString(1).c_str());
+            tmp.emplace_back(result->getString(1).c_str());
 		}
 		delete result;
 		return tmp;
@@ -697,7 +699,6 @@ public:
 
 	size_t getCountExpert(size_t _number, size_t _uid) {
 		size_t cnt = 0;
-		size_t tmp = 0;
 		pstmt = con->prepareStatement("SELECT COUNT(number) FROM mark WHERE number = ? AND user_id = ? GROUP BY number;");
 		pstmt->setInt(1, _number);
 		pstmt->setInt(2, _uid);

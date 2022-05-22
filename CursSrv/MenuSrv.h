@@ -64,20 +64,18 @@ public:
 		std::cout << user;
 		//db.deleteUser(user.getUid());
 		std::cout << "---------------------------------" << std::endl;
-		if (cUser) { 
+		if (cUser) {
 			curUser.setUser(db.getUser("login", user.getLogin()));
 		}
 	}
 
 	//-------- Список пользователей ---------
 	int listUsers(vector<std::string>& vc, int flag = 0) {	// 0 - Все
-		int ch = 0;											// 1 - Эксперты
-		if (!vc.empty()) vc.clear();						// 2 - Не Менеджеры
-		vc = db.getGuide("user", 2, flag);
+		if (!vc.empty()) vc.clear();						// 1 - Эксперты
+		vc = db.getGuide("user", 2, flag);// 2 - Не Менеджеры
 		sendString(sock, "menu0");
 		sendString(sock, toString(vc, "Выберите пользователя: "));
-		ch = takeInt(sock);
-		return ch;
+    	return takeInt(sock);
 	}
 
 	//----- Редактирование пользователя -----
@@ -147,7 +145,7 @@ public:
 	}
 
 	//----- Вывод пользователей -----
-	void printUsers(std::vector<User> users, std::string toFile = "") {
+	void printUsers(std::vector<User> users, const std::string& toFile = "") const {
 		sendString(sock, "output" + toFile);
 		for (auto& it : users) {
 			it.printUser(it == users[0]);
@@ -158,7 +156,7 @@ public:
 	}
 
 	//--------- Поиск пользователей ---------
-	void searchUsers(std::string toFile = "") {
+	void searchUsers(const std::string& toFile = "") {
 		sendString(sock, "data");
 		sendString(sock, "Введите Фамилию (или ее часть) для поиска: ");
 		std::string fndUser = takeString(sock);
@@ -186,13 +184,11 @@ public:
 
 	//----------- Список компаний -----------
 	int listCompany(vector<string>& vc) {
-		int ch = 0;
 		if (!vc.empty()) vc.clear();
 		vc = db.getGuide("company", 2);
 		sendString(sock, "menu0");
 		sendString(sock, toString(vc, "Выберите компанию: "));
-		ch = takeInt(sock);
-		return ch;
+		return takeInt(sock);
 	}
 
 	//------- Редактирование компании -------
@@ -233,9 +229,9 @@ public:
 	}
 
 	//------------ Вывод компаний -----------
-	void printCompanies(std::vector<Company> vcCmps, std::string fout = "") {
+	void printCompanies(std::vector<Company> vcCmps, const std::string& fout = "") const {
 		sendString(sock, "output" + fout);
-		for (auto& it : vcCmps) {
+		for (const auto& it : vcCmps) {
 			it.printCompany(it == vcCmps[0]);
 			it.printCompanySock(sock, it == vcCmps[0]);
 		}
@@ -260,7 +256,7 @@ public:
 	}
 
 	//------------ Вывод проектов -----------
-	void printProjects(std::vector<Project> vcPrs, std::string fout = "") {
+	void printProjects(std::vector<Project> vcPrs, const std::string& fout = "") {
 		sendString(sock, "output" + fout);
 		for (auto& it : vcPrs) {
 			it.printProject(db.getCompany("company_id", std::to_string(it.getCompanyId())).getName(), it == vcPrs[0]);
@@ -300,18 +296,16 @@ public:
 
 	//------- Список проектов vector --------
 	size_t listProject(vector<string>& vc, size_t mode = 0) {
-		int ch = 0;
 		if (!vc.empty()) vc.clear();
 		vc = db.getGuide("project", 2);
 		sendString(sock, "menu" + std::to_string(mode));
 		sendString(sock, toString(vc, "Выберите проект: "));
-		ch = takeInt(sock);
-		return ch;
+		return takeInt(sock);
 	}
 
 	//--------- Список проектов map ---------
 	size_t listProject(map<string, size_t>& vc, size_t mode = 0) {
-		int ch = 0;
+		size_t ch = 0;
 		if (!vc.empty()) vc.clear();
 		vc = db.getGuideMap("project", 2);
 		vector<string> tmp = toVector(vc);
@@ -333,7 +327,7 @@ public:
 	void editProject() {
 		vector<std::string> projects;
 		Project oldProject;
-		int ch = listProject(projects);
+		size_t ch = listProject(projects);
 		if (ch != 0)
 			oldProject = db.getProject("project_name", projects[ch - 1]);
 		else {
@@ -401,7 +395,7 @@ public:
 
 	//--------- Список оценок map ---------
 	size_t listMark(map<string, size_t>& vc) {
-		int ch = 0;
+		size_t ch = 0;
 		if (!vc.empty()) vc.clear();
 		vc = db.getGuideMap("mark", 2);
 		vector<string> tmp = toVector(vc);
@@ -519,6 +513,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuMain);
 				return;
+            default:
+                break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuManager);
@@ -579,6 +575,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuManager);
 				return;
+            default:
+                break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuManagerAdd);
@@ -603,7 +601,7 @@ public:
 			std::cout << "<- " << split(strMenuManagerEdit)[i] << endl;
 			switch (i) {
 			case 1:
-				// 
+				//
 				editUser();
 				break;
 			case 2:
@@ -618,6 +616,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuManager);
 				return;
+            default:
+                break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuManagerEdit);
@@ -654,6 +654,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuManager);
 				return;
+            default:
+                break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuManagerDel);
@@ -693,6 +695,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuManager);
 				return;
+            default:
+                break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuManagerSave);
@@ -719,7 +723,7 @@ public:
 			std::string strOrder;
 			switch (i) {
 			case 1:
-				// сортирова 
+				// сортирова
 				strOrder = "project_id";
 				break;
 			case 2:
@@ -735,6 +739,8 @@ public:
 				break;
 			case 5:
 				return;
+            default:
+                break;
 			}
 			printProjects(db.getProjects("", strOrder));
 			sendString(sock, "menu");
@@ -778,6 +784,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuManager);
 				return;
+            default:
+                break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuManagerSearch);
@@ -856,6 +864,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuManager);
 				return;
+            default:
+                break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuManagerRanking);
@@ -901,6 +911,8 @@ public:
 				break;
 			case 5:
 				return;
+            default:
+                break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuCompany);
@@ -924,7 +936,7 @@ public:
 			std::cout << "<- " << split(strMenuCompanyEdit)[i] << endl;
 			switch (i) {
 			case 1:
-				// 
+				//
 				addCompany();
 				break;
 			case 2:
@@ -935,6 +947,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuCompany);
 				return;
+            default:
+                break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuCompanyAdd);
@@ -969,6 +983,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuCompany);
 				return;
+            default:
+                break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuCompanyEdit);
@@ -1007,6 +1023,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuCompany);
 				return;
+            default:
+                break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuCompanySave);
@@ -1041,6 +1059,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuCompany);
 				return;
+            default:
+                break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuCompanyDel);
@@ -1049,7 +1069,7 @@ public:
 
 	void reCreateVcProjects(Rating& rt) {
 		if (!rt.vcProjects.empty()) rt.vcProjects.clear();
-		map <size_t, std::vector<Mark>> ::iterator itt = rt.ranking.begin();
+		auto itt = rt.ranking.begin();
 		size_t tmpPrId = (*itt).second[0].getProject1Id();
 		Project tmpPr = db.getProject("project_id", std::to_string(tmpPrId));
 		rt.vcProjects.push_back(tmpPr);
@@ -1062,7 +1082,7 @@ public:
 		}
 	}
 
-	std::pair<float, float> getORT(std::vector<Mark> mrk, size_t pr1Id, size_t pr2Id) {
+	static std::pair<float, float> getORT(const std::vector<Mark>& mrk, size_t pr1Id, size_t pr2Id) {
 		for (const Mark& it : mrk) {
 			if (pr1Id == it.getProject1Id() && pr2Id == it.getProject2Id())
 				return make_pair(it.getValue1(), it.getValue2());
@@ -1070,10 +1090,10 @@ public:
 		return make_pair((float)0, (float)0);
 	}
 
-	void reCreateVcRankTotal(Rating& rt) {
+	static void reCreateVcRankTotal(Rating& rt) {
 		std::vector<Mark> tmpMrks;
 		Mark tmpMrk;
-		map <size_t, std::vector<Mark>> ::iterator itt = rt.ranking.begin();
+		auto itt = rt.ranking.begin();
 		for (const auto& it : itt->second) {
 			tmpMrk.setValues(getORT(rt.rankingTotal, it.getProject1Id(), it.getProject2Id()));
 			tmpMrks.push_back(tmpMrk);
@@ -1145,6 +1165,8 @@ public:
 				break;
 			case 4:
 				return;
+            default:
+                break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuExpert);
@@ -1183,13 +1205,12 @@ public:
 
 	void start() {
 		int c;
-		char p[200], com[200];//основной буфер и команда
-		char curU[20];
-		curU[0] = '\0';
-		com[0] = '\0';
+		char p[200]; //, com[200];//основной буфер и команда
+		//char curU[20];
+		//curU[0] = '\0';
+		//com[0] = '\0';
 		p[0] = '\0';
 		std::cout << "Соединение установлено." << std::endl;
-		char* message = new char[100];
 		strcat(p, "Server connected...\n");
 		Date tmpDate{};
 		tmpDate.setDateStr(Date::currentDate());
@@ -1203,7 +1224,6 @@ public:
 		while (c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
 			command = p;
 			int i = atoi(command.c_str());
-			size_t ch;
 			curUser.clear();
 			switch (i) {
 			case 1:

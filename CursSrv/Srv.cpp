@@ -1,7 +1,7 @@
 ﻿#include "Server.h"
 #include <iostream>
 #include <process.h> /* _beginthread, _endthread */
-#include <Windows.h>
+//#include <Windows.h>
 #include <fstream>
 #include "MenuSrv.h"
 
@@ -30,14 +30,14 @@ int main() {
 	if (err != 0) return err;
 
 	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);//создаем TCP-сокет с интернет-адресацией
-	struct sockaddr_in local;//адресная структура
+	struct sockaddr_in local{};//адресная структура
 	local.sin_family = AF_INET;
 	local.sin_port = htons(1280);//порт соединения
 	local.sin_addr.s_addr = htonl(INADDR_ANY);//посылать или принимать данные через любой IP-адрес данного компьютера
 	bind(s, (struct sockaddr*)&local, sizeof(local));//связываем адрес с сокетом
 	listen(s, 5);//установка в прослушивание с 5-ти кратными попытками соединения
 	while (true) {//цикл извлечения запросов на подключение из очереди
-		sockaddr_in remote;//адрес клиента(заполняется системой)
+		sockaddr_in remote{};//адрес клиента(заполняется системой)
 		int j = sizeof(remote);//адрес клиента(заполняется системой)
 		SOCKET newS = accept(s, (struct sockaddr*)&remote, &j);//подключение
 		cntClients++;
