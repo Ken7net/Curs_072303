@@ -14,11 +14,11 @@
 using namespace std;
 
 static size_t cntClients = 0;
-int dbLocation;
+size_t dbLocation = 3;
 
 
 void Work(void* newS) {//поток обслуживания
-	A_menu menu((SOCKET)newS, 3); // , dbLocation);
+	A_menu menu((SOCKET)newS, dbLocation); // , dbLocation);
 	menu.start();
 }
 
@@ -26,6 +26,7 @@ int main(/*int argc, char* argv[]*/) {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 	system("color F0");
+
 	//dbLocation = argc; // =0 remote
 	//if (argc > 1)// если передаем аргументы, то argc будет больше 1(в зависимости от кол-ва аргументов)
 	//{
@@ -33,6 +34,24 @@ int main(/*int argc, char* argv[]*/) {
 	//	if (strcmp(argv[1], "-local") == 0) dbLocation = 1;
 	//	else if (strcmp(argv[1], "-remote") == 0) dbLocation = 0;
 	//}
+
+	std::string str;
+	ifstream infile("CursSrv.ini");//создать объект типа ifstream
+	if (!infile.is_open()) {
+		std::cout << "Не получается открыть файл для чтения данных!" << std::endl;
+		return 0;
+	}
+	size_t _port = 1280;
+	while (getline(infile, str)) {//пока не достигнут конец файла поместить очередную строку в переменную str1
+		//std::cout << str << endl;//выводим на экран str
+		if (str.find("Location") != std::string::npos) {
+			dbLocation = static_cast<size_t>(std::stoi(str.substr(str.find("=") + 1, str.size() - str.find("="))));
+		}
+		if (str.find("Port") != std::string::npos) {
+			_port = static_cast<size_t>(std::stoi(str.substr(str.find("=") + 1, str.size() - str.find("="))));
+		}
+	}
+
 	WSADATA wsaData;
 	WORD wVersionRequested = MAKEWORD(2, 2);//первая цифра версии находится в младшем байте, вторая - в старшем.
 	int err = WSAStartup(wVersionRequested, &wsaData);//инициализируем работу с WinSock dll
@@ -41,7 +60,7 @@ int main(/*int argc, char* argv[]*/) {
 	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);//создаем TCP-сокет с интернет-адресацией
 	struct sockaddr_in local {};//адресная структура
 	local.sin_family = AF_INET;
-	local.sin_port = htons(1280);//порт соединения
+	local.sin_port = htons(_port);//порт соединения
 	local.sin_addr.s_addr = htonl(INADDR_ANY);//посылать или принимать данные через любой IP-адрес данного компьютера
 	bind(s, (struct sockaddr*)&local, sizeof(local));//связываем адрес с сокетом
 	listen(s, 5);//установка в прослушивание с 5-ти кратными попытками соединения

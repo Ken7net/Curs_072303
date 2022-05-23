@@ -103,7 +103,7 @@ public:
 			std::cout << "Год: ";
 			Checks::CheckInput(year);
 		} while (CheckYear(year) == 0);
-		size_t max_day;
+		size_t max_day = 0;
 		do {
 			std::cout << "Месяц: ";
 			Checks::CheckInput(month);
