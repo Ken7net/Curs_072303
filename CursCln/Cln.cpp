@@ -23,9 +23,10 @@ int main() {
     int err = WSAStartup(wVersionRequested, &wsaData);//инициализируем работу с WinSock dll
     if (err != 0) return -1;
 
-    struct sockaddr_in peer;//адресная структура
+    struct sockaddr_in peer {};//адресная структура
     peer.sin_family = AF_INET;
     peer.sin_port = htons(1280);//порт соединения
+
     peer.sin_addr.s_addr = inet_addr("127.0.0.1");// т.к. клиент и сервер на одном компьютере
     SOCKET s = socket(AF_INET, SOCK_STREAM, 0);//создаем TCP-сокет с интернет-адресацией
     connect(s, (struct sockaddr *) &peer, sizeof(peer));//запрос на открытие соединения

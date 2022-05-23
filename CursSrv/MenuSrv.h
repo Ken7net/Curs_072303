@@ -41,12 +41,22 @@ public:
 		sock = NULL;
 	};
 
-	explicit A_menu(SOCKET connection) {
+	explicit A_menu(SOCKET connection, int dbLocation = 3) {
 		sock = connection;
 		curUser.setSock(sock);
-		// Зашифрованные имя_пользователя, пароль и имя_базы_данных
-		//db.connect("-mysql.services.clever-cloud.com:3306", "xgbhnnb`id{ty<~`", "Ue;LioBjUwN4]:L|T5G", "o>jc`fzotxojunu88n");
-		db.connect("tcp://127.0.0.1:3306", "myuser", "mypass", "curs");
+		// Зашифрованные адрес бд, имя_пользователя, пароль и имя_базы_данных
+		switch (dbLocation)
+		{
+		case 0:
+			db.connect("o>jc`fzotxojunu88n `t~|a#~h{dnh~#nah{h nabxi#nb`7>>=;", "xgbhnnb`id{ty<~`", "Ue;LioBjUwN4]:L|T5G", "o>jc`fzotxojunu88n");
+			break;
+		case 1:
+			db.connect("<?:#=#=#<7>>=;", "`tx~h", "`t}l~~", "nx~");
+			break;
+		default:
+			db.connect("<=#<5?#;:#<957>>=;", "`tx~h", "@t]l~)nx~?", "nx~");
+			break;
+		}
 	}
 
 	~A_menu() = default;
@@ -992,7 +1002,7 @@ public:
 				editProject();
 				break;
 			case 3:
-				// Редактировать информацию о себе
+				// Редактировать проект
 				editUserSelf();
 				break;
 			case 4:
@@ -1301,7 +1311,7 @@ public:
 				sendString(sock, "exit");
 				closesocket(sock);//закрываем сокет
 				exit(EXIT_SUCCESS);
-                //return;
+				//return;
 				break;
 			default:
 				break;

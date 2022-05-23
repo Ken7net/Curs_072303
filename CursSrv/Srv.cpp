@@ -14,29 +14,38 @@
 using namespace std;
 
 static size_t cntClients = 0;
+int dbLocation;
+
 
 void Work(void* newS) {//поток обслуживания
-	A_menu menu((SOCKET)newS);
+	A_menu menu((SOCKET)newS, 3); // , dbLocation);
 	menu.start();
 }
 
-int main() {
+int main(/*int argc, char* argv[]*/) {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 	system("color F0");
-	//setlocale(LC_ALL, "1251");// utf - 8");//это на всякий случай
+	//dbLocation = argc; // =0 remote
+	//if (argc > 1)// если передаем аргументы, то argc будет больше 1(в зависимости от кол-ва аргументов)
+	//{
+	//	cout << argv[1] << endl;// вывод второй строки из массива указателей на строки(нумерация в строках начинается с 0 )
+	//	if (strcmp(argv[1], "-local") == 0) dbLocation = 1;
+	//	else if (strcmp(argv[1], "-remote") == 0) dbLocation = 0;
+	//}
 	WSADATA wsaData;
 	WORD wVersionRequested = MAKEWORD(2, 2);//первая цифра версии находится в младшем байте, вторая - в старшем.
 	int err = WSAStartup(wVersionRequested, &wsaData);//инициализируем работу с WinSock dll
 	if (err != 0) return err;
 
 	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);//создаем TCP-сокет с интернет-адресацией
-	struct sockaddr_in local{};//адресная структура
+	struct sockaddr_in local {};//адресная структура
 	local.sin_family = AF_INET;
 	local.sin_port = htons(1280);//порт соединения
 	local.sin_addr.s_addr = htonl(INADDR_ANY);//посылать или принимать данные через любой IP-адрес данного компьютера
 	bind(s, (struct sockaddr*)&local, sizeof(local));//связываем адрес с сокетом
 	listen(s, 5);//установка в прослушивание с 5-ти кратными попытками соединения
+	std::cout << "Сервер запущен и ожидает соединений." << std::endl;
 	while (true) {//цикл извлечения запросов на подключение из очереди
 		sockaddr_in remote{};//адрес клиента(заполняется системой)
 		int j = sizeof(remote);//адрес клиента(заполняется системой)
