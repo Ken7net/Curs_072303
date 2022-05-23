@@ -18,6 +18,22 @@ int main() {
     //setlocale(LC_ALL, "1251");
     //system("mode con: cols=70 lines=20");
 
+    std::string str;
+    ifstream infile("CursCln.ini");//создать объект типа ifstream
+    if (!infile.is_open()) {
+//        std::cout << "Не получается открыть файл для чтения данных!" << std::endl;
+        return 0;
+    }
+    std::pair<std::string, size_t> adrServer;
+    while (getline(infile, str)) {//пока не достигнут конец файла поместить очередную строку в переменную str1
+        std::cout << str << endl;//выводим на экран str
+        if (str.find(":") != std::string::npos) {
+            adrServer.first = str.substr(0, str.find(":"));
+            adrServer.second = static_cast<size_t>(std::stoi(str.substr(static_cast<size_t>(str.rfind(":")) + 1, 4)));
+        }
+
+    }
+
     WSADATA wsaData;
     WORD wVersionRequested = MAKEWORD(2, 2);//первая цифра версии находится в младшем байте, вторая - в старшем.
     int err = WSAStartup(wVersionRequested, &wsaData);//инициализируем работу с WinSock dll
@@ -25,9 +41,9 @@ int main() {
 
     struct sockaddr_in peer {};//адресная структура
     peer.sin_family = AF_INET;
-    peer.sin_port = htons(1280);//порт соединения
+    peer.sin_port = htons(adrServer.second);//порт соединения
 
-    peer.sin_addr.s_addr = inet_addr("127.0.0.1");// т.к. клиент и сервер на одном компьютере
+    peer.sin_addr.s_addr = inet_addr(adrServer.first.c_str());// т.к. клиент и сервер на одном компьютере
     SOCKET s = socket(AF_INET, SOCK_STREAM, 0);//создаем TCP-сокет с интернет-адресацией
     connect(s, (struct sockaddr *) &peer, sizeof(peer));//запрос на открытие соединения
 //    if (connect(s, (SOCKADDR *) &peer, sizeof(peer)) != 0) {
