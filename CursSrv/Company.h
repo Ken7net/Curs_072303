@@ -197,6 +197,12 @@ public:
 		//tmp.setCompany(_name, _activity, _finance);
 	}
 
+	friend ostream& operator<<(ostream& os, const CompanySock& company) {
+		os << "Компания: " << company.getName() << endl;
+		os << "Вид деятельности: " << company.getActivity() << endl;
+		os << "Финансовое состояние: " << company.getFinance() << endl;;
+		return os;
+	}
 };
 
 #endif //CURSSRV_COMPANY_H

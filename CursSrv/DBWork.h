@@ -656,7 +656,7 @@ public:
 
 		strQuery += "SELECT project1_id, project2_id, ROUND(SUM(mark.mark1), 2) AS mark1, ROUND(SUM(mark.mark2), 2) AS mark2 ";
 		strQuery += "FROM mark WHERE mark.number = ? ";
-		strQuery += "GROUP BY mark.project1_id + project2_id";
+		strQuery += "GROUP BY mark.project1_id, project2_id";
 
 		pstmt = con->prepareStatement(strQuery);
 		pstmt->setInt(1, _number);

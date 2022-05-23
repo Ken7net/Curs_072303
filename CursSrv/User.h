@@ -136,13 +136,15 @@ public:
 
 	// Проверка существования логина
 	static bool checkExistLogin(const std::vector<std::string>& vc, const std::string& str) {
-		for (const auto& it : vc) {
-			if (it == str) {
-				return true;
-			}
-		}
-		return false;
-//        return std::ranges::any_of(vc.cbegin(), vc.cend(), str);
+        return std::ranges::any_of(vc.begin(), vc.end(), [str](const std::string& st){
+            return st==str;
+        });
+//		for (const auto& it : vc) {
+//			if (it == str) {
+//				return true;
+//			}
+//		}
+//		return false;
 	}
 
 	virtual void enterUser(const std::vector<std::string>& existLogins) {

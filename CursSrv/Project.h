@@ -449,13 +449,13 @@ public:
 
 	friend std::ostream& operator<<(std::ostream& os, const ProjectSock& project) {
 		//os << "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
-		os << " project_id: " << project.getProjectId() << endl;
-		os << " project_name: " << project.getProjectName() << endl;
-		os << " sum_credit: " << project.getSumCredit() << endl;
-		os << " credit_time: " << project.getCreditTime() << endl;
-		os << " sud_reestr: " << project.getSudReestr() << endl;
-		os << " application_date: " << project.getApplicationDate().getDateStr() << endl;
-		os << " company_id: " << project.getCompanyId() << endl;
+		os << " ID: " << project.getProjectId() << endl;
+		os << " Наименование: " << project.getProjectName() << endl;
+		os << " Сумма кредита: " << project.getSumCredit() << endl;
+		os << " Срок кредитования: " << project.getCreditTime() << endl;
+		os << " Судебный реестр: " << project.getSudReestr() << endl;
+		os << " Дата: " << project.getApplicationDate().getDateStr() << endl;
+		os << " ID Компании: " << project.getCompanyId() << endl;
 		//os << "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
 		return os;
 	}

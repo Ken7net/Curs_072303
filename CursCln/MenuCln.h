@@ -92,7 +92,11 @@ public:
 						str = input_pass();
 					}
 					else {
-						std::cin >> str;
+						//std::cin >> str;
+						std::cin.clear();
+						std::getline(std::cin >> std::ws, str);
+						//std::getline(std::cin, str);
+						std::cin.clear();
 					}
 					sendString(cn, str);
 					str = takeString(cn);

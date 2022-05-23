@@ -11,6 +11,23 @@ using namespace std;
 
 extern size_t cntClients;
 
+std::string strMenuMain = "-=-=-=-=  М е н ю  =-=-=-=-#Авторизация#Регистрация#Отключение#Выход";
+std::string strMenuManager = "---= Менеджер =---#Добавление#Редактировать#Удаление#Сохранение информации#Поиск#Просмотр инвестиционных проектов#Сортировка инвестиционных проектов#Ранжировать инвестиционные проекты#Выход";
+std::string strMenuManagerAdd = "Вы хотите добавить: #Пользователя#Компанию#Проект#Ранжирование#Назад";
+std::string strMenuManagerEdit = "Вы хотите редактировать данные:#Пользователя#Компании#Проекта#Назад";
+std::string strMenuManagerDel = "Вы хотите удалить: #Пользователя#Компанию#Проект#Назад";
+std::string strMenuManagerSave = "Вы хотите сохранить информацию о:#Пользователях#Компаниях#Проектах#Назад";
+std::string strMenuManagerSearch = "Вы хотите найти информацию о:#Пользователях#Компаниях#Проектах#Назад";
+std::string strMenuManagerSort = "Вы хотите сортировать инвестиционные проекты по:#Id#Наименованию#Сумме кредита#Сроку#Назад";
+std::string strMenuManagerRanking = "Ранжировать инвестиционные проекты:#Осуществить попарное сравнение проектов#Найти оценки#Вычислить веса проектов#Вывести результат ранжирования ИП#Назад";
+std::string strMenuCompany = "-----= Консультант =-----#Ввод данных#Редактировать данные#Сохранение информации#Удаление данных#Выход";
+std::string strMenuCompanyAdd = "Вы хотите добавить данные:#Компании#Проектов#Назад";
+std::string strMenuCompanyEdit = "Вы хотите редактировать данные:#Компании#Проектов#О себе#Назад";
+std::string strMenuCompanySave = "Вы хотите сохранить информацию о:#Компании#Проектах#Назад";
+std::string strMenuCompanyDel = "Вы хотите удалить информацию о:#Компании#Проекте#Назад";
+std::string strMenuExpert = "-----= Эксперт =-----#Выставление оценок#Редактировать данные о себе#Просмотреть информацию об инвестиционных проектах#Выход";
+std::string strMenuEditUserSelf = "-= Редактирование пользователя#Фамилия Имя#Логин#Пароль";
+
 class A_menu {
 private:
 	SOCKET sock;
@@ -18,24 +35,6 @@ private:
 	UserSock curUser;
 
 public:
-	//static vector<std::string> vcMainMenu = {"Логин", "Регистрация", "Выход"};
-
-	std::string strMenuMain = "-=-=-=-=  М е н ю  =-=-=-=-#Авторизация#Регистрация#Отключение#Выход";
-	std::string strMenuManager = "---= Менеджер =---#Добавление#Редактировать#Удаление#Сохранение информации#Поиск#Просмотр инвестиционных проектов#Сортировка инвестиционных проектов#Ранжировать инвестиционные проекты#Выход";
-	std::string strMenuManagerAdd = "Вы хотите добавить: #Пользователя#Компанию#Проект#Ранжирование#Назад";
-	std::string strMenuManagerEdit = "Вы хотите редактировать данные:#Пользователя#Компании#Проекта#Назад";
-	std::string strMenuManagerDel = "Вы хотите удалить: #Пользователя#Компанию#Проект#Назад";
-	std::string strMenuManagerSave = "Вы хотите сохранить информацию о:#Пользователях#Компаниях#Проектах#Назад";
-	std::string strMenuManagerSearch = "Вы хотите найти информацию о:#Пользователях#Компаниях#Проектах#Назад";
-	std::string strMenuManagerSort = "Вы хотите сортировать инвестиционные проекты по:#Id#Наименованию#Сумме кредита#Сроку#Назад";
-	std::string strMenuManagerRanking = "Ранжировать инвестиционные проекты:#Осуществить попарное сравнение проектов#Найти оценки#Вычислить веса проектов#Вывести результат ранжирования ИП#Назад";
-	std::string strMenuCompany = "-----= Консультант =-----#Ввод данных#Редактировать данные#Сохранение информации#Удаление данных#Выход";
-	std::string strMenuCompanyAdd = "Вы хотите добавить данные:#Компании#Проектов#Назад";
-	std::string strMenuCompanyEdit = "Вы хотите редактировать данные:#Компании#Проектов#Назад";
-	std::string strMenuCompanySave = "Вы хотите сохранить информацию о:#Компании#Проектах#Назад";
-	std::string strMenuCompanyDel = "Вы хотите удалить информацию о:#Компании#Проекте#Назад";
-	std::string strMenuExpert = "-----= Эксперт =-----#Выставление оценок#Редактировать данные о себе#Просмотреть информацию об инвестиционных проектах#Выход";
-	std::string strMenuEditUserSelf = "-= Редактирование пользователя#Фамилия Имя#Логин#Пароль";
 
 	// Конструктор
 	A_menu() {
@@ -50,7 +49,6 @@ public:
 		db.connect("tcp://127.0.0.1:3306", "myuser", "mypass", "curs");
 	}
 
-	// Деструктор
 	~A_menu() = default;
 
 	//----- Ввод нового пользователя -----
@@ -75,7 +73,7 @@ public:
 		vc = db.getGuide("user", 2, flag);// 2 - Не Менеджеры
 		sendString(sock, "menu0");
 		sendString(sock, toString(vc, "Выберите пользователя: "));
-    	return takeInt(sock);
+		return takeInt(sock);
 	}
 
 	//----- Редактирование пользователя -----
@@ -99,6 +97,19 @@ public:
 		std::cout << "---------------------------------" << std::endl;
 	}
 
+	// Удаление текущего логина из списков логинов
+	static std::vector<std::string> delCurrentLogin(std::vector<string> vc, const std::string& curLogin) {
+		std::vector<std::string> tmp;
+		// Фильтруем элементы, перемещая уцелевшие элементы в начало массива
+		auto newEnd = std::remove_if(vc.begin(), vc.end(), [curLogin](const std::string& str) {
+			return str == curLogin;
+			});
+		// Удаляем все элементы, следующие после
+		vc.erase(newEnd, vc.end());
+		tmp = std::move(vc);
+		return tmp;
+	}
+
 	//-- Редактирование пользователя собой --
 	void editUserSelf() {
 
@@ -114,7 +125,7 @@ public:
 			//UserSock user(sock, db.getGuide("user_role", 1));
 			//user.enterUser();
 			//user.setUid(oldUser.getUid());
-			curUser.editUserSock(db.getGuide("user", 3), ch);
+			curUser.editUserSock(delCurrentLogin(db.getGuide("user", 3), oldUser.getLogin()), ch);
 			db.editUser(curUser, oldUser.getUid());
 			std::cout << "-- Редактирование пользователя --" << std::endl;
 			std::cout << oldUser;
@@ -513,8 +524,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuMain);
 				return;
-            default:
-                break;
+			default:
+				break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuManager);
@@ -575,8 +586,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuManager);
 				return;
-            default:
-                break;
+			default:
+				break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuManagerAdd);
@@ -616,8 +627,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuManager);
 				return;
-            default:
-                break;
+			default:
+				break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuManagerEdit);
@@ -654,8 +665,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuManager);
 				return;
-            default:
-                break;
+			default:
+				break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuManagerDel);
@@ -695,8 +706,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuManager);
 				return;
-            default:
-                break;
+			default:
+				break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuManagerSave);
@@ -739,8 +750,8 @@ public:
 				break;
 			case 5:
 				return;
-            default:
-                break;
+			default:
+				break;
 			}
 			printProjects(db.getProjects("", strOrder));
 			sendString(sock, "menu");
@@ -784,8 +795,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuManager);
 				return;
-            default:
-                break;
+			default:
+				break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuManagerSearch);
@@ -864,8 +875,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuManager);
 				return;
-            default:
-                break;
+			default:
+				break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuManagerRanking);
@@ -911,8 +922,8 @@ public:
 				break;
 			case 5:
 				return;
-            default:
-                break;
+			default:
+				break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuCompany);
@@ -947,8 +958,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuCompany);
 				return;
-            default:
-                break;
+			default:
+				break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuCompanyAdd);
@@ -960,7 +971,8 @@ public:
 		/*
 		* 1. Компании#
 		* 2. Проектов#
-		* 3. Назад
+		* 3. О себе#
+		* 4. Назад
 		*/
 		sendString(sock, "menu");
 		sendString(sock, strMenuCompanyEdit);
@@ -980,11 +992,15 @@ public:
 				editProject();
 				break;
 			case 3:
+				// Редактировать информацию о себе
+				editUserSelf();
+				break;
+			case 4:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuCompany);
 				return;
-            default:
-                break;
+			default:
+				break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuCompanyEdit);
@@ -1023,8 +1039,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuCompany);
 				return;
-            default:
-                break;
+			default:
+				break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuCompanySave);
@@ -1059,8 +1075,8 @@ public:
 				//sendString(sock, "menu");
 				//sendString(sock, strMenuCompany);
 				return;
-            default:
-                break;
+			default:
+				break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuCompanyDel);
@@ -1165,14 +1181,15 @@ public:
 				break;
 			case 4:
 				return;
-            default:
-                break;
+			default:
+				break;
 			}
 			sendString(sock, "menu");
 			sendString(sock, strMenuExpert);
 		}
 	}
 
+	// Авторизация
 	void loginUser() {
 		User oldUser;
 		tUser userC;
@@ -1194,13 +1211,27 @@ public:
 				std::cout << "login: " << curUser.getLogin() << " - " << curUser.getPass() << " - " << curUser.getRole() << endl;
 			}
 		}
+		else {
+			sendString(sock, "end");
+			sendString(sock, "output");
+			sendString(sock, "Ошибка! Нет такого пользователя!!!\n");
+			sendString(sock, "end");
+		}
 	}
 
+	// Запуск меню в зависимости от роли
 	void userStart() {
 		if (!curUser.isEmptyId()) {
 			if (curUser.getRole() == "Менеджер") menuManager();
 			else if (curUser.getRole() == "Консультант банка") menuCompany();
 			else menuExpert();
+		}
+	}
+
+	void cryptPasses() {
+		for (auto& it : db.getUsers()) {
+			it.setPass(encryptChars(it.getPass()));
+			db.editUser(it, it.getUid());
 		}
 	}
 
@@ -1250,6 +1281,7 @@ public:
 				//отключение пользователя
 				//cout << "User " << curU << " logout" << endl;
 
+				//cryptPasses();
 				menuManager();
 				//menuCompany();
 				//menuExpert();
@@ -1269,6 +1301,7 @@ public:
 				sendString(sock, "exit");
 				closesocket(sock);//закрываем сокет
 				exit(EXIT_SUCCESS);
+                //return;
 				break;
 			default:
 				break;

@@ -155,7 +155,7 @@ public:
 			sendString(sock, toString(vc));
 			size_t ch = takeInt(sock);
 			if (ch == 0) { 
-				if (vc.size() > 2) break;
+				if (vcProjects.size() > 2) break;
 				else {
 					// сообщение о ошибке
 					sendString(sock, "output");
@@ -196,7 +196,7 @@ public:
 		size_t ch = takeInt(sock);
 		if (ch == 0) return;
 		else if (ch != vc.size() + 1) {
-			number = stoi(vc[static_cast<size_t>(ch) - 1]);
+			number = static_cast<size_t>(stoi(vc[static_cast<size_t>(ch) - 1]));
 		}
 		else {
 			number = static_cast<size_t>(stoi(vc[vc.size() - 1])) + 1;
@@ -263,6 +263,7 @@ public:
 		//MarkSock tmpMark(sock);
 		std::cout << "--------------------------------------------" << std::endl;
 		printVcProjects();
+		printVcProjectsSock();
 		std::cout << "Ввод оценок (для ранжирования) от всех экспертов!" << std::endl;
 		for (auto& it : mpExperts) {
 			enterRank(it);
@@ -317,7 +318,7 @@ public:
 	void printVcProjects() {
 		std::cout << "- - - - - - - - - - - - - - -" << std::endl;
 		std::cout << "Проекты в ранже:" << std::endl;
-		for (auto& it : vcProjects) {
+		for (const auto& it : vcProjects) {
 			std::cout << it.getProjectId() << " - " << it.getProjectName() << std::endl;
 		}
 		std::cout << "- - - - - - - - - - - - - - -" << std::endl;
