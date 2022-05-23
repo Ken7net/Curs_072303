@@ -9,6 +9,7 @@
 // Link with ws2_32.lib
 #pragma comment(lib, "Ws2_32.lib")
 #pragma warning (disable: 4996)
+#pragma warning (disable: 4099)
 
 using namespace std;
 

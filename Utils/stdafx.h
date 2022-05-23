@@ -159,7 +159,7 @@ std::string input_pass(/*char *str1*/)    //Функция ввода масси
     size_t nn = 0;
     size_t mm = 0;
     int num = 0;
-    char str[20];
+    char str[20]{};
     do {
         nn = _getch();
         if ((nn != 10) && (nn != 13)) {
@@ -214,14 +214,14 @@ std::vector<std::string> split(const std::string &s, char delimiter = '#') {
 }
 //----------------------------------------------------------------------------
 std::string toString(std::vector<std::string> a, std::string text = "") {
-    for (auto it: a) {
+    for (const auto& it: a) {
         text += "#" + it;
     }
     return text;
 }
 //----------------------------------------------------------------------------
 std::string toString(std::map<std::string, size_t> a, std::string text = "") {
-    for (auto it : a) {
+    for (const auto& it : a) {
         text += "#" + it.first;
     }
     return text;
@@ -230,15 +230,15 @@ std::string toString(std::map<std::string, size_t> a, std::string text = "") {
 template<typename T>
 std::vector<std::string> toVector(std::map<std::string, T> a) {
     std::vector<std::string> tmp;
-    for (auto it : a) {
+    for (const auto& it : a) {
         tmp.push_back(it.first);
     }
     return tmp;
 }
 //----------------------------------------------------------------------------
 void sendMenu(SOCKET Connection, std::vector<std::string> a) {
-    char msg1[300];
-    for (auto it: a) {
+    char msg1[300]{};
+    for (const auto& it: a) {
         strcpy(msg1, it.c_str());
         send(Connection, msg1, sizeof(msg1), 0);
     }
@@ -247,7 +247,7 @@ void sendMenu(SOCKET Connection, std::vector<std::string> a) {
 }
 //----------------------------------------------------------------------------
 std::vector<std::string> takeMenu(SOCKET Connection) {
-    char msg[300];
+    char msg[300]{};
     recv(Connection, msg, sizeof(msg), 0);
     std::string str = std::string(msg);
     return split(str, '#');

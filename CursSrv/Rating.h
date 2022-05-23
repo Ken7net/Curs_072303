@@ -159,7 +159,7 @@ public:
 				else {
 					// сообщение о ошибке
 					sendString(sock, "output");
-					sendString(sock, "Количество проектов в ранжировании должно быть больше 2!!! Добавьте еще проектов!\n");
+					sendString(sock, "Количество проектов в ранжировании должно быть больше 2!!! Добавьте еще проекты!\n");
 					sendString(sock, "end");
 					continue;
 
@@ -196,7 +196,7 @@ public:
 		size_t ch = takeInt(sock);
 		if (ch == 0) return;
 		else if (ch != vc.size() + 1) {
-			number = stoi(vc[ch - 1]);
+			number = stoi(vc[static_cast<size_t>(ch) - 1]);
 		}
 		else {
 			number = static_cast<size_t>(stoi(vc[vc.size() - 1])) + 1;

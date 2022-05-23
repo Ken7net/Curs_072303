@@ -12,13 +12,14 @@
 // Link with ws2_32.lib
 #pragma comment(lib, "Ws2_32.lib")
 #pragma warning (disable: 4996)
+#pragma warning (disable: 4099)
 
 class Server {
 private:
     SOCKET newConnection;
 public:
     int Accept() const {
-        SOCKADDR_IN FromAddr;
+        SOCKADDR_IN FromAddr{};
         int len = sizeof(FromAddr);
         SOCKET sock;
         sock = accept(newConnection, (SOCKADDR *) &FromAddr, &len);
@@ -39,7 +40,7 @@ public:
             std::cout << "Не удалось загузить библиотеку WSdata" << std::endl;
             exit(1);
         }
-        SOCKADDR_IN addr;
+        SOCKADDR_IN addr{};
         int size = sizeof(addr);
         addr.sin_addr.s_addr = inet_addr("127.0.0.1");
         addr.sin_port = htons(1111);    //порт соединения

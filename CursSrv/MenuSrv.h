@@ -1186,7 +1186,8 @@ public:
 			sendString(sock, "Пароль: ");
 			userC.pass = takeString(sock);
 			sendString(sock, "end");
-			if (userC.pass == encryptChars(oldUser.getPass())) {
+			//if (userC.pass == encryptChars(oldUser.getPass())) {
+			if (userC.pass == oldUser.getPass()) {
 				//if (userC.pass == oldUser.getPass()) {
 				userC.Role = oldUser.getRole();
 				curUser.setUser(oldUser);
@@ -1205,7 +1206,7 @@ public:
 
 	void start() {
 		int c;
-		char p[200]; //, com[200];//основной буфер и команда
+		char p[200]{}; //, com[200];//основной буфер и команда
 		//char curU[20];
 		//curU[0] = '\0';
 		//com[0] = '\0';

@@ -338,7 +338,7 @@ public:
 			} while (true);
 			break;
 		} while (true);
-		size_t max_day;
+		size_t max_day = 0;
 		do {
 			std::cout << "Месяц: ";
 			Checks::CheckInput(tmp.month);
