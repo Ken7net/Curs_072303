@@ -11,7 +11,7 @@
 using namespace std;
 using namespace Checks;
 
-class Project {
+class Project : public Company {
 private:
 	size_t project_id;
 	std::string project_name;

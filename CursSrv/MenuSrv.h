@@ -100,7 +100,7 @@ public:
 		vector<std::string> users;
 		User oldUser;
 		int ch = listUsers(users, 0);
-		if (ch != 0) oldUser = db.getUser("user_name", users[ch - 1]);
+		if (ch != 0) oldUser = db.getUser("user_name", users[static_cast<size_t>(ch - 1)]);
 		else {
 			std::cout << "- Редактирование пользователя отменено -" << std::endl;
 			return;
@@ -163,7 +163,7 @@ public:
 		vector<std::string> users;
 		User oldUser;
 		int ch = listUsers(users, 0);
-		if (ch != 0) oldUser = db.getUser("user_name", users[ch - 1]);
+		if (ch != 0) oldUser = db.getUser("user_name", users[static_cast<size_t>(ch - 1)]);
 		else {
 			std::cout << "- Удаление пользователя отменено -" << std::endl;
 			return;
@@ -226,7 +226,7 @@ public:
 		vector<std::string> companies;
 		Company oldCompany;
 		int ch = listCompany(companies);
-		if (ch != 0) oldCompany = db.getCompany("company_name", companies[ch - 1]);
+		if (ch != 0) oldCompany = db.getCompany("company_name", companies[static_cast<size_t>(ch - 1)]);
 		else {
 			std::cout << "-- Редактирование компании отменено --" << std::endl;
 			return;
@@ -247,7 +247,7 @@ public:
 		vector<std::string> companies;
 		Company oldCompany;
 		int ch = listCompany(companies);
-		if (ch != 0) oldCompany = db.getCompany("company_name", companies[ch - 1]);
+		if (ch != 0) oldCompany = db.getCompany("company_name", companies[static_cast<size_t>(ch - 1)]);
 		else {
 			std::cout << "--- Удаление компании отменено ---" << std::endl;
 			return;
@@ -885,6 +885,9 @@ public:
 				// Расчет весов
 				rating.vcProjects = db.getWeightVcMark(rating.getNumber());
 
+				// Вывод результата ранжирования
+				rating.printRating();
+				rating.printRatingSock();
 				break;
 			case 4:
 				// Вывести результат ранжирования ИП
@@ -1229,22 +1232,35 @@ public:
 		oldUser = db.getUser("login", userC.login);
 		// если находим
 		if (!oldUser.isEmptyId()) {
-			sendString(sock, "Пароль: ");
-			userC.pass = takeString(sock);
-			sendString(sock, "end");
-			//if (userC.pass == encryptChars(oldUser.getPass())) {
-			if (userC.pass == oldUser.getPass()) {
-				//if (userC.pass == oldUser.getPass()) {
-				userC.Role = oldUser.getRole();
-				curUser.setUser(oldUser);
-				std::cout << "login: " << curUser.getLogin() << " - " << curUser.getPass() << " - " << curUser.getRole() << endl;
+			unsigned int cnt = 0;
+			while (cnt < 3) {
+				sendString(sock, "Пароль: ");
+				userC.pass = takeString(sock);
+				sendString(sock, "end");
+				if (userC.pass == encryptChars(oldUser.getPass())) {
+					userC.Role = oldUser.getRole();
+					curUser.setUser(oldUser);
+					std::cout << "login: " << curUser.getLogin() << " - " << curUser.getPass() << " - " << curUser.getRole() << endl;
+					break;
+				}
+				else {
+					cnt++;
+					sendString(sock, "end");
+					sendString(sock, "output");
+					sendString(sock, "Ошибка! Неверный пароль!!!\n");
+					sendString(sock, "end");
+					if (cnt<3) sendString(sock, "data");
+					else if (modeMenu == 2) sendString(sock, "pause");
+				}
 			}
+			if (!curUser.isEmpty()) return;
 		}
 		else {
 			sendString(sock, "end");
 			sendString(sock, "output");
 			sendString(sock, "Ошибка! Нет такого пользователя!!!\n");
 			sendString(sock, "end");
+			if (modeMenu == 2) sendString(sock, "pause");
 		}
 	}
 
@@ -1267,9 +1283,6 @@ public:
 	void start() {
 		int c;
 		char p[200]{}; //, com[200];//основной буфер и команда
-		//char curU[20];
-		//curU[0] = '\0';
-		//com[0] = '\0';
 		p[0] = '\0';
 		std::cout << "Соединение установлено." << std::endl;
 		strcat(p, "Server connected...\n");
@@ -1292,32 +1305,29 @@ public:
 				//Подключение пользователя
 				loginUser();
 				userStart();
-
-				//menuManager();
-				//menuCompany();
-				//menuExpert();
 				break;
 			case 2:
 				//подключение пользователя
 				curUser.clear();
 				addUser(2, true);
 				userStart();
-
-				//menuManager();
-				//menuCompany();
-				//menuExpert();
 				break;
 			case 3:
 				//отключение пользователя
-				//cout << "User " << curU << " logout" << endl;
-				//cntClients--;
-				//std::cout << "Клиент " << curUser.getLogin() << "отключен.\nТекущее количество подключений: " << cntClients << std::endl;
-				//sendString(sock, "exit");
-				//closesocket(sock);//закрываем сокет
-				//return;
+				cntClients--;
+				if (!curUser.isEmpty()) {
+					std::cout << "Клиент " << curUser.getLogin() << "отключен." << std::endl; //Авторизованный отключился
+				}
+				else {
+					std::cout << "Клиент отключен." << std::endl; //Неавторизованный отключился
+				}
+				std::cout << "Текущее количество подключений : " << cntClients << std::endl;
+				sendString(sock, "exit");
+				closesocket(sock);//закрываем сокет
+				return;
 
 				//cryptPasses();
-				menuManager();
+				//menuManager();
 				//menuCompany();
 				//menuExpert();
 				break;

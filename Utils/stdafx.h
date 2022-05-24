@@ -182,8 +182,8 @@ std::string input_pass(/*char *str1*/)    //Функция ввода масси
 {                                                                //name - что вводим,
 	//str строка,
 	//num=1 если нужны только символы
-	size_t nn = 0;
-	size_t mm = 0;
+	char nn = 0;
+	char mm = 0;
 	int num = 0;
 	char str[20]{};
 	do {

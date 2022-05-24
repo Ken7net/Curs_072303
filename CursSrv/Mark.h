@@ -8,7 +8,7 @@
 using namespace std;
 using namespace Checks;
 
-class Mark {
+class Mark : public User {
 private:
 	size_t mark_id;		// ID Оценки
 	size_t number;		// # Ранжирования
