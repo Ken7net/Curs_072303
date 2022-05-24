@@ -13,18 +13,18 @@ extern size_t cntClients;
 
 std::string strMenuMain = "-=-=-=-=  М е н ю  =-=-=-=-#Авторизация#Регистрация#Отключение#Выход";
 std::string strMenuManager = "---= Менеджер =---#Добавление#Редактировать#Удаление#Сохранение информации#Поиск#Просмотр инвестиционных проектов#Сортировка инвестиционных проектов#Ранжировать инвестиционные проекты#Выход";
-std::string strMenuManagerAdd = "Вы хотите добавить: #Пользователя#Компанию#Проект#Ранжирование#Назад";
-std::string strMenuManagerEdit = "Вы хотите редактировать данные:#Пользователя#Компании#Проекта#Назад";
-std::string strMenuManagerDel = "Вы хотите удалить: #Пользователя#Компанию#Проект#Назад";
-std::string strMenuManagerSave = "Вы хотите сохранить информацию о:#Пользователях#Компаниях#Проектах#Назад";
-std::string strMenuManagerSearch = "Вы хотите найти информацию о:#Пользователях#Компаниях#Проектах#Назад";
-std::string strMenuManagerSort = "Вы хотите сортировать инвестиционные проекты по:#Id#Наименованию#Сумме кредита#Сроку#Назад";
-std::string strMenuManagerRanking = "Ранжировать инвестиционные проекты:#Осуществить попарное сравнение проектов#Найти оценки#Вычислить веса проектов#Вывести результат ранжирования ИП#Назад";
+std::string strMenuManagerAdd = "-= Вы хотите добавить: #Пользователя#Компанию#Проект#Ранжирование#Назад";
+std::string strMenuManagerEdit = "-= Вы хотите редактировать данные:#Пользователя#Компании#Проекта#Назад";
+std::string strMenuManagerDel = "-= Вы хотите удалить: #Пользователя#Компанию#Проект#Назад";
+std::string strMenuManagerSave = "-= Вы хотите сохранить информацию о:#Пользователях#Компаниях#Проектах#Назад";
+std::string strMenuManagerSearch = "-= Вы хотите найти информацию о:#Пользователях#Компаниях#Проектах#Назад";
+std::string strMenuManagerSort = "-= Вы хотите сортировать инвестиционные проекты по:#Id#Наименованию#Сумме кредита#Сроку#Назад";
+std::string strMenuManagerRanking = "-= Ранжировать инвестиционные проекты:#Осуществить попарное сравнение проектов#Найти оценки#Вычислить веса проектов#Вывести результат ранжирования ИП#Назад";
 std::string strMenuCompany = "-----= Консультант =-----#Ввод данных#Редактировать данные#Сохранение информации#Удаление данных#Выход";
-std::string strMenuCompanyAdd = "Вы хотите добавить данные:#Компании#Проектов#Назад";
-std::string strMenuCompanyEdit = "Вы хотите редактировать данные:#Компании#Проектов#О себе#Назад";
-std::string strMenuCompanySave = "Вы хотите сохранить информацию о:#Компании#Проектах#Назад";
-std::string strMenuCompanyDel = "Вы хотите удалить информацию о:#Компании#Проекте#Назад";
+std::string strMenuCompanyAdd = "-= Вы хотите добавить данные:#Компании#Проектов#Назад";
+std::string strMenuCompanyEdit = "-= Вы хотите редактировать данные:#Компании#Проектов#О себе#Назад";
+std::string strMenuCompanySave = "-= Вы хотите сохранить информацию о:#Компании#Проектах#Назад";
+std::string strMenuCompanyDel = "-= Вы хотите удалить информацию о:#Компании#Проекте#Назад";
 std::string strMenuExpert = "-----= Эксперт =-----#Выставление оценок#Редактировать данные о себе#Просмотреть информацию об инвестиционных проектах#Выход";
 std::string strMenuEditUserSelf = "-= Редактирование пользователя#Фамилия Имя#Логин#Пароль";
 
@@ -33,6 +33,7 @@ private:
 	SOCKET sock;
 	DBWork db;
 	UserSock curUser;
+	size_t modeMenu = 1;
 
 public:
 
@@ -45,6 +46,7 @@ public:
 		sock = connection;
 		curUser.setSock(sock);
 		// Зашифрованные адрес бд, имя_пользователя, пароль и имя_базы_данных
+		int res = 0;
 		switch (dbLocation)
 		{
 		case 0:
@@ -56,6 +58,13 @@ public:
 		default:
 			db.connect("<=#<5?#;:#<957>>=;", "`tx~h", "@t]l~)nx~?", "nx~");
 			break;
+		}
+		if (db._error != 0) {
+			sendString(sock, "Ошибка подключения к БД!!!\n");
+			sendString(sock, "exit");
+			std::cout << "Ошибка подключения к БД!!!" << std::endl;
+			system("pause");
+			exit(-1);
 		}
 	}
 
@@ -187,7 +196,7 @@ public:
 		if (!tmp.empty()) printUsers(tmp);
 		else {
 			sendString(sock, "output");
-			sendString(sock, "Ничего не нашли! :(");
+			sendString(sock, "Ничего не нашли! :(\n");
 			std::cout << "Ничего не нашли! :(" << std::endl;
 			sendString(sock, "end");
 		}
@@ -270,7 +279,7 @@ public:
 		if (!tmp.empty()) printCompanies(tmp);
 		else {
 			sendString(sock, "output");
-			sendString(sock, "Ничего не нашли! :(");
+			sendString(sock, "Ничего не нашли! :(\n");
 			std::cout << "Ничего не нашли! :(" << std::endl;
 			sendString(sock, "end");
 		}
@@ -297,7 +306,7 @@ public:
 		if (!tmp.empty()) printProjects(tmp);
 		else {
 			sendString(sock, "output");
-			sendString(sock, "Ничего не нашли! :(");
+			sendString(sock, "Ничего не нашли! :(\n");
 			std::cout << "Ничего не нашли! :(" << std::endl;
 			sendString(sock, "end");
 		}
@@ -521,6 +530,7 @@ public:
 				printProjects(db.getProjects());
 				//printProjectsSock();
 				//printProjectsSock("file");
+				if (modeMenu == 2) sendString(sock, "pause");
 				break;
 			case 7:
 				// Сортировка Инвестиционных проектов
@@ -537,6 +547,7 @@ public:
 			default:
 				break;
 			}
+			//sendString(sock, "pause");
 			sendString(sock, "menu");
 			sendString(sock, strMenuManager);
 		}
@@ -547,8 +558,10 @@ public:
 		Rating rt(sock);
 		// Выбор экспертов
 		rt.selectExperts(db.getGuideMap("user", 2, 1));
+		if (rt.getCntExperts() == 0) return;
 		// Выбор проектов
 		rt.selectProjects(db.getProjectMp());
+		if (rt.getCntProjects() == 0) return;
 		// Ввод оценок
 		rt.setNumber(db.getNewNumber());
 		rt.enterRanks();
@@ -764,6 +777,7 @@ public:
 				break;
 			}
 			printProjects(db.getProjects("", strOrder));
+			if (modeMenu == 2) sendString(sock, "pause");
 			sendString(sock, "menu");
 			sendString(sock, strMenuManagerSort);
 		}
@@ -790,16 +804,19 @@ public:
 				// поиск и вывод пользователей в консоль сервера и в файл на клиенте
 				//printUsers(db.getUsers("ил"), "file#users");
 				searchUsers();
+				if (modeMenu == 2) sendString(sock, "pause");
 				break;
 			case 2:
 				// поиск и вывод компаний в консоль сервера и в файл на клиенте
 				//printCompanies(db.getUsers("ил"), "file#companies");
 				searchCompanies();
+				if (modeMenu == 2) sendString(sock, "pause");
 				break;
 			case 3:
 				// вывод проектов в консоль сервера и в файл на клиенте
 				//printProjects(db.getProjects(), "file#projects");
 				searchProjects();
+				if (modeMenu == 2) sendString(sock, "pause");
 				break;
 			case 4:
 				//sendString(sock, "menu");
@@ -888,6 +905,7 @@ public:
 			default:
 				break;
 			}
+			if (modeMenu == 2) sendString(sock, "pause");
 			sendString(sock, "menu");
 			sendString(sock, strMenuManagerRanking);
 		}
@@ -898,7 +916,7 @@ public:
 		/*
 		* 1. Ввод данных#
 		* 2. Редактировать данные#
-		* 3. Сохранение информации в бд#
+		* 3. Сохранение информации#
 		* 4. Удаление данных#
 		* 6. Выход
 		*/
@@ -1186,6 +1204,7 @@ public:
 				// Информация о инвестиционных проектах
 				//// вывод проектов в консоль сервера
 				printProjects(db.getProjects());
+				if (modeMenu == 2) sendString(sock, "pause");
 				//printProjectsSock();
 				//printProjectsSock("file");
 				break;
@@ -1257,6 +1276,7 @@ public:
 		Date tmpDate{};
 		tmpDate.setDateStr(Date::currentDate());
 		sendString(sock, "Server connected...\n" + tmpDate.getDateStr() + "\n");
+		modeMenu = takeInt(sock);
 		sendString(sock, "menu" + std::to_string(1));
 		sendString(sock, strMenuMain);
 		curUser.setSock(sock);
@@ -1290,20 +1310,17 @@ public:
 			case 3:
 				//отключение пользователя
 				//cout << "User " << curU << " logout" << endl;
-
-				//cryptPasses();
-				menuManager();
-				//menuCompany();
-				//menuExpert();
-
 				//cntClients--;
 				//std::cout << "Клиент " << curUser.getLogin() << "отключен.\nТекущее количество подключений: " << cntClients << std::endl;
 				//sendString(sock, "exit");
 				//closesocket(sock);//закрываем сокет
 				//return;
 
-
-				//break;
+				//cryptPasses();
+				menuManager();
+				//menuCompany();
+				//menuExpert();
+				break;
 			case 4:
 				//выход
 				cntClients--;

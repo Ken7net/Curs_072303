@@ -32,6 +32,7 @@ protected:
 	sql::PreparedStatement* pstmt{};
 	sql::ResultSet* result{};
 public:
+	int _error = 0; 
 
 	DBWork() {}
 
@@ -64,6 +65,8 @@ public:
 		username = std::move(_username);
 		password = std::move(_password);
 		database = std::move(_database);
+		_error = 0;
+		// Подключение к серверу
 		try {
 			driver = get_driver_instance();
 			con = driver->connect(encryptChars(server), encryptChars(username), encryptChars(password));
@@ -73,17 +76,28 @@ public:
 		}
 		catch (sql::SQLException e) {
 			cout << "Could not connect to server. Error message: " << e.what() << endl;
+			_error = -1;
 			system("pause");
-			exit(1);
+			return;
+			//exit(1);
 		}
-		con->setSchema(encryptChars(database));
-		//con->setSchema(database);
+		// Подключение к БД
+		try {
+			con->setSchema(encryptChars(database));
+			//con->setSchema(database);
 
-		std::cout << "Успешное открытие БД." << std::endl;
-		std::cout << "----------------------------------------------------------" << std::endl;
+			std::cout << "Успешное открытие БД." << std::endl;
+			std::cout << "----------------------------------------------------------" << std::endl;
 
-		pstmt = con->prepareStatement("SET NAMES cp1251;");
-		pstmt->execute();
+			pstmt = con->prepareStatement("SET NAMES cp1251;");
+			pstmt->execute();
+		}
+		catch (sql::SQLException e) {
+			cout << "Could not connect to database. Error message: " << e.what() << endl;
+			_error = -1;
+			system("pause");
+			return;
+		}
 	}
 
 	~DBWork() {
@@ -117,7 +131,7 @@ public:
 		}
 		while (result->next()) {
 			//tmp.push_back(result->getString(_numField).c_str());
-            tmp.emplace_back(result->getString(_numField).c_str());
+			tmp.emplace_back(result->getString(_numField).c_str());
 		}
 		delete result;
 		return tmp;
@@ -148,7 +162,7 @@ public:
 		while (result->next()) {
 			printf("%s\n", result->getString(1).c_str());
 			//tmp.push_back(result->getString(1).c_str());
-            tmp.emplace_back(result->getString(1).c_str());
+			tmp.emplace_back(result->getString(1).c_str());
 		}
 		delete result;
 		//setlocale(LC_ALL, ".1251");
@@ -680,7 +694,7 @@ public:
 		result = pstmt->executeQuery();
 		while (result->next()) {
 			//tmp.push_back(result->getString(1).c_str());
-            tmp.emplace_back(result->getString(1).c_str());
+			tmp.emplace_back(result->getString(1).c_str());
 		}
 		delete result;
 		return tmp;
