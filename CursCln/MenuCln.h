@@ -109,6 +109,11 @@ int vcChoicePress(std::vector<std::string> vc, const std::string& topStr, size_t
 			else count = 2;
 		}
 		if (pressed == '\r' || pressed == '\n') break;	//Если переход на новую строку, то выходим из цикла
+
+		if (pressed == 27) { //Если  нажатие клавишей Esc
+			count = vc.size();
+			break;
+		};	
 	}
 
 	if (cancel == 0) {

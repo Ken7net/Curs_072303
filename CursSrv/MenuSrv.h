@@ -829,8 +829,8 @@ public:
 			switch (i) {
 			case 1:
 				// Найти оценки
-
-				rating.selectNumber(db.getNumbersMark(), "2");
+				rating.selectNumber(db.getNumbersMark(), "0");
+				if (rating.getNumber() == 0) break;
 
 				// Загрузка оценок
 				rating.ranking = db.getMpMarks(rating.getNumber());
@@ -847,6 +847,14 @@ public:
 			case 2:
 				// Осуществить попарное сравнение проектов
 
+				if (rating.getNumber() == 0) {
+					std::cout << "Не выбрано ранжирование!" << std::endl;
+					sendString(sock, "output");
+					sendString(sock, "Не выбрано ранжирование!\n");
+					sendString(sock, "end");
+					break;
+				}
+
 				// Расчет сумм по парным сравнениям
 				rating.rankingTotal = db.getVcTotalMarks(rating.getNumber());
 
@@ -860,6 +868,14 @@ public:
 			case 3:
 				// Вычислить веса проектов
 
+				if (rating.getNumber() == 0) {
+					std::cout << "Не выбрано ранжирование!" << std::endl;
+					sendString(sock, "output");
+					sendString(sock, "Не выбрано ранжирование!\n");
+					sendString(sock, "end");
+					break;
+				}
+
 				// Расчет весов
 				rating.vcProjects = db.getWeightVcMark(rating.getNumber());
 
@@ -869,6 +885,14 @@ public:
 				break;
 			case 4:
 				// Вывести результат ранжирования ИП
+
+				if (rating.getNumber() == 0) {
+					std::cout << "Не выбрано ранжирование!" << std::endl;
+					sendString(sock, "output");
+					sendString(sock, "Не выбрано ранжирование!\n");
+					sendString(sock, "end");
+					break;
+				}
 
 				// Вывод таблицы ранжирования
 				rating.printRatingTable();
@@ -1092,11 +1116,15 @@ public:
 	}
 
 	static std::pair<float, float> getORT(const std::vector<Mark>& mrk, size_t pr1Id, size_t pr2Id) {
-		for (const Mark& it : mrk) {
-			if (pr1Id == it.getProject1Id() && pr2Id == it.getProject2Id())
-				return make_pair(it.getValue1(), it.getValue2());
-		}
-		return make_pair((float)0, (float)0);
+		//for (const Mark& it : mrk) {
+		//	if (pr1Id == it.getProject1Id() && pr2Id == it.getProject2Id())
+		//		return make_pair(it.getValue1(), it.getValue2());
+		//}
+		//return make_pair((float)0, (float)0);
+
+		auto it = std::find_if(mrk.begin(), mrk.end(), [&pr1Id, &pr2Id](const Mark& mrkt) {return (pr1Id == mrkt.getProject1Id() && pr2Id == mrkt.getProject2Id()); });
+		if (it !=mrk.end()) return make_pair(it->getValue1(), it->getValue2());
+		else return make_pair((float)0, (float)0);
 	}
 
 	static void reCreateVcRankTotal(Rating& rt) {

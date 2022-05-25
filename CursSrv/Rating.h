@@ -184,6 +184,7 @@ public:
 
 	// Выбор номера для ранжа
 	void selectNumber(std::vector<std::string> vc, const std::string& strAdd = "2") {
+		number = 0;
 		std::cout << "--------------------------------------------" << std::endl;
 		sendString(sock, "menu" + strAdd);
 		sendString(sock, toString(vc, "Выберите номер ранжирования:"));
@@ -355,10 +356,15 @@ public:
 
 	// Поиск эксперта по id
 	std::string findExpert(size_t id) {
-		for (const auto& it : mpExperts) {
-			if (it.second == id) return it.first;
-		}
-		return "";
+	//	for (const auto& it : mpExperts) {
+	//		if (it.second == id) return it.first;
+	//	}
+	//	return "";
+	
+		auto it = std::find_if(mpExperts.begin(), mpExperts.end(), [&id](const std::pair<std::string, size_t>& kt) 
+			{ return (kt.second == id); });
+		if (it != mpExperts.end()) return it->first;
+		else return "";
 	}
 
 	// Вывод парных сравнений проектов в ранже (в серверную консоль)

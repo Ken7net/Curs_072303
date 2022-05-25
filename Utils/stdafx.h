@@ -27,6 +27,7 @@
 #include <map>
 #include <cstdlib>
 #include <utility>
+#include <numeric>
 
 #pragma warning(pop) //For /Wall
 
@@ -226,26 +227,44 @@ std::vector<std::string> split(const std::string& s, char delimiter = '#') {
 	return tokens;
 }
 //----------------------------------------------------------------------------
-std::string toString(std::vector<std::string> a, std::string text = "") {
-	for (const auto& it : a) {
-		text += "#" + it;
-	}
-	return text;
+//std::string toString(std::vector<std::string> a, std::string text = "") {
+		//for (const auto& it : a) {
+		//	text += "#" + it;
+		//}
+		//return text;
+//}
+std::string toString(std::vector<std::string> a, const std::string& text = "") {
+	std::string s = std::accumulate(a.begin(), a.end(),
+		text, // начинаем с первого элемента
+		[](std::string a, const std::string& b) { return std::move(a) + '#' + b;
+		});
+	return s;
 }
 //----------------------------------------------------------------------------
-std::string toString(std::map<std::string, size_t> a, std::string text = "") {
-	for (const auto& it : a) {
-		text += "#" + it.first;
-	}
-	return text;
+//std::string toString(std::map<std::string, size_t> a, std::string text = "") {
+//	for (const auto& it : a) {
+//		text += "#" + it.first;
+//	}
+//	return text;
+//}
+std::string toString(std::map<std::string, size_t> a, const std::string& text = "") {
+	std::string s = std::accumulate(a.begin(), a.end(),
+		text, // начинаем с первого элемента
+		[](std::string a, const std::pair<std::string, size_t>& b) { return std::move(a) + '#' + b.first;
+		});
+	return s;
 }
 //----------------------------------------------------------------------------
 template<typename T>
 std::vector<std::string> toVector(std::map<std::string, T> a) {
 	std::vector<std::string> tmp;
-	for (const auto& it : a) {
-		tmp.push_back(it.first);
-	}
+
+	//for (const auto& it : a) {
+	//	tmp.push_back(it.first);
+	//}
+
+	std::transform(a.begin(), a.end(), std::back_inserter(tmp),	[](const auto& kv) { return kv.first; });
+
 	return tmp;
 }
 //----------------------------------------------------------------------------
