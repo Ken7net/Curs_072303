@@ -36,18 +36,19 @@ public:
 
 	DBWork() {}
 
-	DBWork(std::string _server, std::string _username, std::string _password, std::string _database) {
-		server = std::move(_server);
-		username = std::move(_username);
-		password = std::move(_password);
-		database = std::move(_database);
+	DBWork(std::string _server, std::string _username, std::string _password, std::string _database) : 
+		server(std::move(_server)), 
+		username(std::move(_username)), 
+		password(std::move(_password)), 
+		database(std::move(_database)) 
+	{
 		try {
 			driver = get_driver_instance();
 			con = driver->connect(encryptChars(database) + server, encryptChars(username), encryptChars(password));
 			std::cout << "----------------------------------------------------------" << std::endl;
 			std::cout << "Успешное соединение к mysql.services.clever-cloud.com." << std::endl;
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Could not connect to server. Error message: " << e.what() << endl;
 			system("pause");
 			exit(1);
@@ -74,7 +75,7 @@ public:
 			std::cout << "----------------------------------------------------------" << std::endl;
 			std::cout << "Успешное соединение к mysql.services.clever-cloud.com." << std::endl;
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Could not connect to server. Error message: " << e.what() << endl;
 			_error = -1;
 			system("pause");
@@ -92,7 +93,7 @@ public:
 			pstmt = con->prepareStatement("SET NAMES cp1251;");
 			pstmt->execute();
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Could not connect to database. Error message: " << e.what() << endl;
 			_error = -1;
 			system("pause");
@@ -124,7 +125,7 @@ public:
 			pstmt = con->prepareStatement("SELECT * FROM " + _table + str + ";");
 			result = pstmt->executeQuery();
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Error {Select user_role} message: " << e.what() << endl;
 			system("pause");
 			//exit(1);
@@ -178,7 +179,7 @@ public:
 			pstmt->setString(4, user.getRole());
 			result = pstmt->executeQuery();
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Error {INSERT user} message: " << e.what() << endl;
 			system("pause");
 			//exit(1);
@@ -197,7 +198,7 @@ public:
 			pstmt->setInt(5, u_id);
 			result = pstmt->executeQuery();
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Error {UPDATE user}  message: " << e.what() << endl;
 			system("pause");
 			//exit(1);
@@ -246,7 +247,7 @@ public:
 			pstmt->setInt(1, u_id);
 			result = pstmt->executeQuery();
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Error {DELETE user user_id}  message: " << e.what() << endl;
 			system("pause");
 			//exit(1);
@@ -259,7 +260,7 @@ public:
 			pstmt->setString(1, _login);
 			result = pstmt->executeQuery();
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Error {DELETE user login} message: " << e.what() << endl;
 			system("pause");
 			//exit(1);
@@ -276,7 +277,7 @@ public:
 			pstmt->setInt(3, company.getFinance());
 			result = pstmt->executeQuery();
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Error {INSERT company} message: " << e.what() << endl;
 			system("pause");
 			//exit(1);
@@ -294,7 +295,7 @@ public:
 			pstmt->setInt(4, c_id);
 			result = pstmt->executeQuery();
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Error {UPDATE company}  message: " << e.what() << endl;
 			system("pause");
 			//exit(1);
@@ -340,7 +341,7 @@ public:
 			pstmt->setInt(1, u_id);
 			result = pstmt->executeQuery();
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Error {DELETE company company_id}  message: " << e.what() << endl;
 			system("pause");
 			//exit(1);
@@ -353,7 +354,7 @@ public:
 			pstmt->setString(1, _name);
 			result = pstmt->executeQuery();
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Error {DELETE company company_name} message: " << e.what() << endl;
 			system("pause");
 			//exit(1);
@@ -374,7 +375,7 @@ public:
 			pstmt->setInt(6, project.getCompanyId());
 			result = pstmt->executeQuery();
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Error {INSERT project} message: " << e.what() << endl;
 			system("pause");
 			//exit(1);
@@ -394,7 +395,7 @@ public:
 			pstmt->setInt(7, p_id);
 			result = pstmt->executeQuery();
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Error {UPDATE project}  message: " << e.what() << endl;
 			system("pause");
 			//exit(1);
@@ -430,7 +431,7 @@ public:
 	}
 
 	// Получение vector проектов
-	std::vector<Project> getProjects(const std::string& findProject = "", std::string orderField = "" /*const std::string& field_name, const std::string& p_name*/) {
+	std::vector<Project> getProjects(const std::string& findProject = "", const std::string& orderField = "" /*const std::string& field_name, const std::string& p_name*/) {
 		Project tmp;
 		std::vector<Project> tmpVc;
 		std::string strSearch, strOrder;
@@ -459,7 +460,7 @@ public:
 			pstmt->setInt(1, u_id);
 			result = pstmt->executeQuery();
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Error {DELETE project project_id}  message: " << e.what() << endl;
 			system("pause");
 			//exit(1);
@@ -472,7 +473,7 @@ public:
 			pstmt->setString(1, _name);
 			result = pstmt->executeQuery();
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Error {DELETE project project_name} message: " << e.what() << endl;
 			system("pause");
 			//exit(1);
@@ -481,7 +482,7 @@ public:
 
 	//------- Mark -------
 	// Добавить оценку
-	void addMark(Mark mark) {
+	void addMark(const Mark& mark) {
 		try {
 			pstmt = con->prepareStatement(
 				"INSERT INTO mark (number, user_id, project1_id, project2_id, mark1, mark2) VALUES(?, ?, ?, ?, ?, ?);");
@@ -494,7 +495,7 @@ public:
 			//pstmt->setInt(6, m_id);
 			result = pstmt->executeQuery();
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Error {INSERT mark} message: " << e.what() << endl;
 			system("pause");
 			//exit(1);
@@ -508,7 +509,7 @@ public:
 	}
 
 	// Редактировать оценку
-	void editMark(Mark mark, size_t m_id) {
+	void editMark(const Mark& mark, size_t m_id) {
 		try {
 			pstmt = con->prepareStatement(
 				"UPDATE mark SET number = ?, user_id = ?, project1_id = ?, project2_id = ?, mark1 = ?, mark2 =? where mark_id = ?;");
@@ -521,7 +522,7 @@ public:
 			pstmt->setInt(7, m_id);
 			result = pstmt->executeQuery();
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Error {UPDATE mark}  message: " << e.what() << endl;
 			system("pause");
 			//exit(1);
@@ -689,7 +690,6 @@ public:
 	// Получение номеров ранжей
 	std::vector<std::string> getNumbersMark() {
 		vector<string> tmp;
-		std::string str;
 		pstmt = con->prepareStatement("SELECT number, COUNT(number) * 2 AS count FROM mark GROUP BY number;");
 		result = pstmt->executeQuery();
 		while (result->next()) {
@@ -732,7 +732,7 @@ public:
 			pstmt->setInt(1, m_id);
 			result = pstmt->executeQuery();
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Error {DELETE mark : mark_id}  message: " << e.what() << endl;
 			system("pause");
 			//exit(1);
@@ -747,7 +747,7 @@ public:
 			pstmt->setInt(2, _user_id);
 			result = pstmt->executeQuery();
 		}
-		catch (sql::SQLException e) {
+		catch (const sql::SQLException& e) {
 			cout << "Error {DELETE mark : number && user_id}  message: " << e.what() << endl;
 			system("pause");
 			//exit(1);

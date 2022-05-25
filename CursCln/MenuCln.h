@@ -42,7 +42,7 @@ colors = {
   },
 }*/
 
-int vcChoice(std::vector<std::string> vc, std::string topStr, size_t cancel = 1) {
+int vcChoice(const std::vector<std::string>& vc, const std::string& topStr, size_t cancel = 1) {
 	std::cout << vc[0] << std::endl;
 	for (size_t i = 1; i < vc.size(); ++i) {
 		std::cout << std::setw(2) << i << ". " << vc[i] << std::endl;
@@ -62,7 +62,8 @@ int vcChoice(std::vector<std::string> vc, std::string topStr, size_t cancel = 1)
 	int ch = -1;
 	do {
 		std::cin >> ch;
-		fflush(stdin);
+		//fflush(stdin);
+		std::cin.clear();
 		if ((ch < cancel) || (ch > topVc)) {
 			std::cout << "Неверный выбор!!! Повторите! Ваш вариант должен быть от " << cancel << " до " << topVc << ".\nВыберите: ";
 		}
@@ -72,13 +73,11 @@ int vcChoice(std::vector<std::string> vc, std::string topStr, size_t cancel = 1)
 }
 
 //Функция выбора 
-int vcChoicePress(std::vector<std::string> vc, std::string topStr, size_t cancel = 1) {
+int vcChoicePress(std::vector<std::string> vc, const std::string& topStr, size_t cancel = 1) {
 	int count = 2;
-	size_t cntVc = vc.size(), cAll = 0, cCancel=0;
+	size_t cAll = 0, cCancel=0;
 	std::cout << "- - - - - - - - - -" << std::endl;
-	size_t topVc = vc.size() - 1;
 	if (cancel == vc.size()) {
-		topVc = cancel;
 		cAll = cancel;
 		cancel = 0;
 		vc.push_back(" -= "+topStr+" = -");
@@ -92,17 +91,23 @@ int vcChoicePress(std::vector<std::string> vc, std::string topStr, size_t cancel
 		system("cls");//очистка экрана 
 		std::cout << vc[0] << std::endl;		//Вывод сообщения на экран 
 		for (size_t i = 1; i < vc.size(); ++i) {//Вывод опций на экран
-			if ((i + 1) == count) cout << "\x1b[48m" << "\x1b[31m>" << vc[i] << "\x1b[48m" << "\x1b[30m" << endl;
+			if ((i + 1) == count) cout << "\x1b[48m" << "\x1b[34m>" << vc[i] << "\x1b[48m" << "\x1b[30m" << endl;
 			else cout << " " << vc[i] << endl;
 		}
 
 		char pressed = _getch();	//Ожидание нажатия 
 		if ((pressed == 'W' || pressed == 'w' || pressed == 'Ц' ||
-			pressed == 'ц' || pressed == 72) && count != 2)	//Если нажатие клавиши вверх и не 1 опция
-			count--;	//Количество нажатий уменьшаем 
+			pressed == 'ц' || pressed == 72)) {
+			if (count != 2)	//Если нажатие клавиши вверх и не 1 опция
+				count--;	//Количество нажатий уменьшаем 
+			else count = vc.size();
+		}
 		if ((pressed == 'S' || pressed == 's' || pressed == 'Ы' ||
-			pressed == 'ы' || pressed == 80) && count != vc.size())	//Если  нажатие клавишей вниз и не последняя опция
-			count++;	//Количество нажатий увеличиваем 
+			pressed == 'ы' || pressed == 80)) {
+			if (count != vc.size())	//Если  нажатие клавишей вниз и не последняя опция
+				count++;	//Количество нажатий увеличиваем 
+			else count = 2;
+		}
 		if (pressed == '\r' || pressed == '\n') break;	//Если переход на новую строку, то выходим из цикла
 	}
 
@@ -123,32 +128,27 @@ public:
 	std::vector<std::string> vcMenu;
 
 	// Конструктор
-	A_menu() {
-		cn = NULL;
-	};
+	A_menu() : cn() {}
 
-	explicit A_menu(SOCKET connection) {
-		cn = connection;
-	}
+	explicit A_menu(SOCKET connection) : cn(connection) {}
 
 	// Деструктор
 	~A_menu() = default;
 
-	void toStream(std::string st, ostream& fout = std::cout) const {
+	void toStream(const std::string& st, ostream& fout = std::cout) {
 		fout << st;
 	}
 
 	void start(const size_t& modeMenu) {
-		int v = 1;
+		
 		std::string str;
 		//char str[50];
 		while (true) {
 			//system("cls");
-			//v = menuMain();
-			int chs = 1;
 			str = takeString(cn);
 			if (str.find("menu") != std::string::npos) {
 				//system("cls");
+				int v = 1;
 				modeStat = 0;
 				if (str.size() > 4) {
 					v = stoi(str.substr(4, str.size() - 4));
@@ -162,11 +162,11 @@ public:
 					if (v == 303) topS = "Новый";
 					v = vcMenu.size();
 				}
+				int chs = 1;
 				if (modeMenu == 1) chs = vcChoice(vcMenu, topS, v);
 				else chs = vcChoicePress(vcMenu, topS, v);
 				sendInt(cn,chs);
 				str = "";
-				v = 1;
 			}
 			if (str == "data") {
 				modeStat = 1;
@@ -195,9 +195,9 @@ public:
 				ofstream fout;
 				if (str.find("file") != std::string::npos) {
 					flagFile = true;
-					std::string toFile = "report";
 					fout.exceptions(ofstream::badbit);
 					try {
+						std::string toFile = "report";
 						if (str.find("#") != std::string::npos) {
 							toFile = str.substr(11, str.size() - 11);
 						}

@@ -115,7 +115,7 @@ public:
 	}
 
 	static void enterCompany(Company& tmp) {
-		std::string _name, _activity, _financeStr;
+		std::string _name;
 		size_t _finance;
 		//Наименование компании
 		do {
@@ -127,6 +127,8 @@ public:
 			else
 				cout << "Некорректный ввод. Повторите попытку.\n";
 		} while (true);
+
+		std::string _activity;
 		do {
 			cout << "Вид деятельности: ";
 			cin >> _activity;
@@ -136,6 +138,7 @@ public:
 			else
 				cout << "Некорректный ввод. Повторите попытку.\n";
 		} while (true);
+		std::string _financeStr;
 		do {
 			cout << "Финансовое состояние: ";
 			cin >> _financeStr;
@@ -146,6 +149,7 @@ public:
 			else
 				std::cout << "Некорректный ввод. Повторите попытку.\n";
 		} while (true);
+
 		tmp.setCompany(_name, _activity, _finance);
 	}
 
@@ -167,13 +171,14 @@ public:
 
 	void enterCompany() {
 		//        CompanySock &tmp
-		std::string _name, _activity, _financeStr;
-		size_t _finance;
+		std::string _name;
 		sendString(sock, "data");
 		//Наименование компании
 		sendString(sock, "Наименование: ");
 		_name = takeString(sock);
+
 		sendString(sock, "Вид деятельности: ");
+		std::string _activity;
 		do {
 			_activity = takeString(sock);
 			if (Checks::checkNoNumbers(_activity)) {
@@ -182,9 +187,11 @@ public:
 			else
 				sendString(sock, "Некорректный ввод. Повторите попытку.\nВид деятельности: ");
 		} while (true);
+
 		sendString(sock, "Финансовое состояние: ");
+		size_t _finance;
 		do {
-			_financeStr = takeString(sock);
+			std::string _financeStr = takeString(sock);
 			if (Checks::checkNoLetters(_financeStr)) {
 				_finance = stol(_financeStr);
 				break;

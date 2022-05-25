@@ -30,8 +30,7 @@ public:
 		uid = 0;
 	};
 
-	explicit User(vector<string> vc) {
-		Roles = std::move(vc);
+	explicit User(vector<string> vc) : Roles(std::move(vc)) {
 		uid = 0;
 	}
 
@@ -232,12 +231,12 @@ private:
 public:
 	SOCKET sock;
 
-	UserSock() {
-		sock = NULL;
+	UserSock() : sock() {
+		//sock = NULL;
 	}
 
-	UserSock(SOCKET _sock, std::vector<std::string> vc) : User(std::move(vc)) {
-		this->sock = _sock;
+	UserSock(SOCKET _sock, std::vector<std::string> vc) : User(std::move(vc)), sock(_sock) {
+		//this->sock = _sock;
 	}
 
 	void setSock(SOCKET sc) {

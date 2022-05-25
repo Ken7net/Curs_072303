@@ -24,21 +24,18 @@ private:
 public:
 	vector<string> Companies;
 
-	Project() {
+	Project() : application_date() {
 		project_id = 0;
 		sum_credit = 0;
 		credit_time = 0;
-		application_date = {};
 		company_id = 0;
 		weight = 0;
 	}
 
-	explicit Project(vector<string> vc) {
-		Companies = std::move(vc);
+	explicit Project(vector<string> vc) : application_date(), Companies(std::move(vc)) {
 		project_id = 0;
 		sum_credit = 0;
 		credit_time = 0;
-		application_date = {};
 		company_id = 0;
 		weight = 0;
 	}
@@ -323,7 +320,7 @@ public:
 
 	Date inputDateSock() const {
 		Date tmp{};
-		std::string _year, _month, _day;
+		std::string _year;
 		do {
 			sendString(sock, "Год: ");
 			do {
@@ -352,9 +349,8 @@ public:
 	}
 
 	void enterProject() {
-		size_t _projectId, _creditTime, _companyId;
-		size_t _sumCredit;
-		std::string _projectName, _sudReestr, _sumCreditStr, _creditTimeStr; // , _companyIdStr;
+		size_t _projectId;
+		std::string _projectName; // , _companyIdStr;
 		Date _applicationDate{};
 		_projectId = 0;
 		sendString(sock, "data");
@@ -369,10 +365,10 @@ public:
 			else
 				sendString(sock, "Некорректный ввод. Повторите попытку.\nНаименование: ");
 		} while (true);
-
+		size_t _sumCredit;
 		sendString(sock, "Сумма кредита: ");
 		do {
-			_sumCreditStr = takeString(sock);
+			std::string _sumCreditStr = takeString(sock);
 			if (Checks::checkNoLetters(_sumCreditStr)) {
 				_sumCredit = stol(_sumCreditStr);
 				break;
@@ -380,10 +376,10 @@ public:
 			else
 				sendString(sock, "Некорректный ввод. Повторите попытку.\nСумма кредита: ");
 		} while (true);
-
+		size_t _creditTime;
 		sendString(sock, "Срок кредитования: ");
 		do {
-			_creditTimeStr = takeString(sock);
+			std::string  _creditTimeStr = takeString(sock);
 			if (Checks::checkNoLetters(_creditTimeStr)) {
 				_creditTime = stol(_creditTimeStr);
 				break;
@@ -392,18 +388,8 @@ public:
 				sendString(sock, "Некорректный ввод. Повторите попытку.\nСрок кредитования: ");
 		} while (true);
 
-		/*sendString(sock, "Судебный реестр: ");
-		do {
-			_sudReestr = takeString(sock);
-			if (Checks::checkNoNumbers(_sudReestr)) {
-				break;
-			}
-			else
-				sendString(sock, "Некорректный ввод. Повторите попытку.\nСудебный реестр: ");
-		} while (true);*/
-
 		sendString(sock, "end");
-
+		std::string _sudReestr;
 		size_t ch;
 		sendString(sock, "menu");
 		sendString(sock, "Судебный реестр:#Нет#Да");
@@ -421,24 +407,10 @@ public:
 			}
 		}
 		else return;
-		//sendString(sock, "Дата подачи заявки: ");
-		//_applicationDate.inputDate();
+
 		_applicationDate.setDateStr(Date::currentDate()); //std::string
 
-		/*sendString(sock, "Наименование компании: ");
-		do {
-			_companyIdStr = takeString(sock);
-			if (Checks::checkNoNumbers(_companyIdStr)) {
-				_companyId = stol(_companyIdStr);
-				break;
-			}
-			else
-				sendString(sock, "Некорректный ввод. Повторите попытку.\nНаименование компании: ");
-		} while (true);*/
-		//sendString(sock, "end");
-
-		//size_t ch = vcChoice("Компания", Companies);
-		//size_t ch;
+		size_t _companyId;
 		sendString(sock, "menu");
 		sendString(sock, toString(Companies));
 		ch = takeInt(sock);

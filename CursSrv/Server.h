@@ -77,7 +77,7 @@ public:
         send(newConnection, msg, sizeof(msg), 0);
     }
 
-    void SendString(std::string a) const {
+    void SendString(const std::string& a) const {
         char msg[200];
         strcpy(msg, a.c_str());
         send(newConnection, msg, sizeof(msg), 0);

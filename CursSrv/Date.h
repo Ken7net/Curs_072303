@@ -93,9 +93,9 @@ public:
 		if (str.find('/') != std::string::npos) r = '/';
 		else if (str.find('-') != std::string::npos) r = '-';
 		else if (str.find('.') != std::string::npos) r = '.';
-		year = std::stoi(str.substr(0, str.find(r)));
-		month = std::stoi(str.substr(str.find(r) + 1, str.rfind(r) - str.find(r)));
-		day = std::stoi(str.substr(str.rfind(r) + 1, 2));
+		year = static_cast<size_t>(std::stoi(str.substr(0, str.find(r))));
+		month = static_cast<size_t>(std::stoi(str.substr(str.find(r) + 1, str.rfind(r) - str.find(r))));
+		day = static_cast<size_t>(std::stoi(str.substr(str.rfind(r) + 1, 2)));
 	}
 
 	void inputDate() {

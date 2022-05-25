@@ -1,8 +1,7 @@
 ﻿#ifndef CURSSRV_MARK_H
 #define CURSSRV_MARK_H
 
-#include <ostream>
-#include <winsock.h>
+//#include <winsock.h>
 #include "../Utils/stdafx.h"
 
 using namespace std;
@@ -18,8 +17,6 @@ private:
 	float value1;		// Оценка проекту 1
 	float value2;		// Оценка проекту 2
 public:
-	//map<string, size_t> mpUsers;
-	//map<string, size_t> mpProjects;
 
 	Mark() {
 		mark_id = 0;
@@ -30,18 +27,6 @@ public:
 		value1 = 0;
 		value2 = 0;
 	}
-
-	//Mark(std::map<std::string, size_t> mpU, std::map<string, size_t> mpP) {
-	//	mpUsers = std::move(mpU);
-	//	mpProjects = std::move(mpP);
-	//	mark_id = 0;
-	//	number = 0;
-	//	user_id = 0;
-	//	project1_id = 0;
-	//	project2_id = 0;
-	//	value1 = 0;
-	//	value2 = 0;
-	//}
 
 	Mark(size_t markId, size_t _number, size_t userId, size_t project1Id, size_t project2Id, float _value) : mark_id(
 		markId), number(_number), user_id(userId), project1_id(project1Id), project2_id(project2Id), value1(_value), value2(1 - _value) {}
@@ -152,7 +137,7 @@ public:
 		value2 = 1 - _value;
 	}
 
-	void setMark(Mark& tmp) {
+	void setMark(const Mark& tmp) {
 		mark_id = tmp.mark_id;
 		number = tmp.number;
 		user_id = tmp.user_id;
@@ -176,15 +161,11 @@ public:
 
 	static void enterMark(Mark& tmp) {
 		size_t markId;
-		std::string _valueStr;
 		if (tmp.getMarkId() != 0) markId = tmp.getMarkId();
 		else markId = 0;
 		float _value;
-		// получение
-		// NumberMark авто из БД
-		// expert_Id из БД (текущий пользователь)
-		// project1_id и project2_id выбор из БД
 		do {
+			std::string _valueStr;
 			cout << "Оценку: ";
 			cin >> _valueStr;
 			if (Checks::checkNoLetters(_valueStr)) {
@@ -211,30 +192,19 @@ public:
 	}
 
 	void enterMark(size_t _number, size_t userId, size_t project1Id, size_t project2Id) {
-		std::string _valueStr;
-		float _value;
-
-		// получение
-		// Number авто из БД
-		// expert_Id из БД (текущий пользователь)
-		// project1_id и project2_id выбор из БД
 		// ----- Выбор эксперта -----
 		std::string str = "Оценкa(" + to_string(project1Id);
 		str += " <-> " + to_string(project2Id);
 		str += "): ";
 		sendString(sock, "data");
 		sendString(sock, str);
+		float _value;
 		do {
+			std::string _valueStr;
 			_valueStr = takeString(sock);
 			if (Checks::checkNoLetters(_valueStr)) {
 				_value = std::stof(_valueStr);
 				if (_value < 0 || _value>1) {
-					/*sendString(sock, "end");
-					sendString(sock, "output");
-					sendString(sock, "Некорректный ввод. Повторите попытку.\nОценка должна быть от 0 до 1.\n");
-					sendString(sock, "data");
-					sendString(sock, str);*/
-
 					sendString(sock, "Некорректный ввод. Повторите попытку.\nОценка должна быть от 0 до 1.\n" + str);
 					continue;
 				}
@@ -249,8 +219,6 @@ public:
 
 	void enterMarkAll(std::map<std::string, size_t> mpUsers, std::map<string, size_t> mpProjects) {
 		size_t userId, project1Id, project2Id;
-		std::string userIdStr, project1IdStr, project2IdStr, _valueStr;
-		//float _value = 0;
 
 		// ----- Выбор эксперта -----
 		vector<string> vc = toVector(mpUsers);
@@ -276,38 +244,12 @@ public:
 		ch = takeInt(sock);
 		if (ch > 0) project2Id = mpProjects[vc[ch - 1]];
 		else return;
-
 		sendString(sock, "end");
-		/*sendString(sock, "data");
-		sendString(sock, "Номер ранжа: ");
-		do {
-			numberStr = takeString(sock);
-			if (Checks::checkNoLetters(_valueStr)) {
-				_number = std::stol(numberStr);
-				break;
-			}
-			else
-				cout << "Некорректный ввод. Повторите попытку.\nНомер ранжа: ";
-		} while (true);
-		sendString(sock, "Оценку: ");
-		do {
-			_valueStr = takeString(sock);
-			if (Checks::checkNoLetters(_valueStr)) {
-				_value = std::stof(_valueStr);
-				break;
-			}
-			else
-				cout << "Некорректный ввод. Повторите попытку.\nОценка: ";
-		} while (true);
-		sendString(sock, "end");*/
 
 		enterMark(getNumber(), userId, project1Id, project2Id);
-		//setMark(0, _number, userId, project1Id, project2Id, _value);
 	}
 
 	void enterMark(size_t _number, const std::pair<std::string, size_t>& userId, size_t project1Id, size_t project2Id) {
-		std::string userIdStr, project1IdStr, project2IdStr, _valueStr;
-		float _value;
 		sendString(sock, "data");
 
 		std::string str = "Эксперт " + userId.first;
@@ -315,17 +257,13 @@ public:
 		str += " <-> " + to_string(project2Id);
 		str += ") : ";
 		sendString(sock, str);
+		float _value;
 		do {
+			std::string _valueStr;
 			_valueStr = takeString(sock);
 			if (Checks::checkNoLetters(_valueStr)) {
 				_value = std::stof(_valueStr);
 				if (_value < 0 || _value>1) {
-					/*sendString(sock, "end");
-					sendString(sock, "output");
-					sendString(sock, "Некорректный ввод. Повторите попытку.\nОценка должна быть от 0 до 1.\n");
-					sendString(sock, "data");
-					sendString(sock, str);*/
-
 					sendString(sock, "Некорректный ввод. Повторите попытку.\nОценка должна быть от 0 до 1.\n" + str);
 					continue;
 				}
@@ -338,7 +276,7 @@ public:
 		setMark(0, _number, userId.second, project1Id, project2Id, _value);
 	}
 
-	static Mark toMark(MarkSock& tmp) {
+	static Mark toMark(const MarkSock& tmp) {
 		Mark mrk;
 		mrk.setMarkId(tmp.getMarkId());
 		mrk.setNumber(tmp.getNumber());

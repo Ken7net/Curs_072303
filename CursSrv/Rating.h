@@ -1,9 +1,7 @@
 ﻿#ifndef CURSSRV_RATING_H
 #define CURSSRV_RATING_H
 
-#include <ostream>
 #include "../Utils/stdafx.h"
-#include <vector>
 #include "Project.h"
 #include "Mark.h"
 
@@ -20,31 +18,26 @@ public:
 	std::vector<Mark> rankingTotal;
 	float total{};
 
-	Rating() {
+	Rating() : sock() {
 		cntProjects = 0;
 		cntExperts = 0;
 		size = cntProjects * (cntProjects - 1) / 2; // = 0;
 		number = 0;
-		sock = -1;
 		total = 0;
 	}
 
-	explicit Rating(const SOCKET& _sock) {
-		this->sock = _sock;
+	explicit Rating(const SOCKET& _sock) :sock(_sock) {
 		cntProjects = 0;
 		cntExperts = 0;
 		size = cntProjects * (cntProjects - 1) / 2; // *cntExperts; // = 0;
 		number = 0;
 	}
 
-	//Rating(size_t _size, size_t _cntProjects, size_t _cntExperts, const vector <size_t>& _vcProjects, size_t _number) :
 	Rating(SOCKET _sock, size_t _size, size_t _cntProjects, size_t _cntExperts, size_t _number) :
 		size(_size),
 		cntProjects(_cntProjects),
 		cntExperts(_cntExperts),
-		number(_number) {
-		sock = _sock;
-	}
+		number(_number), sock(_sock) {}
 
 	size_t getSize() const {
 		return size;
@@ -154,13 +147,14 @@ public:
 			sendString(sock, "menu2");
 			sendString(sock, toString(vc));
 			size_t ch = takeInt(sock);
-			if (ch == 0) { 
-				if (vcProjects.size() > 2) break;
+			if (ch == 0) {
+				if (vcProjects.size() > 2 || vcProjects.size() == 0) break;
 				else {
 					// сообщение о ошибке
 					sendString(sock, "output");
 					sendString(sock, "Количество проектов в ранжировании должно быть больше 2!!! Добавьте еще проекты!\n");
 					sendString(sock, "end");
+					sendString(sock, "pause");  // пауза будет при любом меню
 					continue;
 
 				}
@@ -191,7 +185,7 @@ public:
 	// Выбор номера для ранжа
 	void selectNumber(std::vector<std::string> vc, const std::string& strAdd = "2") {
 		std::cout << "--------------------------------------------" << std::endl;
-		sendString(sock, "menu"+strAdd);
+		sendString(sock, "menu" + strAdd);
 		sendString(sock, toString(vc, "Выберите номер ранжирования:"));
 		size_t ch = takeInt(sock);
 		if (ch == 0) return;
@@ -207,7 +201,6 @@ public:
 	//Редактирование оценок экспертом
 	void editRank(const std::pair<std::string, size_t>& expert, size_t flag = 0) {
 		MarkSock tmpMark(sock);
-		std::vector<Mark> mrk;
 		if (flag == 1) {
 			std::cout << "--------------------------------------------" << std::endl;
 			std::cout << "Ввод оценок (для ранжирования) одним экспертом!" << std::endl;
@@ -291,8 +284,8 @@ public:
 	//Расчет весов
 	void calcWeights() {
 		size_t cnt = 0;
-		for (auto & vcProject : vcProjects) {
-			for (auto & rTj : rankingTotal) {
+		for (auto& vcProject : vcProjects) {
+			for (auto& rTj : rankingTotal) {
 				if (rTj.getProject1Id() == vcProject.getProjectId()) vcProject.setWeight(vcProject.getWeight() + rTj.getValue1());
 				if (rTj.getProject2Id() == vcProject.getProjectId()) vcProject.setWeight(vcProject.getWeight() + rTj.getValue2());
 				if (rTj.getProject1Id() == vcProject.getProjectId() || rTj.getProject2Id() == vcProject.getProjectId()) cnt++;
