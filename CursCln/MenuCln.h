@@ -75,12 +75,13 @@ int vcChoice(const std::vector<std::string>& vc, const std::string& topStr, size
 //Функция выбора 
 int vcChoicePress(std::vector<std::string> vc, const std::string& topStr, size_t cancel = 1) {
 	int count = 2;
-	size_t cAll = 0, cCancel=0;
+	size_t cAll = 0, cCancel = 0;
 	std::cout << "- - - - - - - - - -" << std::endl;
 	if (cancel == vc.size()) {
 		cAll = cancel;
 		cancel = 0;
-		vc.push_back(" -= "+topStr+" = -");
+		vc.push_back(" -= " + topStr + " = -");
+
 	}
 	if (cancel == 0) {
 		vc.push_back(" -= ОТМЕНА =-");
@@ -91,7 +92,7 @@ int vcChoicePress(std::vector<std::string> vc, const std::string& topStr, size_t
 		system("cls");//очистка экрана 
 		std::cout << vc[0] << std::endl;		//Вывод сообщения на экран 
 		for (size_t i = 1; i < vc.size(); ++i) {//Вывод опций на экран
-			if ((i + 1) == count) cout << "\x1b[48m" << "\x1b[34m>" << vc[i] << "\x1b[48m" << "\x1b[30m" << endl;
+			if ((i + 1) == count) cout << bold_on << ">" << vc[i] << bold_off << endl;
 			else cout << " " << vc[i] << endl;
 		}
 
@@ -121,7 +122,7 @@ int vcChoicePress(std::vector<std::string> vc, const std::string& topStr, size_t
 		//if (count == cAll) return cAll;
 	}
 	if (cAll != 0) {
-		if (count == cAll) return cAll;
+		if (count == cAll + 1) return cAll;
 	}
 	return count - 1;
 }

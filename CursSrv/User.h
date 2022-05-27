@@ -325,7 +325,7 @@ public:
 		case 4:
 			editName(getName());
 			editLogin(existLogins, getLogin());
-			editPass(getPass());
+			editPass(encryptChars(getPass()));
 			break;
 		default:
 			break;

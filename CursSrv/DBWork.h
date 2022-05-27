@@ -46,7 +46,8 @@ public:
 			driver = get_driver_instance();
 			con = driver->connect(encryptChars(database) + server, encryptChars(username), encryptChars(password));
 			std::cout << "----------------------------------------------------------" << std::endl;
-			std::cout << "Успешное соединение к mysql.services.clever-cloud.com." << std::endl;
+			//std::cout << "Успешное соединение к mysql.services.clever-cloud.com." << std::endl;
+			std::cout << "Успешное соединение к Базе данных." << std::endl;
 		}
 		catch (const sql::SQLException& e) {
 			cout << "Could not connect to server. Error message: " << e.what() << endl;
@@ -73,7 +74,8 @@ public:
 			con = driver->connect(encryptChars(server), encryptChars(username), encryptChars(password));
 			//con = driver->connect(server, username, password);
 			std::cout << "----------------------------------------------------------" << std::endl;
-			std::cout << "Успешное соединение к mysql.services.clever-cloud.com." << std::endl;
+			//std::cout << "Успешное соединение к mysql.services.clever-cloud.com." << std::endl;
+			std::cout << "Успешное соединение к Базе Данных." << std::endl;
 		}
 		catch (const sql::SQLException& e) {
 			cout << "Could not connect to server. Error message: " << e.what() << endl;
@@ -531,7 +533,7 @@ public:
 	// Получить оценку
 	Mark getMark(const std::string& field_name, size_t m_id) {
 		Mark tmp;
-		pstmt = con->prepareStatement("SELECT * FROM mark WHERE " + field_name + " = ?;");
+		pstmt = con->prepareStatement("SELECT mark_id, number, user_id, project1_id, project2_id, ROUND(mark1, 2), ROUND(mark2, 2) FROM mark WHERE " + field_name + " = ?;");
 		pstmt->setInt(1, m_id);
 		result = pstmt->executeQuery();
 		while (result->next()) {
@@ -549,7 +551,7 @@ public:
 		std::vector<Mark> tmpMrk;
 		std::string strUserId;
 		if (_userId != 0) strUserId = " AND user_id = " + std::to_string(_userId);
-		pstmt = con->prepareStatement("SELECT * FROM mark WHERE number = ?" + strUserId + ";"); //  ORDER BY user_id, project1_id, project2_id // AND user_id = ? ; ");
+		pstmt = con->prepareStatement("SELECT mark_id, number, user_id, project1_id, project2_id, ROUND(mark1, 2), ROUND(mark2, 2) FROM mark WHERE number = ?" + strUserId + ";"); //  ORDER BY user_id, project1_id, project2_id // AND user_id = ? ; ");
 		pstmt->setInt(1, _number);
 		//pstmt->setInt(2, _userId);
 		size_t lastUser = -1;

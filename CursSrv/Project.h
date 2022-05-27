@@ -253,25 +253,27 @@ public:
 			std::cout << "+----+----------------------------------------+------+" << std::endl;
 		}
 		if (flag == 2) {	// для ранжа
+			if (head == 1) std::cout << bold_on;
 			std::cout << "|" << std::right << std::setw(3) << project_id << " |" << std::left << std::setw(40) << project_name << "|" << std::setw(6) << weight << "|" << std::endl;
+			if (head == 1) std::cout << bold_off;
 			std::cout << "+----+----------------------------------------+------+" << std::endl;
 		}
 	}
 
 	// Вывод проекта в сокет
 	void printProjectSock(SOCKET sc, const std::string& companyStr, bool head = false) {
-			if (head) {
-				// заголовок
-				sendString(sc, "+----+----------------------------------------+-----------+-------+---+----------+-------------------+\n");
-				sendString(sc, "| Id | Наименование проекта                   | Сумма     | Срок  |СР |  Дата    | Компания          |\n");
-				sendString(sc, "+----+----------------------------------------+-----------+-------+---+----------+-------------------+\n");
-			}
-			std::stringstream ss;
-			ss << "|" << std::right << std::setw(3) << project_id << " |" << std::left << std::setw(40) << project_name << "|"
-				<< std::setw(11) << sum_credit << "|" << std::setw(7) << credit_time << "|" << std::setw(3) << sud_reestr << "|" << application_date.getDateStr() << "|" << std::setw(19) << companyStr << "|" << std::endl;
-			sendString(sc, ss.str());
-			ss.str("");
+		if (head) {
+			// заголовок
 			sendString(sc, "+----+----------------------------------------+-----------+-------+---+----------+-------------------+\n");
+			sendString(sc, "| Id | Наименование проекта                   | Сумма     | Срок  |СР |  Дата    | Компания          |\n");
+			sendString(sc, "+----+----------------------------------------+-----------+-------+---+----------+-------------------+\n");
+		}
+		std::stringstream ss;
+		ss << "|" << std::right << std::setw(3) << project_id << " |" << std::left << std::setw(40) << project_name << "|"
+			<< std::setw(11) << sum_credit << "|" << std::setw(7) << credit_time << "|" << std::setw(3) << sud_reestr << "|" << application_date.getDateStr() << "|" << std::setw(19) << companyStr << "|" << std::endl;
+		sendString(sc, ss.str());
+		ss.str("");
+		sendString(sc, "+----+----------------------------------------+-----------+-------+---+----------+-------------------+\n");
 	}
 
 	// Вывод проекта с весами в сокет
@@ -283,8 +285,10 @@ public:
 			sendString(sc, "+----+----------------------------------------+------+\n");
 		}
 		std::stringstream ss;
-		if (flag == 2) {	// для ранжа
+		if (flag > 1) {	// для ранжа
+			if (head == 1 && flag == 2) ss << bold_on;
 			ss << "|" << std::right << std::setw(3) << project_id << " |" << std::left << std::setw(40) << project_name << "|" << std::setw(6) << weight << "|" << std::endl;
+			if (head == 1 && flag == 2) ss << bold_off;
 			sendString(sc, ss.str());
 			sendString(sc, "+----+----------------------------------------+------+\n");
 		}

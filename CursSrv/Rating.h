@@ -342,26 +342,25 @@ public:
 	}
 
 	// Вывод результата ранжирования проектов (в клиентскую консоль или в file)
-	void printRatingSock(const std::string& fout = "", size_t flag = 0) {
+	void printRatingSock(const std::string& fout = "") {
 		sendString(sock, "output" + fout);
-		if (flag == 1) {
-			// Заголовок
-		}
+		size_t flag = 0;
+		flag = 1;
 		for (auto& it : vcProjects) {
-			if (it == vcProjects[0]) it.printProjectWeightSock(sock, 2, 1);
-			else it.printProjectWeightSock(sock, 2);
+			if (it != vcProjects[0]) flag = 0; 
+			it.printProjectWeightSock(sock, 2 + (fout.empty() ? 0: 1), flag);
 		}
 		sendString(sock, "end");
 	}
 
 	// Поиск эксперта по id
 	std::string findExpert(size_t id) {
-	//	for (const auto& it : mpExperts) {
-	//		if (it.second == id) return it.first;
-	//	}
-	//	return "";
-	
-		auto it = std::find_if(mpExperts.begin(), mpExperts.end(), [&id](const std::pair<std::string, size_t>& kt) 
+		//	for (const auto& it : mpExperts) {
+		//		if (it.second == id) return it.first;
+		//	}
+		//	return "";
+
+		auto it = std::find_if(mpExperts.begin(), mpExperts.end(), [&id](const std::pair<std::string, size_t>& kt)
 			{ return (kt.second == id); });
 		if (it != mpExperts.end()) return it->first;
 		else return "";

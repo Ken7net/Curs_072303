@@ -263,7 +263,7 @@ std::vector<std::string> toVector(std::map<std::string, T> a) {
 	//	tmp.push_back(it.first);
 	//}
 
-	std::transform(a.begin(), a.end(), std::back_inserter(tmp),	[](const auto& kv) { return kv.first; });
+	std::transform(a.begin(), a.end(), std::back_inserter(tmp), [](const auto& kv) { return kv.first; });
 
 	return tmp;
 }
@@ -369,5 +369,19 @@ std::string acp(const std::string& s)
 {
 	return wstr_to_str(str_to_wstr(s, CP_UTF8), CP_ACP);
 }
-
+//----------------------------------------------------------------------------
+std::ostream& bold_on(std::ostream& os)
+{
+	/*return os << "\x1b[1m";*/
+	//return os << "\x1b[48;5;15m" << "\x1b[38;5;5m";
+	return os << "\x1b[48m" << "\x1b[34m";
+}
+//----------------------------------------------------------------------------
+std::ostream& bold_off(std::ostream& os)
+{
+	//return os << "\x1b[0m";
+	//return os << "\x1b[48;5;15m" << "\x1b[38;5;12m";
+	return os << "\x1b[48m" << "\x1b[30m";
+}
+//----------------------------------------------------------------------------
 #endif //SRV_STDAFX_H
