@@ -222,6 +222,7 @@ public:
 			std::cout << "Эксперт " << expert.first << "(" << expert.second << ")" << " -- " << j + 1 <<
 				"(" << it.getProject1Id() << ") : " << k + 1 << "(" << it.getProject2Id() << "): ";
 			tmpMark.enterMark(number, expert, it.getProject1Id(), it.getProject2Id());
+			tmpMark.setMarkId(it.getMarkId());
 			std::cout << tmpMark.getValue1() << " :: " << tmpMark.getValue2() << std::endl;
 			it = MarkSock::toMark(tmpMark);
 		}

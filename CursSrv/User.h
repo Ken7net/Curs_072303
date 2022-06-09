@@ -16,7 +16,7 @@ private:
 	std::string pass;       // Пароль
 	std::string role;       // Роль
 public:
-	vector<string> Roles;// = { "Администратор", "Представитель компании", "Эксперт" };
+	vector<string> Roles;// = { "Менеджер", "Консультант банка", "Эксперт" };
 
 	friend ostream& operator<<(ostream& out, User& obj) {
 		out << "Фамилия Имя: " << obj.getName() << endl;

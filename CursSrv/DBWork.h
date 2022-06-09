@@ -530,6 +530,34 @@ public:
 			//exit(1);
 		}
 	}
+
+	// Редактировать оценку
+	void editMark(const Mark& mark) {
+		try {
+			pstmt = con->prepareStatement(
+				"UPDATE mark SET number = ?, user_id = ?, project1_id = ?, project2_id = ?, mark1 = ?, mark2 =? where mark_id = ?;");
+			pstmt->setInt(1, mark.getNumber());
+			pstmt->setInt(2, mark.getUserId());
+			pstmt->setInt(3, mark.getProject1Id());
+			pstmt->setInt(4, mark.getProject2Id());
+			pstmt->setDouble(5, mark.getValue1());
+			pstmt->setDouble(6, mark.getValue2());
+			pstmt->setInt(7, mark.getMarkId());
+			result = pstmt->executeQuery();
+		}
+		catch (const sql::SQLException& e) {
+			cout << "Error {UPDATE mark}  message: " << e.what() << endl;
+			system("pause");
+			//exit(1);
+		}
+	}
+
+	void editMarkVc(const std::vector<Mark>& _mark) {
+		for (auto&& it : _mark) {
+			editMark(it);
+		}
+	}
+
 	// Получить оценку
 	Mark getMark(const std::string& field_name, size_t m_id) {
 		Mark tmp;

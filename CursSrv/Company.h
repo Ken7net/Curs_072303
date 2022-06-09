@@ -156,7 +156,7 @@ public:
 	friend ostream& operator<<(ostream& os, const Company& company) {
 		os << "Компания: " << company.name << endl;
 		os << "Вид деятельности: " << company.activity << endl;
-		os << "Финансовое состояние: " << company.finance << endl;;
+		os << "Финансовое состояние: " << company.finance << endl;
 		return os;
 	}
 };
@@ -207,7 +207,7 @@ public:
 	friend ostream& operator<<(ostream& os, const CompanySock& company) {
 		os << "Компания: " << company.getName() << endl;
 		os << "Вид деятельности: " << company.getActivity() << endl;
-		os << "Финансовое состояние: " << company.getFinance() << endl;;
+		os << "Финансовое состояние: " << company.getFinance() << endl;
 		return os;
 	}
 };

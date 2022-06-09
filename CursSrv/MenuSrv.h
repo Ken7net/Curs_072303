@@ -331,13 +331,12 @@ public:
 
 	//--------- Список проектов map ---------
 	size_t listProject(map<string, size_t>& vc, size_t mode = 0) {
-		size_t ch = 0;
 		if (!vc.empty()) vc.clear();
 		vc = db.getGuideMap("project", 2);
 		vector<string> tmp = toVector(vc);
 		sendString(sock, "menu" + std::to_string(mode));
 		sendString(sock, toString(tmp, "Выберите проект: "));
-		ch = takeInt(sock);
+        size_t ch = takeInt(sock);
 		if (ch != 0 && ch != tmp.size() + 1) {
 			////ch = vc[tmp[ch]];
 			//ch = ch - 1;
@@ -403,14 +402,13 @@ public:
 	// Выбор номера ранжа
 	//--------- Список оценок map ---------
 	size_t listNumberMark(/*map<string, size_t>& vc*/) {
-		int ch = 0;
 		/*if (!vc.empty()) vc.clear();
 		vc = db.getGuideMap("mark", 2);
 		vector<string> tmp = toVector(vc);*/
 		vector<string> tmp = db.getNumbersMark();
 		sendString(sock, "menu151");
 		sendString(sock, toString(tmp, "Выберите номер оценивания: "));
-		ch = takeInt(sock);
+        int ch = takeInt(sock);
 		if (ch != 0) {
 			////ch = vc[tmp[ch]];
 			//std::cout << tmp[ch] << " " << tmp[ch - 1] << " " << vc[tmp[ch - 1]] << endl;
@@ -421,13 +419,12 @@ public:
 
 	//--------- Список оценок map ---------
 	size_t listMark(map<string, size_t>& vc) {
-		size_t ch = 0;
 		if (!vc.empty()) vc.clear();
 		vc = db.getGuideMap("mark", 2);
 		vector<string> tmp = toVector(vc);
 		sendString(sock, "menu0");
 		sendString(sock, toString(tmp, "Выберите оценку: "));
-		ch = takeInt(sock);
+        size_t ch = takeInt(sock);
 		if (ch != 0) {
 			//ch = vc[tmp[ch]];
 			std::cout << tmp[ch] << " " << tmp[ch - 1] << " " << vc[tmp[ch - 1]] << endl;
@@ -496,7 +493,7 @@ public:
 		strcpy(p, "");
 		p[0] = '\0';
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-			size_t i = atoi(p);
+			size_t i = stoi(p);
 			std::cout << "<- " << split(strMenuManager)[i] << endl;
 			switch (i) {
 			case 1:
@@ -577,7 +574,7 @@ public:
 		strcpy(p, "");
 		p[0] = '\0';
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-			int i = atoi(p);
+			int i = stoi(p);
 			std::cout << "<- " << split(strMenuManagerAdd)[i] << endl;
 			switch (i) {
 			case 1:
@@ -620,7 +617,7 @@ public:
 		strcpy(p, "");
 		p[0] = '\0';
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-			int i = atoi(p);
+			int i = stoi(p);
 			std::cout << "<- " << split(strMenuManagerEdit)[i] << endl;
 			switch (i) {
 			case 1:
@@ -659,7 +656,7 @@ public:
 		strcpy(p, "");
 		p[0] = '\0';
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-			int i = atoi(p);
+			int i = stoi(p);
 			std::cout << "<- " << split(strMenuManagerDel)[i] << endl;
 			switch (i) {
 			case 1:
@@ -695,7 +692,7 @@ public:
 		strcpy(p, "");
 		p[0] = '\0';
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-			int i = atoi(p);
+			int i = stoi(p);
 			std::cout << "<- " << split(strMenuManagerSave)[i] << endl;
 			switch (i) {
 			case 1:
@@ -735,7 +732,7 @@ public:
 		strcpy(p, "");
 		p[0] = '\0';
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-			int i = atoi(p);
+			int i = stoi(p);
 			std::cout << "<- " << split(strMenuManagerSort)[i] << endl;
 			std::string strOrder;
 			switch (i) {
@@ -780,7 +777,7 @@ public:
 		strcpy(p, "");
 		p[0] = '\0';
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-			int i = atoi(p);
+			int i = stoi(p);
 			std::cout << "<- " << split(strMenuManagerSearch)[i] << endl;
 			switch (i) {
 			case 1:
@@ -824,7 +821,7 @@ public:
 		p[0] = '\0';
 		Rating rating(sock);
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-			int i = atoi(p);
+			int i = stoi(p);
 			std::cout << "<- " << split(strMenuManagerRanking)[i] << endl;
 			switch (i) {
 			case 1:
@@ -930,7 +927,7 @@ public:
 		strcpy(p, "");
 		p[0] = '\0';
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-			int i = atoi(p);
+			int i = stoi(p);
 			std::cout << "<- " << split(strMenuCompany)[i] << endl;
 			switch (i) {
 			case 1:
@@ -972,7 +969,7 @@ public:
 		strcpy(p, "");
 		p[0] = '\0';
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-			int i = atoi(p);
+			int i = stoi(p);
 			std::cout << "<- " << split(strMenuCompanyEdit)[i] << endl;
 			switch (i) {
 			case 1:
@@ -1007,7 +1004,7 @@ public:
 		strcpy(p, "");
 		p[0] = '\0';
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-			int i = atoi(p);
+			int i = stoi(p);
 			std::cout << "<- " << split(strMenuCompanyEdit)[i] << endl;
 			switch (i) {
 			case 1:
@@ -1045,7 +1042,7 @@ public:
 		strcpy(p, "");
 		p[0] = '\0';
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-			int i = atoi(p);
+			int i = stoi(p);
 			std::cout << "<- " << split(strMenuCompanySave)[i] << endl;
 			switch (i) {
 			case 1:
@@ -1079,7 +1076,7 @@ public:
 		strcpy(p, "");
 		p[0] = '\0';
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-			int i = atoi(p);
+			int i = stoi(p);
 			std::cout << "<- " << split(strMenuCompanyDel)[i] << endl;
 			switch (i) {
 			case 1:
@@ -1162,13 +1159,18 @@ public:
 			rating.ranking.clear();
 			rating.ranking = db.getMpMarks(rating.getNumber());
 			reCreateVcProjects(rating);
+			rating.ranking.clear();
 			rating.ranking = db.getMpMarks(rating.getNumber(), curUser.getUid());
 			if (rating.ranking.empty()) {
 				//rating.ranking.insert(make_pair(curUser.getUid(), db.getVcTotalMarks(rating.getNumber())));
+				rating.addExpert(curUser.getName(), curUser.getUid());
 				rating.enterRank(make_pair(curUser.getName(), curUser.getUid()), 1);
+				db.addMarkVc(rating.ranking[curUser.getUid()]);
 			}
-			else rating.editRank(make_pair(curUser.getName(), curUser.getUid()), 1);
-			db.addMarkVc(rating.ranking[curUser.getUid()]);
+			else {
+				rating.editRank(make_pair(curUser.getName(), curUser.getUid()), 1);
+				db.editMarkVc(rating.ranking[curUser.getUid()]);
+			}
 		}
 	}
 
@@ -1188,7 +1190,7 @@ public:
 		p[0] = '\0';
 		Rating rating(sock);
 		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
-			int i = atoi(p);
+			int i = stoi(p);
 			std::cout << "<- " << split(strMenuExpert)[i] << endl;
 			switch (i) {
 			case 1:
@@ -1274,7 +1276,6 @@ public:
 	}
 
 	void start() {
-		int c;
 		char p[200]{}; //, com[200];//основной буфер и команда
 		p[0] = '\0';
 		std::cout << "Соединение установлено." << std::endl;
@@ -1288,10 +1289,10 @@ public:
 		curUser.setSock(sock);
 		strcpy(p, "");
 		p[0] = '\0';
-		while ((c = recv(sock, p, sizeof(p), 0)) != 0) { //пока принимаются команды
+		while (int c = recv(sock, p, sizeof(p), 0) != 0) { //пока принимаются команды
 			std::string command;
 			command = p;
-			int i = atoi(command.c_str());
+			int i = stoi(command);
 			curUser.clear();
 			switch (i) {
 			case 1:
@@ -1323,7 +1324,7 @@ public:
 				//menuManager();
 				//menuCompany();
 				//menuExpert();
-				break;
+				//break;
 			case 4:
 				//выход
 				cntClients--;
@@ -1332,7 +1333,7 @@ public:
 				closesocket(sock);//закрываем сокет
 				exit(EXIT_SUCCESS);
 				//return;
-				break;
+				//break;
 			default:
 				break;
 			}
